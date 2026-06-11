@@ -1,0 +1,240 @@
+@using LioraApp.ViewModels.Customer
+@model CartIndexVM
+
+@{
+    ViewData["Title"] = "My Cart";
+}
+
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">Shopping Cart</h1>
+
+    @if (!Model.Items.Any())
+    {
+        <div class="bg-white p-8 rounded-lg shadow-sm border border-slate-200 text-center">
+            <span class="material-symbols-outlined text-6xl text-slate-300 mb-4">shopping_cart</span>
+            <h2 class="text-xl font-semibold text-slate-700">Your cart is currently empty.</h2>
+            <p class="text-slate-500 mt-2">Start adding items to proceed with checkout.</p>
+            <a asp-area="Customer" asp-controller="Products" asp-action="Index"
+               class="mt-4 inline-block bg-primary text-white font-semibold px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors">
+                Browse Products
+            </a>
+        </div>
+    }
+    else
+    {
+        @* Hidden antiforgery token for JS fetch calls (UpdateQuantity) *@
+        @Html.AntiForgeryToken()
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            @* Cart Items *@
+            <div class="lg:col-span-2 space-y-4">
+                @foreach (var item in Model.Items)
+                {
+                    <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center gap-4"
+                         id="cart-row-@item.CartItemId">
+
+                        @if (item.IsGiftBundle)
+                        {
+                            <div class="flex-grow min-w-0 space-y-4">
+                                <div class="flex flex-wrap items-center gap-3">
+                                    <span class="rounded-full bg-primary/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-primary">Gift Bundle</span>
+                                    <h3 class="text-lg font-semibold text-slate-800 line-clamp-1">@item.GiftBundleTitle</h3>
+                                </div>
+
+                                <div class="flex flex-wrap items-center gap-3">
+                                    @for (var bundleIndex = 0; bundleIndex < item.BundleItems.Count; bundleIndex++)
+                                    {
+                                        var bundleProduct = item.BundleItems[bundleIndex];
+                                        <div class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3">
+                                            <div class="h-14 w-14 overflow-hidden rounded-xl bg-white">
+                                                @if (!string.IsNullOrWhiteSpace(bundleProduct.ImageUrl))
+                                                {
+                                                    <img src="@bundleProduct.ImageUrl" alt="@bundleProduct.ProductName" class="h-full w-full object-cover" />
+                                                }
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-bold text-slate-800">@bundleProduct.ProductName</p>
+                                                <p class="mt-1 text-xs text-slate-500">@bundleProduct.Size / @bundleProduct.Color</p>
+                                            </div>
+                                        </div>
+
+                                        @if (bundleIndex < item.BundleItems.Count - 1)
+                                        {
+                                            <span class="material-symbols-outlined text-xl text-slate-300">add</span>
+                                        }
+                                    }
+                                </div>
+
+                                <div class="flex flex-wrap items-end gap-3">
+                                    <p class="font-bold text-primary text-lg">$@item.UnitPrice.ToString("0.00") per bundle</p>
+                                    @if (item.GiftBundleOriginalTotal.HasValue && item.GiftBundleOriginalTotal.Value > item.UnitPrice)
+                                    {
+                                        <span class="text-sm text-slate-400 line-through">$@item.GiftBundleOriginalTotal.Value.ToString("0.00")</span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="w-24 h-24 bg-slate-100 rounded-xl flex-shrink-0 overflow-hidden">
+                                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                {
+                                    <img src="@item.ImageUrl" alt="@item.ProductName"
+                                         class="w-full h-full object-cover" />
+                                }
+                            </div>
+
+                            <div class="flex-grow min-w-0">
+                                <h3 class="font-semibold text-lg text-slate-800 line-clamp-1">@item.ProductName</h3>
+                                <p class="text-sm text-slate-500 mt-1">@item.Size | @item.Color</p>
+                                <p class="font-bold text-primary mt-2">$@item.UnitPrice.ToString("0.00") each</p>
+                            </div>
+                        }
+
+                        <div class="w-fit max-w-full self-start rounded-2xl border border-slate-200 bg-slate-50/80 p-3 sm:w-auto sm:min-w-[190px] sm:self-auto sm:p-4">
+                            <div class="flex items-center justify-between gap-3">
+                                <span class="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400 sm:text-xs sm:tracking-[0.18em]">Subtotal</span>
+                                <p class="text-base font-extrabold text-slate-900 sm:text-lg" id="line-subtotal-@item.CartItemId">
+                                    $@item.Subtotal.ToString("0.00")
+                                </p>
+                            </div>
+
+                            <div class="mt-3 flex items-center gap-2 sm:mt-4 sm:block">
+                                <div class="rounded-2xl border border-slate-200 bg-white p-1 shadow-sm sm:p-1.5">
+                                    <div class="flex items-center justify-between gap-2">
+                                        <button type="button"
+                                                class="qty-btn h-8 w-8 rounded-xl border border-slate-200 bg-slate-50 text-sm font-bold
+                                                       text-slate-700 transition hover:border-primary hover:bg-primary/5 hover:text-primary sm:h-10 sm:w-10 sm:text-base"
+                                                data-item-id="@item.CartItemId"
+                                                data-unit-price="@item.UnitPrice.ToString("0.0000")"
+                                                data-max="@item.MaxStock"
+                                                data-dir="minus">−</button>
+                                        <input type="number"
+                                               id="qty-@item.CartItemId"
+                                               value="@item.Quantity"
+                                               min="1" max="@item.MaxStock"
+                                               class="h-8 w-12 rounded-xl border border-slate-200 bg-slate-50 text-center text-sm font-semibold text-slate-800
+                                                      focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 sm:h-10 sm:w-16"
+                                               data-item-id="@item.CartItemId"
+                                               data-unit-price="@item.UnitPrice.ToString("0.0000")" />
+                                        <button type="button"
+                                                class="qty-btn h-8 w-8 rounded-xl border border-slate-200 bg-slate-50 text-sm font-bold
+                                                       text-slate-700 transition hover:border-primary hover:bg-primary/5 hover:text-primary sm:h-10 sm:w-10 sm:text-base"
+                                                data-item-id="@item.CartItemId"
+                                                data-unit-price="@item.UnitPrice.ToString("0.0000")"
+                                                data-max="@item.MaxStock"
+                                                data-dir="plus">+</button>
+                                    </div>
+                                </div>
+
+                                <form asp-action="RemoveItem" method="post" class="shrink-0 sm:mt-3">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="cartItemId" value="@item.CartItemId" />
+                                    <button type="submit"
+                                            class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-red-200 bg-white text-red-500 transition hover:bg-red-50 hover:text-red-600 sm:h-auto sm:w-full sm:gap-2 sm:px-3 sm:py-2.5 sm:text-sm sm:font-semibold">
+                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                        <span class="hidden sm:inline">Remove</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            @* Order Summary sidebar *@
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 h-fit space-y-4">
+                <h3 class="text-xl font-bold">Order Summary</h3>
+
+                <div class="flex justify-between text-slate-600">
+                    <span>Subtotal (@Model.TotalItemCount items)</span>
+                    <span id="cart-subtotal">$@Model.Subtotal.ToString("0.00")</span>
+                </div>
+
+                @if (Model.DiscountAmount > 0)
+                {
+                    <div class="flex justify-between text-emerald-600">
+                        <span>Discount (@Model.AppliedCouponCode)</span>
+                        <span>-$@Model.DiscountAmount.ToString("0.00")</span>
+                    </div>
+                }
+
+                <hr class="border-slate-200" />
+
+                <div class="flex justify-between font-bold text-xl text-slate-800">
+                    <span>Total</span>
+                    <span id="cart-total">$@Model.Total.ToString("0.00")</span>
+                </div>
+
+                @* Real navigation to Checkout *@
+                <a asp-area="Customer" asp-controller="Orders" asp-action="Checkout"
+                   class="block w-full text-center bg-primary hover:bg-primary/90
+                          text-white font-bold py-3 rounded-lg transition-colors">
+                    Proceed to Checkout
+                </a>
+
+                <form asp-action="ClearCart" asp-controller="Cart" asp-area="Customer" method="post" class="inline"
+                      onsubmit="return confirm('Clear your entire cart?');">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="px-4 py-2 text-sm text-rose-600 hover:text-rose-800 font-semibold transition-colors">
+                        Clear Cart
+                    </button>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+<script>
+    // Grab AntiForgery token from the standalone hidden field at top of page
+    const _aft = document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '';
+
+    async function updateQty(itemId, newQty, unitPrice) {
+        try {
+            const res = await fetch('@Url.Action("UpdateQuantity", "Cart", new { area = "Customer" })', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'RequestVerificationToken': _aft
+                },
+                body: `cartItemId=${itemId}&quantity=${newQty}`
+            });
+            if (!res.ok) return;
+            const data = await res.json();
+            if (data.success) {
+                const lineSubtotal = (newQty * parseFloat(unitPrice)).toFixed(2);
+                document.getElementById(`line-subtotal-${itemId}`).textContent = `$${lineSubtotal}`;
+                document.getElementById('cart-total').textContent = `$${data.cartTotal.toFixed(2)}`;
+            }
+        } catch (e) { console.error('UpdateQuantity failed', e); }
+    }
+
+    document.querySelectorAll('.qty-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const itemId   = btn.dataset.itemId;
+            const price    = btn.dataset.unitPrice;
+            const max      = parseInt(btn.dataset.max, 10);
+            const input    = document.getElementById(`qty-${itemId}`);
+            let v = parseInt(input.value, 10) || 1;
+            v = btn.dataset.dir === 'plus' ? Math.min(v + 1, max) : Math.max(1, v - 1);
+            input.value = v;
+            updateQty(itemId, v, price);
+        });
+    });
+
+    document.querySelectorAll('input[id^="qty-"]').forEach(input => {
+        let timer;
+        input.addEventListener('change', () => {
+            clearTimeout(timer);
+            const itemId = input.dataset.itemId;
+            const price  = input.dataset.unitPrice;
+            const max    = parseInt(input.max, 10);
+            let v = Math.max(1, Math.min(parseInt(input.value, 10) || 1, max));
+            input.value = v;
+            timer = setTimeout(() => updateQty(itemId, v, price), 400);
+        });
+    });
+</script>
+}

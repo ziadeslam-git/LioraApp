@@ -1,0 +1,105 @@
+@model IEnumerable<LioraApp.ViewModels.Admin.OrderIndexVM>
+@using LioraApp.Utilities
+
+@{
+    ViewData["Title"] = "Orders";
+    Layout = "_AdminLayout";
+    var currentStatus = ViewBag.CurrentStatus as string;
+
+    string StatusBadge(string status) => status switch
+    {
+        SD.Status_Pending => "bg-amber-100 text-amber-700",
+        SD.Status_Confirmed => "bg-blue-100 text-blue-700",
+        SD.Status_Processing => "bg-indigo-100 text-indigo-700",
+        SD.Status_Shipped => "bg-sky-100 text-sky-700",
+        SD.Status_Delivered => "bg-emerald-100 text-emerald-700",
+        SD.Status_Cancelled => "bg-red-100 text-red-700",
+        _ => "bg-slate-100 text-slate-700"
+    };
+
+    string PaymentBadge(string status) => status switch
+    {
+        SD.Payment_Paid => "bg-emerald-100 text-emerald-700",
+        SD.Payment_Refunded => "bg-purple-100 text-purple-700",
+        SD.Payment_Failed => "bg-red-100 text-red-700",
+        SD.Payment_Pending => "bg-amber-100 text-amber-700",
+        _ => "bg-slate-100 text-slate-700"
+    };
+}
+
+<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Orders</h2>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Manage customer orders and manual payments.</p>
+    </div>
+    <a asp-action="Create" class="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-md shadow-primary/20 transition hover:opacity-90">
+        <span class="material-symbols-outlined text-sm">add_shopping_cart</span>
+        Create Order
+    </a>
+</div>
+
+<div class="mb-6 flex items-center gap-1 overflow-x-auto rounded-xl border border-slate-200 bg-white p-1 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <a asp-action="Index" asp-route-status=""
+       class="whitespace-nowrap rounded-lg px-4 py-2 text-sm font-semibold transition @(string.IsNullOrEmpty(currentStatus) ? "bg-primary text-white" : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800")">
+        All Orders
+    </a>
+    @foreach (var s in (IReadOnlyList<string>)ViewBag.AllStatuses)
+    {
+        <a asp-action="Index" asp-route-status="@s"
+           class="whitespace-nowrap rounded-lg px-4 py-2 text-sm font-semibold transition @(currentStatus == s ? "bg-primary text-white" : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800")">
+            @s
+        </a>
+    }
+</div>
+
+<div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <div class="overflow-x-auto">
+        <table class="w-full border-collapse text-left text-sm">
+            <thead>
+                <tr class="border-b border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-800/50">
+                    <th class="px-4 py-4 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Order ID</th>
+                    <th class="px-4 py-4 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Customer</th>
+                    <th class="px-4 py-4 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Items</th>
+                    <th class="px-4 py-4 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Total</th>
+                    <th class="px-4 py-4 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Payment</th>
+                    <th class="px-4 py-4 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Status</th>
+                    <th class="px-4 py-4 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Date</th>
+                    <th class="px-4 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-500">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="8" class="px-6 py-16 text-center text-slate-400">No orders found.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var order in Model)
+                    {
+                        <tr class="transition hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                            <td class="px-4 py-4"><span class="font-mono font-semibold text-primary">#ORD-@order.Id</span></td>
+                            <td class="px-4 py-4">
+                                <p class="font-medium text-slate-900 dark:text-slate-100">@order.CustomerName</p>
+                                <p class="text-xs text-slate-400">@order.CustomerEmail</p>
+                            </td>
+                            <td class="px-4 py-4 text-slate-500">@order.ItemCount</td>
+                            <td class="px-4 py-4 font-semibold text-slate-900 dark:text-slate-100">@order.TotalAmount.ToString("C")</td>
+                            <td class="px-4 py-4"><span class="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase @PaymentBadge(order.PaymentStatus)">@order.PaymentStatus</span></td>
+                            <td class="px-4 py-4"><span class="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase @StatusBadge(order.Status)">@order.Status</span></td>
+                            <td class="whitespace-nowrap px-4 py-4 text-xs text-slate-500">@order.CreatedAt.ToString("MMM dd, yyyy")</td>
+                            <td class="px-4 py-4 text-right">
+                                <div class="inline-flex items-center gap-1.5">
+                                    <a asp-action="Details" asp-route-id="@order.Id" class="rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-200">View</a>
+                                    <a asp-action="Edit" asp-route-id="@order.Id" class="rounded-lg bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-600 transition hover:bg-emerald-100">Edit</a>
+                                    <a asp-action="UpdateStatus" asp-route-id="@order.Id" class="rounded-lg bg-blue-50 px-2.5 py-1.5 text-xs font-semibold text-blue-600 transition hover:bg-blue-100">Status</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

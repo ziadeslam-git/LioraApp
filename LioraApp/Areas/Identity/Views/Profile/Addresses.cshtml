@@ -1,0 +1,170 @@
+@model IEnumerable<LioraApp.Models.Address>
+@inject Microsoft.Extensions.Localization.IStringLocalizer<LioraApp.Resources.SharedResource> SR
+@{
+    ViewData["Title"] = SR["MyAddresses"];
+    Layout = "_ProfileLayout";
+}
+
+<!-- Panel Header -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <div>
+        <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">@SR["MyAddresses"]</h1>
+        <p class="text-slate-500 text-sm">@SR["ManageYourDeliveryLocations"]</p>
+    </div>
+    <a asp-action="AddAddress" class="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-lg font-medium transition-all shadow-lg shadow-primary/20">
+        <span class="material-symbols-outlined text-xl">add</span>
+        <span>@SR["AddNewAddress"]</span>
+    </a>
+</div>
+
+<!-- Address Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    @if (!Model.Any())
+    {
+        <div class="col-span-full bg-slate-50 dark:bg-slate-800/50 p-8 rounded-xl text-center border-2 border-dashed border-slate-200 dark:border-slate-700">
+            <span class="material-symbols-outlined text-4xl text-slate-400 mb-2">location_off</span>
+            <p class="text-slate-500">@SR["NoSavedAddressesYet"]</p>
+        </div>
+    }
+
+    @foreach (var address in Model)
+    {
+        <div class="bg-white dark:bg-slate-900 border @(address.IsDefault ? "border-primary/50 ring-1 ring-primary/50" : "border-slate-200 dark:border-slate-800") rounded-xl p-6 relative flex flex-col justify-between hover:shadow-md transition-shadow">
+            <div>
+                <div class="flex justify-between items-start mb-4">
+                    <div class="bg-primary/10 text-primary p-3 rounded-full">
+                        <span class="material-symbols-outlined fill-1">home</span>
+                    </div>
+                    @if (address.IsDefault)
+                    {
+                        <span class="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
+                            @SR["Default"]
+                        </span>
+                    }
+                </div>
+                <h4 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-1">@address.FullName</h4>
+                <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-1">@address.Street</p>
+                <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-4">@address.City, @address.State @address.PostalCode, @address.Country</p>
+                
+                <div class="flex items-center gap-2 text-slate-500 text-xs mb-6">
+                    <span class="material-symbols-outlined text-sm">phone</span>
+                    <span>@address.PhoneNumber</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+                @if (address.IsDefault)
+                {
+                    <span class="text-emerald-600 dark:text-emerald-400 text-xs font-semibold flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">check_circle</span>
+                        @SR["MainDeliveryPoint"]
+                    </span>
+                }
+                else
+                {
+                    <form asp-action="SetDefaultAddress" method="post" class="inline mb-2">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@address.Id" />
+                        <button type="submit" class="text-primary hover:underline text-xs font-semibold">@SR["SetAsDefault"]</button>
+                    </form>
+                }
+                
+                <div class="flex items-center gap-3">
+                    <a asp-action="EditAddress" asp-route-id="@address.Id" class="text-slate-400 hover:text-primary transition-colors" title="@SR["Edit"]">
+                        <span class="material-symbols-outlined">edit</span>
+                    </a>
+                    <form asp-action="DeleteAddress" method="post" class="inline" data-address-delete-form>
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@address.Id" />
+                        <button type="button" class="text-rose-400 hover:text-rose-600 transition-colors" title="@SR["Delete"]" data-open-delete-modal>
+                            <span class="material-symbols-outlined">delete</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div id="deleteAddressModal" class="fixed inset-0 z-[90] hidden items-center justify-center bg-slate-950/70 px-4 py-6">
+    <div class="w-full max-w-md rounded-[22px] bg-white p-6 shadow-2xl dark:bg-slate-900 md:p-7">
+        <div class="flex items-start gap-4">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400">
+                <span class="material-symbols-outlined text-[24px]">delete</span>
+            </div>
+            <div class="min-w-0 flex-1">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">@SR["Delete"]</h3>
+                <p class="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">@SR["DeleteAddressConfirmation"]</p>
+            </div>
+        </div>
+
+        <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <button id="cancelDeleteAddressButton" type="button" class="rounded-[18px] border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800">
+                Cancel
+            </button>
+            <button id="confirmDeleteAddressButton" type="button" class="rounded-[18px] bg-rose-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-rose-700 shadow-sm shadow-rose-600/20">
+                @SR["Delete"]
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const modal = document.getElementById('deleteAddressModal');
+            const confirmButton = document.getElementById('confirmDeleteAddressButton');
+            const cancelButton = document.getElementById('cancelDeleteAddressButton');
+            let activeForm = null;
+
+            if (!modal || !confirmButton || !cancelButton) {
+                return;
+            }
+
+            const closeModal = function () {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.classList.remove('overflow-hidden');
+                activeForm = null;
+            };
+
+            const openModal = function (form) {
+                activeForm = form;
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.classList.add('overflow-hidden');
+            };
+
+            document.querySelectorAll('[data-address-delete-form]').forEach(function (form) {
+                const trigger = form.querySelector('[data-open-delete-modal]');
+                if (!trigger) {
+                    return;
+                }
+
+                trigger.addEventListener('click', function () {
+                    openModal(form);
+                });
+            });
+
+            confirmButton.addEventListener('click', function () {
+                if (activeForm) {
+                    activeForm.submit();
+                }
+            });
+
+            cancelButton.addEventListener('click', closeModal);
+
+            modal.addEventListener('click', function (event) {
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
+                    closeModal();
+                }
+            });
+        })();
+    </script>
+}

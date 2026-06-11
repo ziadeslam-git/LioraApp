@@ -1,0 +1,79 @@
+@using LioraApp.ViewModels.Admin
+@model ProductDetailsVM
+
+@{
+    ViewData["Title"] = "Delete Product";
+}
+
+<div class="max-w-2xl mx-auto space-y-6">
+
+    <div>
+        <nav class="flex text-sm text-slate-500 mb-2 items-center gap-2">
+            <a asp-area="Admin" asp-controller="Product" asp-action="Index"
+               class="hover:text-primary transition-colors">Products</a>
+            <span class="material-symbols-outlined text-sm">chevron_right</span>
+            <span class="font-medium text-slate-900">Delete / Deactivate</span>
+        </nav>
+        <h1 class="text-3xl font-black tracking-tight">Remove Product</h1>
+        <p class="text-slate-500 mt-1">Choose how to remove <strong>@Model.Name</strong> from your store.</p>
+    </div>
+
+    @* Product Info *@
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
+        <h3 class="font-bold text-slate-700 mb-3">Product Summary</h3>
+        <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+                <span class="text-slate-400 block text-xs font-bold uppercase tracking-wider">Name</span>
+                <span class="font-semibold text-slate-900 mt-1 block">@Model.Name</span>
+            </div>
+            <div>
+                <span class="text-slate-400 block text-xs font-bold uppercase tracking-wider">Category</span>
+                <span class="font-semibold text-slate-900 mt-1 block">@Model.CategoryName</span>
+            </div>
+            <div>
+                <span class="text-slate-400 block text-xs font-bold uppercase tracking-wider">Base Price</span>
+                <span class="font-semibold text-slate-900 mt-1 block">$@Model.BasePrice.ToString("0.00")</span>
+            </div>
+            <div>
+                <span class="text-slate-400 block text-xs font-bold uppercase tracking-wider">Variants</span>
+                <span class="font-semibold text-slate-900 mt-1 block">@Model.Variants.Count total</span>
+            </div>
+        </div>
+    </div>
+
+    @* Option A: Deactivate *@
+    <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 flex gap-4 items-start">
+        <div class="size-10 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-amber-600">visibility_off</span>
+        </div>
+        <div class="flex-1">
+            <p class="font-bold text-amber-900">Option A — Deactivate (Recommended)</p>
+            <p class="text-sm text-amber-700 mt-1">
+                Hides the product and all its variants from the storefront.<br/>
+                <strong>Data is preserved.</strong> Order history remains intact. You can re-activate at any time via the Toggle switch.
+            </p>
+            <form asp-area="Admin" asp-controller="Product" asp-action="DeactivateConfirmed" asp-route-id="@Model.Id"
+                  method="post" class="mt-4 inline">
+                @Html.AntiForgeryToken()
+                <button type="submit"
+                        class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-600
+                               text-white text-sm font-bold transition-all active:scale-95 shadow-md shadow-amber-200">
+                    <span class="material-symbols-outlined text-base">visibility_off</span>
+                    Deactivate Product
+                </button>
+            </form>
+        </div>
+    </div>
+
+    @* Cancel *@
+    <div class="flex justify-start">
+        <a asp-area="Admin" asp-controller="Product" asp-action="Details" asp-route-id="@Model.Id"
+           class="px-5 py-2.5 rounded-lg border border-slate-200 text-slate-600 text-sm font-semibold
+                  hover:bg-slate-50 transition-colors flex items-center gap-2">
+            <span class="material-symbols-outlined text-base">arrow_back</span>
+            Cancel — Back to Details
+        </a>
+    </div>
+
+</div>
+

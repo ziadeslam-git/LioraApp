@@ -1,0 +1,109 @@
+@model LioraApp.ViewModels.Admin.OrderDetailsVM
+@using LioraApp.Utilities
+
+@{
+    ViewData["Title"] = $"Order #{Model.Id}";
+    Layout = "_AdminLayout";
+
+    string StatusBadge(string status) => status switch
+    {
+        SD.Status_Pending => "bg-amber-100 text-amber-700",
+        SD.Status_Confirmed => "bg-blue-100 text-blue-700",
+        SD.Status_Processing => "bg-indigo-100 text-indigo-700",
+        SD.Status_Shipped => "bg-sky-100 text-sky-700",
+        SD.Status_Delivered => "bg-emerald-100 text-emerald-700",
+        SD.Status_Cancelled => "bg-red-100 text-red-700",
+        _ => "bg-slate-100 text-slate-700"
+    };
+
+    string PaymentBadge(string status) => status switch
+    {
+        SD.Payment_Paid => "bg-emerald-100 text-emerald-700",
+        SD.Payment_Refunded => "bg-purple-100 text-purple-700",
+        SD.Payment_Failed => "bg-red-100 text-red-700",
+        SD.Payment_Pending => "bg-amber-100 text-amber-700",
+        _ => "bg-slate-100 text-slate-700"
+    };
+}
+
+<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+        <nav class="mb-2 flex items-center gap-2 text-sm text-slate-400">
+            <a asp-action="Index" class="transition hover:text-primary">Orders</a>
+            <span class="material-symbols-outlined text-xs">chevron_right</span>
+            <span class="font-medium text-slate-700 dark:text-slate-300">#ORD-@Model.Id</span>
+        </nav>
+        <div class="flex flex-wrap items-center gap-3">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Order #@Model.Id</h2>
+            <span class="rounded-full px-2.5 py-1 text-xs font-bold uppercase @StatusBadge(Model.Status)">@Model.Status</span>
+            <span class="rounded-full px-2.5 py-1 text-xs font-bold uppercase @PaymentBadge(Model.PaymentStatus)">@Model.PaymentStatus</span>
+        </div>
+        <p class="mt-1 text-xs text-slate-400">Placed on @Model.CreatedAt.ToString("MMMM dd, yyyy HH:mm")</p>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">Edit Order</a>
+        <a asp-action="UpdateStatus" asp-route-id="@Model.Id" class="rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white shadow-md shadow-primary/20 transition hover:opacity-90">Update Status</a>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 gap-6 lg:grid-cols-10">
+    <div class="space-y-6 lg:col-span-6">
+        <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4 dark:border-slate-800">
+                <h3 class="font-bold text-slate-900 dark:text-slate-100">Order Items</h3>
+                <span class="text-xs text-slate-400">@Model.Items.Count @(Model.Items.Count == 1 ? "item" : "items")</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-slate-50 dark:bg-slate-800/50">
+                        <tr>
+                            <th class="px-6 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Product</th>
+                            <th class="px-6 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Variant</th>
+                            <th class="px-6 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Unit Price</th>
+                            <th class="px-6 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Qty</th>
+                            <th class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td class="px-6 py-4 font-semibold text-slate-900 dark:text-slate-100">@item.ProductName</td>
+                                <td class="px-6 py-4 text-slate-600">@item.Size / @item.Color</td>
+                                <td class="px-6 py-4 text-slate-600">@item.UnitPrice.ToString("C")</td>
+                                <td class="px-6 py-4 text-slate-600">@item.Quantity</td>
+                                <td class="px-6 py-4 text-right font-bold text-slate-900 dark:text-slate-100">@item.Subtotal.ToString("C")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="space-y-6 lg:col-span-4">
+        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <h3 class="mb-5 font-bold text-slate-900 dark:text-slate-100">Customer</h3>
+            <p class="font-bold text-slate-900 dark:text-slate-100">@Model.CustomerName</p>
+            <p class="text-sm text-slate-400">@Model.CustomerEmail</p>
+        </div>
+
+        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <h3 class="mb-4 font-bold text-slate-900 dark:text-slate-100">Shipping Address</h3>
+            <p class="text-sm leading-6 text-slate-600 dark:text-slate-300">@Model.AddressLine</p>
+        </div>
+
+        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <h3 class="mb-4 font-bold text-slate-900 dark:text-slate-100">Totals</h3>
+            <div class="space-y-2 text-sm">
+                <div class="flex justify-between"><span class="text-slate-500">Subtotal</span><span>@Model.Subtotal.ToString("C")</span></div>
+                @if (Model.DiscountAmount > 0)
+                {
+                    <div class="flex justify-between"><span class="text-slate-500">Discount @(Model.CouponCode != null ? $"({Model.CouponCode})" : "")</span><span class="text-emerald-600">-@Model.DiscountAmount.ToString("C")</span></div>
+                }
+                <div class="flex justify-between border-t border-slate-200 pt-3 text-base font-bold"><span>Total</span><span class="text-primary">@Model.TotalAmount.ToString("C")</span></div>
+            </div>
+        </div>
+    </div>
+</div>

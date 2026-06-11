@@ -1,0 +1,189 @@
+using System.Security.Claims;
+using LioraApp.Models;
+using LioraApp.Repositories.IRepositories;
+using LioraApp.ViewModels.Customer.ProductController;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+
+namespace LioraApp.Areas.Customer.Controllers;
+
+[Area("Customer")]
+public class ProductsController : Controller
+{
+    private readonly IUnitOfWork _unitOfWork;
+
+    public ProductsController(IUnitOfWork unitOfWork)
+    {
+        _unitOfWork = unitOfWork;
+    }
+
+    public async Task<IActionResult> Index(
+        string? search,
+        int? categoryId,
+        decimal? minPrice,
+        decimal? maxPrice,
+        string? sort,
+        int page = 1)
+    {
+        const int PageSize = 16;
+        page = Math.Max(1, page);
+        search = string.IsNullOrWhiteSpace(search) ? null : search.Trim();
+        sort = string.IsNullOrWhiteSpace(sort) ? "newest" : sort.Trim().ToLowerInvariant();
+
+        var query = _unitOfWork.Products
+            .Query()
+            .AsNoTracking();
+
+        if (!string.IsNullOrEmpty(search))
+        {
+            query = query.Where(p => p.Name.Contains(search));
+        }
+
+        if (categoryId.HasValue)
+        {
+            query = query.Where(p => p.CategoryId == categoryId);
+        }
+
+        if (minPrice.HasValue)
+        {
+            query = query.Where(p =>
+                (p.Variants.Where(v => v.IsActive && v.Stock > 0)
+                    .Select(v => (decimal?)v.Price)
+                    .OrderBy(price => price)
+                    .FirstOrDefault() ?? p.BasePrice) >= minPrice.Value);
+        }
+
+        if (maxPrice.HasValue)
+        {
+            query = query.Where(p =>
+                (p.Variants.Where(v => v.IsActive && v.Stock > 0)
+                    .Select(v => (decimal?)v.Price)
+                    .OrderBy(price => price)
+                    .FirstOrDefault() ?? p.BasePrice) <= maxPrice.Value);
+        }
+
+        query = sort switch
+        {
+            "price_asc" => query.OrderBy(p =>
+                p.Variants.Where(v => v.IsActive && v.Stock > 0)
+                    .Select(v => (decimal?)v.Price)
+                    .OrderBy(price => price)
+                    .FirstOrDefault() ?? p.BasePrice),
+            "price_desc" => query.OrderByDescending(p =>
+                p.Variants.Where(v => v.IsActive && v.Stock > 0)
+                    .Select(v => (decimal?)v.Price)
+                    .OrderBy(price => price)
+                    .FirstOrDefault() ?? p.BasePrice),
+            _ => query.OrderByDescending(p => p.CreatedAt)
+        };
+
+        var totalCount = await query.CountAsync();
+        var totalPages = Math.Max(1, (int)Math.Ceiling(totalCount / (double)PageSize));
+        page = Math.Min(page, totalPages);
+
+        var products = await query
+            .Skip((page - 1) * PageSize)
+            .Take(PageSize)
+            .Select(p => new ProductCardVM
+            {
+                Id = p.Id,
+                Name = p.Name,
+                BasePrice = p.BasePrice,
+                MinVariantPrice = p.Variants
+                    .Where(v => v.IsActive && v.Stock > 0)
+                    .Select(v => (decimal?)v.Price)
+                    .OrderBy(price => price)
+                    .FirstOrDefault(),
+                DefaultVariantId = p.Variants
+                    .Where(v => v.IsActive && v.Stock > 0)
+                    .OrderBy(v => v.Price)
+                    .Select(v => (int?)v.Id)
+                    .FirstOrDefault(),
+                MainImageUrl = p.Images
+                    .OrderByDescending(i => i.IsMain)
+                    .ThenBy(i => i.DisplayOrder)
+                    .Select(i => i.ImageUrl)
+                    .FirstOrDefault()
+                    ?? p.Variants
+                        .SelectMany(v => v.Images)
+                        .OrderByDescending(i => i.IsMain)
+                        .ThenBy(i => i.Id)
+                        .Select(i => i.ImageUrl)
+                    .FirstOrDefault(),
+                CategoryName = p.Category != null ? p.Category.Name : null,
+                HasStock = p.Variants.Any(v => v.IsActive && v.Stock > 0),
+                AvailableStock = p.Variants
+                    .Where(v => v.IsActive && v.Stock > 0)
+                    .Sum(v => (int?)v.Stock) ?? 0
+            })
+            .ToListAsync();
+
+        var categorySelectList = await _unitOfWork.Categories
+            .Query()
+            .AsNoTracking()
+            .OrderBy(c => c.Name)
+            .Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.Name
+            })
+            .ToListAsync();
+
+        var vm = new ProductIndexCustomerVM
+        {
+            Products = products,
+            Categories = categorySelectList,
+            CurrentPage = page,
+            TotalPages = totalPages,
+            TotalCount = totalCount,
+            PageSize = PageSize,
+            SearchQuery = search,
+            SelectedCategoryId = categoryId,
+            MinPrice = minPrice,
+            MaxPrice = maxPrice,
+            Sort = sort
+        };
+
+        return View(vm);
+    }
+
+    public async Task<IActionResult> Details(int id)
+    {
+        var product = await _unitOfWork.Products
+            .Query()
+            .Where(p => p.Id == id)
+            .AsSplitQuery()
+            .Include(p => p.Category)
+            .Include(p => p.Images)
+            .Include(p => p.Variants)
+                .ThenInclude(v => v.Images)
+            .FirstOrDefaultAsync();
+
+        if (product == null || !product.IsActive)
+        {
+            return NotFound();
+        }
+
+        var related = await _unitOfWork.Products
+            .Query()
+            .Where(p => p.CategoryId == product.CategoryId &&
+                        p.Id != product.Id &&
+                        p.IsActive)
+            .AsSplitQuery()
+            .Include(p => p.Category)
+            .Include(p => p.Images)
+            .Include(p => p.Variants)
+            .OrderByDescending(p => p.CreatedAt)
+            .Take(4)
+            .ToListAsync();
+
+        var vm = new ProductDetailsVM
+        {
+            Product = product,
+            RelatedProducts = related
+        };
+
+        return View(vm);
+    }
+}

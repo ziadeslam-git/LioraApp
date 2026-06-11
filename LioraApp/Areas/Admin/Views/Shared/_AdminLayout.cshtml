@@ -1,0 +1,562 @@
+@using LioraApp.Models
+@using LioraApp.Repositories.IRepositories
+@using LioraApp.Utilities
+@using Microsoft.AspNetCore.Identity
+@inject IUnitOfWork UnitOfWork
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var currentAdminUser = User.Identity?.IsAuthenticated == true ? await UserManager.GetUserAsync(User) : null;
+    var displayName = currentAdminUser?.FullName;
+    var controller = ViewContext.RouteData.Values["Controller"]?.ToString() ?? string.Empty;
+    var currentAdminSection = controller switch
+    {
+        "Dashboard" => "Dashboard",
+        "Product" or "ProductVariants" or "ProductImages" => "Products",
+        "GiftBundles" => "Gift Bundles",
+        "Category" => "Categories",
+        "Orders" => "Orders",
+        "Users" => "Customers",
+        "Discounts" => "Discounts",
+        "Payments" => "Payments",
+        _ => "Dashboard"
+    };
+
+    if (string.IsNullOrWhiteSpace(displayName))
+    {
+        var identityName = User.Identity?.Name;
+        displayName = string.IsNullOrWhiteSpace(identityName)
+            ? "Admin"
+            : identityName.Contains('@')
+                ? identityName.Split('@')[0]
+                : identityName;
+    }
+
+    var notificationFeedCutoff = DateTime.UtcNow.AddDays(-7);
+    var newOrdersCutoff = DateTime.UtcNow.AddHours(-24);
+    var adminNotificationOrders = User.Identity?.IsAuthenticated == true
+        ? (await UnitOfWork.Orders.FindAllAsync(
+                o => o.CreatedAt >= notificationFeedCutoff || o.Status == SD.Status_Pending,
+                includeProperties: "User,Address",
+                tracked: false))
+            .OrderByDescending(o => o.CreatedAt)
+            .Take(6)
+            .ToList()
+        : new List<Order>();
+    var adminNotificationCount = adminNotificationOrders.Count(o => o.CreatedAt >= newOrdersCutoff || o.Status == SD.Status_Pending);
+
+    Func<DateTime, string> formatNotificationTime = createdAt =>
+    {
+        var elapsed = DateTime.UtcNow - createdAt;
+
+        if (elapsed.TotalMinutes < 1)
+        {
+            return "Just now";
+        }
+
+        if (elapsed.TotalHours < 1)
+        {
+            return $"{Math.Max(1, (int)elapsed.TotalMinutes)} min ago";
+        }
+
+        if (elapsed.TotalDays < 1)
+        {
+            return $"{Math.Max(1, (int)elapsed.TotalHours)} hr ago";
+        }
+
+        if (elapsed.TotalDays < 7)
+        {
+            var days = Math.Max(1, (int)elapsed.TotalDays);
+            return $"{days} day{(days == 1 ? string.Empty : "s")} ago";
+        }
+
+        return createdAt.ToString("dd MMM");
+    };
+
+    Func<string, string> notificationStatusClasses = status => status switch
+    {
+        SD.Status_Pending => "bg-amber-100 text-amber-700",
+        SD.Status_Confirmed => "bg-blue-100 text-blue-700",
+        SD.Status_Processing => "bg-violet-100 text-violet-700",
+        SD.Status_Shipped => "bg-sky-100 text-sky-700",
+        SD.Status_Delivered => "bg-emerald-100 text-emerald-700",
+        SD.Status_Cancelled => "bg-rose-100 text-rose-700",
+        _ => "bg-slate-100 text-slate-700"
+    };
+}
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>@ViewData["Title"] - Liora Admin</title>
+    
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
+    <link rel="icon" type="image/png" href="~/images/site-logo.png" asp-append-version="true" />
+    <link rel="shortcut icon" href="~/images/site-logo.png" asp-append-version="true" />
+    
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4648d4",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101122",
+                        "sidebar-dark": "#0F172A",
+                        "surface-container-low": "#f2f4f6",
+                        "primary-fixed": "#e1e0ff",
+                        "tertiary": "#6b38d4",
+                        "inverse-surface": "#213145",
+                        "surface-tint": "#494bd6",
+                        "outline-variant": "#c7c4d7",
+                        "secondary-container": "#dae2fd",
+                        "surface": "#f8f9ff",
+                        "on-surface-variant": "#464554",
+                        "on-background": "#0b1c30",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#0b1c30",
+                        "error-container": "#ffdad6",
+                        "background": "#f8f9ff",
+                        "on-primary": "#ffffff",
+                        "outline": "#767586",
+                        "on-error-container": "#93000a",
+                        "surface-container": "#eceef0",
+                        "surface-variant": "#e0e3e5",
+                        "tertiary-fixed": "#e9ddff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#8455ef",
+                        "surface-dim": "#d8dadc",
+                        "inverse-primary": "#c0c1ff",
+                        "surface-bright": "#f7f9fb",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#23005c",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "on-tertiary-container": "#fffbff",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#5516be",
+                        "on-primary-container": "#fffbff",
+                        "on-secondary-fixed-variant": "#3f465c",
+                        "surface-container-high": "#e6e8ea",
+                        "primary-container": "#6063ee",
+                        "secondary-fixed": "#dae2fd",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "secondary-fixed-dim": "#bec6e0",
+                        "on-secondary-fixed": "#131b2e",
+                        "tertiary-fixed-dim": "#d0bcff",
+                        "on-primary-fixed": "#07006c",
+                        "on-secondary-container": "#5c647a",
+                        "secondary": "#565e74"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "headline": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "mono": ["Fira Code", "monospace"],
+                        "inter": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-size: 20px; }
+        .admin-mobile-menu summary::-webkit-details-marker { display: none; }
+        .admin-mobile-menu[open] .admin-mobile-chevron { transform: rotate(180deg); }
+        .active-nav {
+            background-color: rgba(100, 103, 242, 0.1);
+            color: white;
+            border-left-width: 4px;
+            border-left-color: #6467f2;
+            border-top-right-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+        }
+    </style>
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-100">
+    <div class="flex min-h-screen overflow-x-hidden">
+        
+        <!-- Persistent Left Sidebar -->
+        <aside class="hidden w-[240px] bg-sidebar-dark md:fixed md:inset-y-0 md:left-0 md:z-50 md:flex md:flex-col">
+            <!-- Top: Logo Area -->
+            <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="p-6 flex items-center gap-3 transition-opacity hover:opacity-90">
+                <img src="~/images/site-logo.png" asp-append-version="true" alt="Liora logo" class="size-10 shrink-0 object-contain" />
+                <h1 class="text-white text-base font-bold">Liora</h1>
+            </a>
+            
+            <!-- User Profile Area -->
+            <div class="px-6 mb-6">
+                <a asp-area="Identity" asp-controller="Profile" asp-action="Index" class="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3 transition-colors hover:bg-white/10">
+                    <div class="flex size-10 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-primary">
+                        <span class="material-symbols-outlined text-[22px]">person</span>
+                    </div>
+                    <div class="flex flex-col overflow-hidden">
+                        <span class="text-white text-sm font-medium truncate">@displayName</span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primary/20 text-primary w-fit">Super Admin</span>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="flex-1 px-3 space-y-1">
+                <!-- Dashboard Active State -->
+                <a asp-controller="Dashboard" asp-action="Index" asp-area="Admin" class="flex items-center gap-3 px-3 py-2.5 group transition-colors @(controller == "Dashboard" ? "active-nav" : "text-slate-400 hover:text-white hover:bg-white/5 rounded-lg")">
+                    <span class="material-symbols-outlined @(controller == "Dashboard" ? "text-white" : "text-slate-400 group-hover:text-white")">dashboard</span>
+                    <span class="text-sm font-medium">Dashboard</span>
+                </a>
+                <a asp-controller="Product" asp-action="Index" asp-area="Admin" class="flex items-center gap-3 px-3 py-2.5 group transition-colors @(controller == "Product" || controller == "ProductVariants" || controller == "ProductImages" ? "active-nav" : "text-slate-400 hover:text-white hover:bg-white/5 rounded-lg")">
+                    <span class="material-symbols-outlined @(controller == "Product" || controller == "ProductVariants" || controller == "ProductImages" ? "text-white" : "text-slate-400 group-hover:text-white")">inventory_2</span>
+                    <span class="text-sm font-medium">Products</span>
+                </a>
+                <a asp-controller="GiftBundles" asp-action="Index" asp-area="Admin" class="flex items-center gap-3 px-3 py-2.5 group transition-colors @(controller == "GiftBundles" ? "active-nav" : "text-slate-400 hover:text-white hover:bg-white/5 rounded-lg")">
+                    <span class="material-symbols-outlined @(controller == "GiftBundles" ? "text-white" : "text-slate-400 group-hover:text-white")">redeem</span>
+                    <span class="text-sm font-medium">Gift Bundles</span>
+                </a>
+                <a asp-controller="Category" asp-action="Index" asp-area="Admin" class="flex items-center gap-3 px-3 py-2.5 group transition-colors @(controller == "Category" ? "active-nav" : "text-slate-400 hover:text-white hover:bg-white/5 rounded-lg")">
+                    <span class="material-symbols-outlined @(controller == "Category" ? "text-white" : "text-slate-400 group-hover:text-white")">category</span>
+                    <span class="text-sm font-medium">Categories</span>
+                </a>
+                <a asp-controller="Orders" asp-action="Index" asp-area="Admin" class="flex items-center gap-3 px-3 py-2.5 group transition-colors @(controller == "Orders" ? "active-nav" : "text-slate-400 hover:text-white hover:bg-white/5 rounded-lg")">
+                    <span class="material-symbols-outlined @(controller == "Orders" ? "text-white" : "text-slate-400 group-hover:text-white")">receipt_long</span>
+                    <span class="text-sm font-medium">Orders</span>
+                </a>
+                <a asp-controller="Users" asp-action="Index" asp-area="Admin" class="flex items-center gap-3 px-3 py-2.5 group transition-colors @(controller == "Users" ? "active-nav" : "text-slate-400 hover:text-white hover:bg-white/5 rounded-lg")">
+                    <span class="material-symbols-outlined @(controller == "Users" ? "text-white" : "text-slate-400 group-hover:text-white")">group</span>
+                    <span class="text-sm font-medium">Customers</span>
+                </a>
+                <a asp-controller="Discounts" asp-action="Index" asp-area="Admin" class="flex items-center gap-3 px-3 py-2.5 group transition-colors @(controller == "Discounts" ? "active-nav" : "text-slate-400 hover:text-white hover:bg-white/5 rounded-lg")">
+                    <span class="material-symbols-outlined @(controller == "Discounts" ? "text-white" : "text-slate-400 group-hover:text-white")">sell</span>
+                    <span class="text-sm font-medium">Discounts</span>
+                </a>
+                <a asp-controller="Payments" asp-action="Index" asp-area="Admin" class="flex items-center gap-3 px-3 py-2.5 group transition-colors @(controller == "Payments" ? "active-nav" : "text-slate-400 hover:text-white hover:bg-white/5 rounded-lg")">
+                    <span class="material-symbols-outlined @(controller == "Payments" ? "text-white" : "text-slate-400 group-hover:text-white")">payments</span>
+                    <span class="text-sm font-medium">Payments</span>
+                </a>
+            </nav>
+            
+            <!-- Bottom: Logout -->
+            <div class="p-6 border-t border-white/5">
+                <form asp-area="Identity" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm-admin"></form>
+                <button type="button" onclick="document.getElementById('logoutForm-admin').submit();" class="flex items-center gap-3 text-slate-500 hover:text-white transition-colors w-full text-left">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span class="text-sm font-medium">Logout</span>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Wrapper -->
+        <div class="min-w-0 flex-1 md:ml-[240px]">
+            <!-- Top Header -->
+            <header class="sticky top-0 z-40 border-b border-slate-200 bg-white px-3 dark:border-slate-800 dark:bg-slate-900 sm:px-4 md:px-6 xl:px-8">
+                <div class="flex flex-wrap items-center gap-3 py-3 lg:grid lg:h-16 lg:grid-cols-[minmax(180px,1fr)_minmax(300px,520px)_minmax(220px,1fr)] lg:gap-6 lg:py-0">
+                    <div class="min-w-0 shrink-0 lg:min-w-0">
+                        <h2 class="truncate text-xl font-bold text-slate-800 dark:text-slate-100">@ViewData["Title"]</h2>
+                    </div>
+
+                    <div class="order-3 basis-full lg:order-none lg:basis-auto lg:w-full">
+                        <div class="relative mx-auto w-full max-w-xl lg:max-w-none">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+                            <input class="w-full rounded-2xl border border-indigo-100 bg-gradient-to-r from-slate-50 via-white to-indigo-50/70 py-2 pl-10 pr-4 text-sm text-slate-900 shadow-sm outline-none transition focus:border-primary/30 focus:ring-2 focus:ring-primary/15 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-400" placeholder="Search orders, items..." type="text"/>
+                        </div>
+                    </div>
+
+                    <div class="order-2 ml-auto flex shrink-0 items-center gap-2 sm:gap-3 lg:order-none lg:ml-0 lg:justify-self-end xl:gap-4">
+                    <div class="relative">
+                        <button type="button" data-admin-notification-toggle aria-expanded="false" class="relative rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50 via-white to-violet-50 p-2.5 text-slate-600 shadow-sm transition hover:border-primary/20 hover:text-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                            <span class="material-symbols-outlined">notifications</span>
+                            @if (adminNotificationCount > 0)
+                            {
+                                <span class="absolute -right-0.5 -top-0.5 inline-flex min-w-[1.2rem] items-center justify-center rounded-full bg-rose-500 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white ring-2 ring-white dark:ring-slate-900">
+                                    @(adminNotificationCount > 9 ? "9+" : adminNotificationCount)
+                                </span>
+                            }
+                        </button>
+
+                        <div data-admin-notification-menu class="fixed left-1/2 top-24 z-50 hidden w-[calc(100vw-1.5rem)] max-w-[360px] -translate-x-1/2 overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800 sm:absolute sm:left-auto sm:right-0 sm:top-[120%] sm:translate-x-0">
+                            <div class="flex items-start justify-between gap-4 border-b border-slate-100 bg-gradient-to-r from-indigo-50 via-white to-violet-50 px-4 py-4 dark:border-slate-700 dark:from-slate-800 dark:via-slate-800 dark:to-slate-700/80">
+                                <div>
+                                    <p class="text-sm font-bold text-slate-800 dark:text-slate-100">Order Notifications</p>
+                                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Latest customer orders and pending requests.</p>
+                                </div>
+                                <span class="inline-flex shrink-0 items-center rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">
+                                    @adminNotificationCount active
+                                </span>
+                            </div>
+
+                            <div class="max-h-[360px] overflow-y-auto p-2">
+                                @if (adminNotificationOrders.Any())
+                                {
+                                    foreach (var order in adminNotificationOrders)
+                                    {
+                                        var customerName = order.User?.FullName ?? order.Address?.FullName ?? "Unknown customer";
+                                        var isFreshOrder = order.CreatedAt >= newOrdersCutoff;
+
+                                        <a asp-area="Admin"
+                                           asp-controller="Orders"
+                                           asp-action="Details"
+                                           asp-route-id="@order.Id"
+                                           class="flex gap-3 rounded-2xl px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                                            <div class="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                                                <span class="material-symbols-outlined text-[20px]">receipt_long</span>
+                                            </div>
+                                            <div class="min-w-0 flex-1">
+                                                <div class="flex items-start justify-between gap-3">
+                                                    <div class="min-w-0">
+                                                        <p class="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">Order #@order.Id</p>
+                                                        <p class="truncate text-xs text-slate-500 dark:text-slate-400">@customerName</p>
+                                                    </div>
+                                                    <span class="shrink-0 rounded-full px-2 py-1 text-[11px] font-semibold @notificationStatusClasses(order.Status)">
+                                                        @order.Status
+                                                    </span>
+                                                </div>
+                                                <div class="mt-2 flex items-center justify-between gap-3 text-xs">
+                                                    <span class="font-semibold text-slate-700 dark:text-slate-200">@order.TotalAmount.ToString("C")</span>
+                                                    <div class="flex items-center gap-2 text-slate-400 dark:text-slate-500">
+                                                        @if (isFreshOrder)
+                                                        {
+                                                            <span class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
+                                                                New
+                                                            </span>
+                                                        }
+                                                        <span>@formatNotificationTime(order.CreatedAt)</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="px-3 py-8 text-center">
+                                        <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-slate-100 text-slate-400 dark:bg-slate-700 dark:text-slate-300">
+                                            <span class="material-symbols-outlined">notifications_none</span>
+                                        </div>
+                                        <p class="mt-3 text-sm font-semibold text-slate-700 dark:text-slate-200">No order notifications yet</p>
+                                        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">New customer orders will appear here automatically.</p>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="border-t border-slate-100 p-2 dark:border-slate-700">
+                                <a asp-area="Admin"
+                                   asp-controller="Orders"
+                                   asp-action="Index"
+                                   class="flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5">
+                                    Open Orders Center
+                                    <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="group relative flex size-11 items-center justify-center rounded-2xl border border-sky-100 bg-gradient-to-br from-sky-50 via-white to-indigo-50 text-sky-700 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:from-primary hover:to-sky-500 hover:text-white hover:shadow-md dark:border-slate-700 dark:bg-slate-800 dark:text-sky-300 dark:hover:border-primary/30 dark:hover:bg-gradient-to-br dark:hover:from-primary dark:hover:to-sky-500 dark:hover:text-white" title="Store Home" aria-label="Store Home">
+                        <span class="material-symbols-outlined">home</span>
+                    </a>
+                    <!-- User Profile Dropdown -->
+                    <div class="relative">
+                        <button type="button" data-admin-profile-toggle aria-expanded="false" class="flex items-center gap-2 rounded-xl px-1.5 py-1.5 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 sm:gap-3 sm:px-2">
+                            <div class="hidden flex-col items-end xl:flex">
+                                <span class="text-sm font-bold text-slate-800 dark:text-slate-100">@displayName</span>
+                                <span class="text-[11px] text-slate-500">Super Admin</span>
+                            </div>
+                            <div class="flex size-9 items-center justify-center rounded-full border-2 border-slate-200 bg-primary/10 text-primary dark:border-slate-700">
+                                <span class="material-symbols-outlined text-[20px]">person</span>
+                            </div>
+                        </button>
+                        
+                        <!-- Dropdown Menu -->
+                        <div data-admin-profile-menu class="absolute right-0 top-[120%] z-50 hidden w-[calc(100vw-1.5rem)] max-w-56 rounded-xl border border-slate-100 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-800">
+                            <div class="p-2 border-b border-slate-100 dark:border-slate-700 md:hidden">
+                                <span class="block text-sm font-bold text-slate-800 dark:text-slate-100 px-2 pt-1 truncate">@displayName</span>
+                                <span class="block text-[11px] text-slate-500 px-2 pb-1">Super Admin</span>
+                            </div>
+                            <div class="p-2">
+                                <a asp-area="Identity" asp-controller="Profile" asp-action="Index" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700/50">
+                                    <span class="material-symbols-outlined text-[18px]">person</span> Profile
+                                </a>
+                                <a asp-area="Identity" asp-controller="Profile" asp-action="ChangePassword" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700/50">
+                                    <span class="material-symbols-outlined text-[18px]">lock</span> Change Password
+                                </a>
+                                <a asp-area="Identity" asp-controller="Profile" asp-action="Addresses" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700/50">
+                                    <span class="material-symbols-outlined text-[18px]">location_on</span> My Addresses
+                                </a>
+                            </div>
+                            <div class="p-2 border-t border-slate-100 dark:border-slate-700">
+                                <button type="button" onclick="document.getElementById('logoutForm-admin').submit();" class="flex items-center gap-3 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 rounded-lg w-full text-left transition-colors">
+                                    <span class="material-symbols-outlined text-[18px]">logout</span> Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="px-4 pt-4 md:hidden">
+                <details class="admin-mobile-menu overflow-hidden rounded-[18px] border border-white/10 bg-sidebar-dark/95 text-white shadow-[0_18px_45px_rgba(15,23,42,0.22)] backdrop-blur sticky top-[76px] z-30">
+                    <summary class="flex cursor-pointer list-none items-center gap-3 px-4 py-4">
+                        <div class="flex size-12 items-center justify-center rounded-full border border-primary/40 bg-primary/15 text-primary">
+                            <span class="material-symbols-outlined text-[22px]">person</span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="truncate text-sm font-bold text-white">@displayName</p>
+                            <div class="mt-1 inline-flex items-center rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-slate-300">
+                                @currentAdminSection
+                            </div>
+                        </div>
+                        <span class="material-symbols-outlined admin-mobile-chevron text-slate-300 transition-transform duration-200">expand_more</span>
+                    </summary>
+
+                    <div class="border-t border-white/10 px-3 pb-3 pt-2">
+                        <div class="space-y-2">
+                            <a asp-controller="Dashboard" asp-action="Index" asp-area="Admin" class="@(controller == "Dashboard" ? "bg-primary/90 text-white shadow-primary/30" : "bg-white/5 text-slate-300") flex items-center gap-3 rounded-[14px] px-4 py-3 text-sm font-semibold shadow-sm transition hover:bg-white/10">
+                                <span class="material-symbols-outlined text-[18px]">dashboard</span>
+                                <span>Dashboard</span>
+                            </a>
+                            <a asp-controller="Product" asp-action="Index" asp-area="Admin" class="@(controller == "Product" || controller == "ProductVariants" || controller == "ProductImages" ? "bg-primary/90 text-white shadow-primary/30" : "bg-white/5 text-slate-300") flex items-center gap-3 rounded-[14px] px-4 py-3 text-sm font-semibold shadow-sm transition hover:bg-white/10">
+                                <span class="material-symbols-outlined text-[18px]">inventory_2</span>
+                                <span>Products</span>
+                            </a>
+                            <a asp-controller="GiftBundles" asp-action="Index" asp-area="Admin" class="@(controller == "GiftBundles" ? "bg-primary/90 text-white shadow-primary/30" : "bg-white/5 text-slate-300") flex items-center gap-3 rounded-[14px] px-4 py-3 text-sm font-semibold shadow-sm transition hover:bg-white/10">
+                                <span class="material-symbols-outlined text-[18px]">redeem</span>
+                                <span>Gift Bundles</span>
+                            </a>
+                            <a asp-controller="Category" asp-action="Index" asp-area="Admin" class="@(controller == "Category" ? "bg-primary/90 text-white shadow-primary/30" : "bg-white/5 text-slate-300") flex items-center gap-3 rounded-[14px] px-4 py-3 text-sm font-semibold shadow-sm transition hover:bg-white/10">
+                                <span class="material-symbols-outlined text-[18px]">category</span>
+                                <span>Categories</span>
+                            </a>
+                            <a asp-controller="Orders" asp-action="Index" asp-area="Admin" class="@(controller == "Orders" ? "bg-primary/90 text-white shadow-primary/30" : "bg-white/5 text-slate-300") flex items-center gap-3 rounded-[14px] px-4 py-3 text-sm font-semibold shadow-sm transition hover:bg-white/10">
+                                <span class="material-symbols-outlined text-[18px]">receipt_long</span>
+                                <span>Orders</span>
+                            </a>
+                            <a asp-controller="Users" asp-action="Index" asp-area="Admin" class="@(controller == "Users" ? "bg-primary/90 text-white shadow-primary/30" : "bg-white/5 text-slate-300") flex items-center gap-3 rounded-[14px] px-4 py-3 text-sm font-semibold shadow-sm transition hover:bg-white/10">
+                                <span class="material-symbols-outlined text-[18px]">group</span>
+                                <span>Customers</span>
+                            </a>
+                            <a asp-controller="Discounts" asp-action="Index" asp-area="Admin" class="@(controller == "Discounts" ? "bg-primary/90 text-white shadow-primary/30" : "bg-white/5 text-slate-300") flex items-center gap-3 rounded-[14px] px-4 py-3 text-sm font-semibold shadow-sm transition hover:bg-white/10">
+                                <span class="material-symbols-outlined text-[18px]">sell</span>
+                                <span>Discounts</span>
+                            </a>
+                            <a asp-controller="Payments" asp-action="Index" asp-area="Admin" class="@(controller == "Payments" ? "bg-primary/90 text-white shadow-primary/30" : "bg-white/5 text-slate-300") flex items-center gap-3 rounded-[14px] px-4 py-3 text-sm font-semibold shadow-sm transition hover:bg-white/10">
+                                <span class="material-symbols-outlined text-[18px]">payments</span>
+                                <span>Payments</span>
+                            </a>
+                            <button type="button" onclick="document.getElementById('logoutForm-admin').submit();" class="flex w-full items-center gap-3 rounded-[14px] bg-white/5 px-4 py-3 text-sm font-semibold text-slate-300 shadow-sm transition hover:bg-rose-500/15 hover:text-white">
+                                <span class="material-symbols-outlined text-[18px]">logout</span>
+                                <span>Logout</span>
+                            </button>
+                        </div>
+                    </div>
+                </details>
+            </div>
+            
+            <!-- Main Content Area -->
+            <main class="space-y-8 p-4 md:p-8">
+                @if (TempData["Success"] != null || TempData["success"] != null)
+                {
+                    <div class="mb-6 flex items-center gap-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 px-4 py-3 rounded-xl text-sm font-medium">
+                        <span class="material-symbols-outlined text-lg">check_circle</span>
+                        @(TempData["Success"] ?? TempData["success"])
+                    </div>
+                }
+                @if (TempData["Error"] != null || TempData["error"] != null)
+                {
+                    <div class="mb-6 flex items-center gap-3 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-400 px-4 py-3 rounded-xl text-sm font-medium">
+                        <span class="material-symbols-outlined text-lg">error</span>
+                        @(TempData["Error"] ?? TempData["error"])
+                    </div>
+                }
+                @if (TempData["Warning"] != null || TempData["warning"] != null)
+                {
+                    <div class="mb-6 flex items-center gap-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 px-4 py-3 rounded-xl text-sm font-medium">
+                        <span class="material-symbols-outlined text-lg">warning</span>
+                        @(TempData["Warning"] ?? TempData["warning"])
+                    </div>
+                }
+
+                @RenderBody()
+            </main>
+            
+        </div>
+    </div>
+
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/@@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+    <script>
+      Fancybox.bind('[data-fancybox]', {
+        // Options available
+      });
+
+      (function () {
+        const profileToggle = document.querySelector('[data-admin-profile-toggle]');
+        const profileMenu = document.querySelector('[data-admin-profile-menu]');
+        const notificationToggle = document.querySelector('[data-admin-notification-toggle]');
+        const notificationMenu = document.querySelector('[data-admin-notification-menu]');
+
+        const closeMenu = function (toggle, menu) {
+          if (!toggle || !menu) {
+            return;
+          }
+
+          menu.classList.add('hidden');
+          toggle.setAttribute('aria-expanded', 'false');
+        };
+
+        const toggleMenu = function (toggle, menu, otherToggle, otherMenu, event) {
+          if (!toggle || !menu) {
+            return;
+          }
+
+          event.stopPropagation();
+          const willOpen = menu.classList.contains('hidden');
+
+          closeMenu(otherToggle, otherMenu);
+          menu.classList.toggle('hidden', !willOpen);
+          toggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+        };
+
+        if (profileToggle && profileMenu) {
+          profileToggle.addEventListener('click', function (event) {
+            toggleMenu(profileToggle, profileMenu, notificationToggle, notificationMenu, event);
+          });
+        }
+
+        if (notificationToggle && notificationMenu) {
+          notificationToggle.addEventListener('click', function (event) {
+            toggleMenu(notificationToggle, notificationMenu, profileToggle, profileMenu, event);
+          });
+        }
+
+        document.addEventListener('click', function (event) {
+          if (profileMenu && profileToggle && !profileMenu.contains(event.target) && !profileToggle.contains(event.target)) {
+            closeMenu(profileToggle, profileMenu);
+          }
+
+          if (notificationMenu && notificationToggle && !notificationMenu.contains(event.target) && !notificationToggle.contains(event.target)) {
+            closeMenu(notificationToggle, notificationMenu);
+          }
+        });
+
+        document.addEventListener('keydown', function (event) {
+          if (event.key === 'Escape') {
+            closeMenu(profileToggle, profileMenu);
+            closeMenu(notificationToggle, notificationMenu);
+          }
+        });
+      })();
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
