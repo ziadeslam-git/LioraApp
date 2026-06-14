@@ -1,105 +1,464 @@
-@model IEnumerable<LioraApp.ViewModels.Admin.OrderIndexVM>
-@using LioraApp.Utilities
+<!DOCTYPE html>
 
-@{
-    ViewData["Title"] = "Orders";
-    Layout = "_AdminLayout";
-    var currentStatus = ViewBag.CurrentStatus as string;
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Liora - Admin Orders Index</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+        darkMode: "class",
+        theme: {
+        extend: {
+        "colors": {
+        "on-error": "#ffffff",
+        "inverse-on-surface": "#f7efe9",
+        "on-secondary-fixed": "#21172c",
+        "error": "#ba1a1a",
+        "secondary-container": "#eedcfa",
+        "on-primary-fixed-variant": "#643d30",
+        "surface-variant": "#e8e1db",
+        "primary-container": "#c49080",
+        "surface-container": "#f4ede7",
+        "tertiary": "#635b68",
+        "surface-container-highest": "#e8e1db",
+        "on-tertiary-container": "#38313d",
+        "tertiary-fixed-dim": "#cec3d2",
+        "on-secondary-fixed-variant": "#4e425a",
+        "inverse-primary": "#f2baa8",
+        "surface-tint": "#7f5446",
+        "on-primary": "#ffffff",
+        "surface-container-lowest": "#ffffff",
+        "tertiary-container": "#a299a7",
+        "surface-bright": "#fff8f3",
+        "primary-fixed-dim": "#f2baa8",
+        "on-secondary": "#ffffff",
+        "on-tertiary-fixed": "#1f1924",
+        "inverse-surface": "#33302c",
+        "secondary-fixed": "#eedcfa",
+        "on-surface-variant": "#514440",
+        "on-error-container": "#93000a",
+        "outline-variant": "#d5c2bd",
+        "primary-fixed": "#ffdbd0",
+        "on-tertiary-fixed-variant": "#4b4450",
+        "secondary-fixed-dim": "#d1c0de",
+        "surface-container-high": "#eee7e1",
+        "primary": "#7f5446",
+        "surface-dim": "#dfd9d3",
+        "secondary": "#665972",
+        "on-tertiary": "#ffffff",
+        "on-background": "#1e1b18",
+        "on-primary-fixed": "#311309",
+        "background": "#fff8f3",
+        "surface": "#fff8f3",
+        "outline": "#83746f",
+        "on-secondary-container": "#6c5f79",
+        "on-primary-container": "#4e2a1f",
+        "error-container": "#ffdad6",
+        "tertiary-fixed": "#eadfee",
+        "on-surface": "#1e1b18",
+        "surface-container-low": "#f9f2ec"
+        },
+        "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "2xl": "1rem",
+        "full": "9999px"
+        },
+        "spacing": {
+        "stack-sm": "8px",
+        "stack-md": "16px",
+        "container-padding-desktop": "64px",
+        "container-padding-mobile": "20px",
+        "stack-lg": "32px",
+        "section-gap": "120px",
+        "gutter": "24px",
+        "unit": "8px"
+        },
+        "fontFamily": {
+        "label-caps": ["DM Sans"],
+        "headline-lg-mobile": ["Playfair Display"],
+        "accent-italic": ["EB Garamond"],
+        "display-lg-mobile": ["Playfair Display"],
+        "headline-lg": ["Playfair Display"],
+        "display-lg": ["Playfair Display"],
+        "headline-md": ["Playfair Display"],
+        "body-md": ["DM Sans"],
+        "body-lg": ["DM Sans"],
+        "mono": ["DM Mono", "monospace"]
+        },
+        "fontSize": {
+        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "700" }],
+        "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+        "accent-italic": ["20px", { "lineHeight": "1.5", "fontWeight": "400" }],
+        "display-lg-mobile": ["40px", { "lineHeight": "1.2", "fontWeight": "700" }],
+        "headline-lg": ["40px", { "lineHeight": "1.2", "fontWeight": "600" }],
+        "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "500" }],
+        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+        },
+        "boxShadow": {
+        "ambient-1": "0px 10px 30px rgba(26, 16, 37, 0.05)",
+        "ambient-2": "0px 20px 50px rgba(26, 16, 37, 0.08)"
+        }
+        }
+        }
+        }
+    </script>
+    <style>
+        body {
+        font-family: 'DM Sans', sans-serif;
+        }
 
-    string StatusBadge(string status) => status switch
-    {
-        SD.Status_Pending => "bg-amber-100 text-amber-700",
-        SD.Status_Confirmed => "bg-blue-100 text-blue-700",
-        SD.Status_Processing => "bg-indigo-100 text-indigo-700",
-        SD.Status_Shipped => "bg-sky-100 text-sky-700",
-        SD.Status_Delivered => "bg-emerald-100 text-emerald-700",
-        SD.Status_Cancelled => "bg-red-100 text-red-700",
-        _ => "bg-slate-100 text-slate-700"
-    };
+        h1, h2, h3, h4, h5, h6, .font-headline-md {
+        font-family: 'Playfair Display', serif;
+        }
 
-    string PaymentBadge(string status) => status switch
-    {
-        SD.Payment_Paid => "bg-emerald-100 text-emerald-700",
-        SD.Payment_Refunded => "bg-purple-100 text-purple-700",
-        SD.Payment_Failed => "bg-red-100 text-red-700",
-        SD.Payment_Pending => "bg-amber-100 text-amber-700",
-        _ => "bg-slate-100 text-slate-700"
-    };
-}
+        .font-accent-italic {
+        font-family: 'EB Garamond', serif;
+        font-style: italic;
+        }
 
-<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-    <div>
-        <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Orders</h2>
-        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Manage customer orders and manual payments.</p>
-    </div>
-    <a asp-action="Create" class="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-md shadow-primary/20 transition hover:opacity-90">
-        <span class="material-symbols-outlined text-sm">add_shopping_cart</span>
-        Create Order
-    </a>
-</div>
+        .font-mono {
+        font-family: 'DM Mono', monospace;
+        }
 
-<div class="mb-6 flex items-center gap-1 overflow-x-auto rounded-xl border border-slate-200 bg-white p-1 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-    <a asp-action="Index" asp-route-status=""
-       class="whitespace-nowrap rounded-lg px-4 py-2 text-sm font-semibold transition @(string.IsNullOrEmpty(currentStatus) ? "bg-primary text-white" : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800")">
-        All Orders
-    </a>
-    @foreach (var s in (IReadOnlyList<string>)ViewBag.AllStatuses)
-    {
-        <a asp-action="Index" asp-route-status="@s"
-           class="whitespace-nowrap rounded-lg px-4 py-2 text-sm font-semibold transition @(currentStatus == s ? "bg-primary text-white" : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800")">
-            @s
-        </a>
-    }
-</div>
+        .transition-ease {
+        transition: all 250ms cubic-bezier(0.25, 1, 0.5, 1);
+        }
 
-<div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-    <div class="overflow-x-auto">
-        <table class="w-full border-collapse text-left text-sm">
-            <thead>
-                <tr class="border-b border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-800/50">
-                    <th class="px-4 py-4 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Order ID</th>
-                    <th class="px-4 py-4 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Customer</th>
-                    <th class="px-4 py-4 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Items</th>
-                    <th class="px-4 py-4 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Total</th>
-                    <th class="px-4 py-4 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Payment</th>
-                    <th class="px-4 py-4 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Status</th>
-                    <th class="px-4 py-4 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Date</th>
-                    <th class="px-4 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-500">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-                @if (!Model.Any())
-                {
-                    <tr>
-                        <td colspan="8" class="px-6 py-16 text-center text-slate-400">No orders found.</td>
-                    </tr>
-                }
-                else
-                {
-                    @foreach (var order in Model)
-                    {
-                        <tr class="transition hover:bg-slate-50 dark:hover:bg-slate-800/40">
-                            <td class="px-4 py-4"><span class="font-mono font-semibold text-primary">#ORD-@order.Id</span></td>
-                            <td class="px-4 py-4">
-                                <p class="font-medium text-slate-900 dark:text-slate-100">@order.CustomerName</p>
-                                <p class="text-xs text-slate-400">@order.CustomerEmail</p>
-                            </td>
-                            <td class="px-4 py-4 text-slate-500">@order.ItemCount</td>
-                            <td class="px-4 py-4 font-semibold text-slate-900 dark:text-slate-100">@order.TotalAmount.ToString("C")</td>
-                            <td class="px-4 py-4"><span class="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase @PaymentBadge(order.PaymentStatus)">@order.PaymentStatus</span></td>
-                            <td class="px-4 py-4"><span class="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase @StatusBadge(order.Status)">@order.Status</span></td>
-                            <td class="whitespace-nowrap px-4 py-4 text-xs text-slate-500">@order.CreatedAt.ToString("MMM dd, yyyy")</td>
-                            <td class="px-4 py-4 text-right">
-                                <div class="inline-flex items-center gap-1.5">
-                                    <a asp-action="Details" asp-route-id="@order.Id" class="rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-200">View</a>
-                                    <a asp-action="Edit" asp-route-id="@order.Id" class="rounded-lg bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-600 transition hover:bg-emerald-100">Edit</a>
-                                    <a asp-action="UpdateStatus" asp-route-id="@order.Id" class="rounded-lg bg-blue-50 px-2.5 py-1.5 text-xs font-semibold text-blue-600 transition hover:bg-blue-100">Status</a>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
+        .btn-scale:active {
+        transform: scale(0.98);
+        }
+
+        .table-row-hover:hover {
+        background-color: var(--tw-colors-surface-container-highest);
+        }
+
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+        background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+        background: var(--tw-colors-outline-variant);
+        border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+        background: var(--tw-colors-outline);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex antialiased">
+    <!-- SideNavBar -->
+    <nav class="hidden md:flex flex-col h-full overflow-y-auto fixed left-0 top-0 w-[240px] bg-surface-container-low border-r border-outline-variant z-40 transition-ease">
+        <div class="p-6">
+            <h1 class="font-headline-md text-headline-md font-bold text-primary">Liora</h1>
+        </div>
+        <div class="px-4 mb-6">
+            <div class="flex items-center gap-3 p-3 rounded-2xl bg-surface-container-highest">
+                <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold overflow-hidden">
+                    <img alt="Liora Admin" class="w-full h-full object-cover" data-alt="A professional headshot of a female admin user. She is wearing a modern, elegant ivory blouse. The background is a soft, out-of-focus high-end office setting with natural light pouring in, creating a serene and sophisticated atmosphere fitting a luxury brand portal." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwiHZ2zSCkfPKWuZc5wFz0JqlmHMRiOMONJdjaexaOFPMWr6e5L-WNfjmUqs7wR0reAL82Mg8sKykXbRz41-LDOGgkFqClS-1LK6ZBp8vUNiQHFYKK42oO8KqQ1JZD5B7zXelZBvt-3N0s2vmLdQsgy6PLL_suySG0qTrytixvNlvZPkIHoK3-eGZhFFNH31_Ge7yOW2DZuHUG47LvI1RyhK_g2IjSWnYqcb0DPMjmSCJwdm6jH3cOAOgQZK6FPdY0I5SS_zmf-ATz" />
+                </div>
+                <div>
+                    <div class="font-body-md text-body-md font-bold text-on-surface">Liora Admin</div>
+                    <div class="font-label-caps text-label-caps text-on-surface-variant">Enterprise Portal</div>
+                </div>
+            </div>
+        </div>
+        <div class="flex-1 flex flex-col gap-1 px-2">
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface rounded-xl transition-ease group" href="#">
+                <span class="material-symbols-outlined text-outline group-hover:text-primary transition-ease">dashboard</span>
+                <span class="font-body-md text-body-md">Overview</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 border-l-2 border-primary bg-surface-container-high text-primary font-bold rounded-r-xl transition-ease" href="#">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+                <span class="font-body-md text-body-md">Sales</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface rounded-xl transition-ease group" href="#">
+                <span class="material-symbols-outlined text-outline group-hover:text-primary transition-ease">group</span>
+                <span class="font-body-md text-body-md">Customers</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface rounded-xl transition-ease group" href="#">
+                <span class="material-symbols-outlined text-outline group-hover:text-primary transition-ease">category</span>
+                <span class="font-body-md text-body-md">Catalog</span>
+            </a>
+        </div>
+        <div class="p-4 mt-auto">
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface rounded-xl transition-ease group" href="#">
+                <span class="material-symbols-outlined text-outline group-hover:text-primary transition-ease">settings</span>
+                <span class="font-body-md text-body-md">Settings</span>
+            </a>
+        </div>
+    </nav>
+    <!-- TopNavBar -->
+    <header class="hidden md:flex items-center justify-between px-gutter w-[calc(100%-240px)] fixed top-0 right-0 h-[60px] bg-surface-container border-b border-outline-variant z-30 transition-ease">
+        <div class="flex-1 flex items-center">
+            <div class="relative w-full max-w-md group">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-ease">search</span>
+                <input class="w-full bg-surface-container-lowest border border-outline-variant rounded-full pl-10 pr-4 py-2 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:shadow-[0_0_0_4px_rgba(196,144,128,0.2)] transition-ease" placeholder="Search orders, customers..." type="text" />
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <button class="p-2 text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-ease cursor-pointer active:scale-95 relative">
+                <span class="material-symbols-outlined">notifications</span>
+                <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-error rounded-full border-2 border-surface-container"></span>
+            </button>
+            <button class="p-2 text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-ease cursor-pointer active:scale-95">
+                <span class="material-symbols-outlined">account_circle</span>
+            </button>
+        </div>
+    </header>
+    <!-- Main Content Canvas -->
+    <main class="w-full md:pl-[240px] pt-[60px] flex flex-col min-h-screen">
+        <div class="flex-1 p-4 md:p-8 md:px-container-padding-desktop max-w-[1280px] mx-auto w-full">
+            <!-- Page Header -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-stack-lg">
+                <div>
+                    <h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Orders Management</h2>
+                    <p class="font-body-md text-body-md text-on-surface-variant">Review and manage recent purchases, verifications, and shipments.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button class="flex items-center gap-2 px-4 py-2 border border-outline text-on-surface hover:bg-surface-container-highest rounded-full font-label-caps text-label-caps transition-ease btn-scale">
+                        <span class="material-symbols-outlined text-[18px]">download</span>
+                        EXPORT CSV
+                    </button>
+                    <button class="flex items-center gap-2 px-4 py-2 bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary rounded-full font-label-caps text-label-caps transition-ease btn-scale shadow-ambient-1">
+                        <span class="material-symbols-outlined text-[18px]">add</span>
+                        CREATE ORDER
+                    </button>
+                </div>
+            </div>
+            <!-- Filters & Controls Card -->
+            <div class="bg-surface-container-lowest rounded-2xl shadow-ambient-1 p-4 md:p-6 mb-stack-lg border border-surface-container-highest">
+                <div class="flex flex-col lg:flex-row justify-between gap-6">
+                    <!-- Status Tabs -->
+                    <div class="flex overflow-x-auto pb-2 lg:pb-0 hide-scrollbar gap-2">
+                        <button class="px-5 py-2.5 rounded-full bg-primary text-on-primary font-label-caps text-label-caps whitespace-nowrap transition-ease btn-scale">
+                            ALL ORDERS
+                        </button>
+                        <button class="px-5 py-2.5 rounded-full bg-surface-container hover:bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps whitespace-nowrap transition-ease btn-scale relative">
+                            PENDING VERIFICATION
+                            <span class="absolute -top-1 -right-1 w-5 h-5 bg-error text-on-error rounded-full text-[10px] flex items-center justify-center font-bold">12</span>
+                        </button>
+                        <button class="px-5 py-2.5 rounded-full bg-surface-container hover:bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps whitespace-nowrap transition-ease btn-scale">
+                            PROCESSING
+                        </button>
+                        <button class="px-5 py-2.5 rounded-full bg-surface-container hover:bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps whitespace-nowrap transition-ease btn-scale">
+                            SHIPPED
+                        </button>
+                        <button class="px-5 py-2.5 rounded-full bg-surface-container hover:bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps whitespace-nowrap transition-ease btn-scale">
+                            DELIVERED
+                        </button>
+                    </div>
+                    <!-- Date Range & View Toggles -->
+                    <div class="flex items-center gap-3 shrink-0">
+                        <div class="relative group">
+                            <button class="flex items-center gap-2 px-4 py-2.5 bg-surface-container-lowest border border-outline-variant hover:border-outline rounded-xl font-body-md text-body-md text-on-surface transition-ease">
+                                <span class="material-symbols-outlined text-outline text-[20px]">calendar_today</span>
+                                <span>Last 30 Days</span>
+                                <span class="material-symbols-outlined text-outline text-[20px]">expand_more</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Data Table Card -->
+            <div class="bg-surface-container-lowest rounded-2xl shadow-ambient-1 overflow-hidden border border-surface-container-highest">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-surface-container-high bg-surface-container-low/50">
+                                <th class="p-4 font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap">Order ID</th>
+                                <th class="p-4 font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap">Customer</th>
+                                <th class="p-4 font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap">Date</th>
+                                <th class="p-4 font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap">Items</th>
+                                <th class="p-4 font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap text-right">Total</th>
+                                <th class="p-4 font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap text-center">Payment</th>
+                                <th class="p-4 font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap">Status</th>
+                                <th class="p-4 font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="font-body-md text-body-md divide-y divide-surface-container-high">
+                            <!-- Row 1: Pending Verification -->
+                            <tr class="table-row-hover transition-colors group cursor-pointer">
+                                <td class="p-4 align-middle">
+                                    <span class="font-mono text-sm font-medium text-primary">#ORD-9021</span>
+                                </td>
+                                <td class="p-4 align-middle">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-sm">
+                                            AH
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-on-surface">Amina Hassan</div>
+                                            <div class="text-sm text-on-surface-variant">amina.h@example.com</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="p-4 align-middle text-on-surface-variant text-sm">
+                                    Oct 24, 2023<br />14:32 EET
+                                </td>
+                                <td class="p-4 align-middle">
+                                    <div class="flex -space-x-2">
+                                        <div class="w-10 h-10 rounded bg-surface border border-surface-container-highest overflow-hidden z-10">
+                                            <img alt="Silk Dress" class="w-full h-full object-cover" data-alt="A luxurious silk slip dress in a soft rose gold hue, folded neatly on a pristine white surface. Soft studio lighting highlights the sheen and delicate texture of the fabric." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtJasYikXFVGhl-IRpcCw7vLPUZ6xrE4jgYmBZXSH3CbpdK0n2ywObPDQC6DbzTL81mL_rhIuLJP6jptvshyZu1McMtos2aLvS4EV6b86UbLYaRPxyZd6-W7AWsjwvfdpsWA8PxQUzJ7Pue8FTjr9AX_EYBWdRVJBmryCIEKop5c1EyE1hjbadRMgNuqjAcOgO-PVKCmTWff34X14hE-chgXTfHnP-YWQTkkrv8TFiBmmHJ0BmztVBqNLMcxYGdxruvDhBZZy91zv4" />
+                                        </div>
+                                        <div class="w-10 h-10 rounded bg-surface border border-surface-container-highest overflow-hidden z-0">
+                                            <img alt="Accessories" class="w-full h-full object-cover" data-alt="A delicate gold chain necklace with a minimalist pendant, resting on a textured ivory linen cloth. The lighting is warm and directional, casting soft shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuARvQHx0jtGAWW0XCvZUZq2DCFMiECDL17HvNQo9bi4CupQho0jeksqmsS8qATmf8Us0ROezAESxhrZL3gKawONh_HwikLiwoBsQ0_8JCAN-J2bdyAlICxGMWhIEsFdVTxlIQOmRKFn0OH2gNLJuGPg5x9DvC-i2x0DDOvRKAXcHRi6_i3WIMe3Flx9cDluqQfrOemYeVBrjCFaV6rfXTVc_xBpm65XgyLXcUcZNJQzm6wZ4s9BOEPOyL9jfkAAiCNrEUuzbn73xVg2" />
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="p-4 align-middle text-right font-medium text-on-surface">
+                                    EGP 4,250
+                                </td>
+                                <td class="p-4 align-middle text-center">
+                                    <div class="inline-flex items-center justify-center w-8 h-8 rounded bg-[#E60000]/10 text-[#E60000] tooltip-trigger" title="Vodafone Cash">
+                                        <span class="material-symbols-outlined text-[18px]">phone_iphone</span>
+                                    </div>
+                                </td>
+                                <td class="p-4 align-middle">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-error-container text-on-error-container text-xs font-bold tracking-wide">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                                        PENDING VERIFICATION
+                                    </span>
+                                </td>
+                                <td class="p-4 align-middle text-right">
+                                    <button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary-container/20 rounded-full transition-ease">
+                                        <span class="material-symbols-outlined">more_vert</span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- Row 2: Processing -->
+                            <tr class="table-row-hover transition-colors group cursor-pointer">
+                                <td class="p-4 align-middle">
+                                    <span class="font-mono text-sm font-medium text-primary">#ORD-9020</span>
+                                </td>
+                                <td class="p-4 align-middle">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center font-bold text-sm">
+                                            YK
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-on-surface">Youssef Kamel</div>
+                                            <div class="text-sm text-on-surface-variant">ykamel99@example.com</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="p-4 align-middle text-on-surface-variant text-sm">
+                                    Oct 24, 2023<br />11:15 EET
+                                </td>
+                                <td class="p-4 align-middle">
+                                    <div class="flex -space-x-2">
+                                        <div class="w-10 h-10 rounded bg-surface border border-surface-container-highest overflow-hidden z-10">
+                                            <img alt="Linen Shirt" class="w-full h-full object-cover" data-alt="A premium men's linen shirt in deep plum color, hanging on a sleek minimalist wooden hanger against a soft grey background. The texture of the natural fibers is clearly visible." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMwsAtyUCoUSvCK64thldM1aDJm0UfagKfeeyQIs6EuXjJTcwxmWEwZDq9UESx5f2jO1MjZaiUc1zKG7pjwmhmwplDfPnZ1u6WokvVTCjoefNi_e6jhyzxkdvRQwSH_JxMD4aVgoA8R260MtzkVATrMBoHWQIuRPSaRaO4uxcG3YLJVQ9oPiyMF26wnXY8yoYj-Aho0yi5o1KjKsuWtkSwTF5QdNekcL5CJAE_OSy3kWInbJ4sHhP6UBsjfAaV4qomJ19fx4rALARw" />
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="p-4 align-middle text-right font-medium text-on-surface">
+                                    EGP 1,800
+                                </td>
+                                <td class="p-4 align-middle text-center">
+                                    <div class="inline-flex items-center justify-center w-8 h-8 rounded bg-[#4B286D]/10 text-[#4B286D] tooltip-trigger" title="InstaPay">
+                                        <span class="material-symbols-outlined text-[18px]">account_balance</span>
+                                    </div>
+                                </td>
+                                <td class="p-4 align-middle">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container text-xs font-bold tracking-wide">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                                        PROCESSING
+                                    </span>
+                                </td>
+                                <td class="p-4 align-middle text-right">
+                                    <button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary-container/20 rounded-full transition-ease">
+                                        <span class="material-symbols-outlined">more_vert</span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- Row 3: Shipped -->
+                            <tr class="table-row-hover transition-colors group cursor-pointer">
+                                <td class="p-4 align-middle">
+                                    <span class="font-mono text-sm font-medium text-primary">#ORD-9019</span>
+                                </td>
+                                <td class="p-4 align-middle">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-sm">
+                                            SM
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-on-surface">Sara Mansour</div>
+                                            <div class="text-sm text-on-surface-variant">sara.m@example.com</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="p-4 align-middle text-on-surface-variant text-sm">
+                                    Oct 23, 2023<br />09:45 EET
+                                </td>
+                                <td class="p-4 align-middle">
+                                    <div class="flex -space-x-2">
+                                        <div class="w-10 h-10 rounded bg-surface border border-surface-container-highest overflow-hidden z-20">
+                                            <img alt="Tote Bag" class="w-full h-full object-cover" data-alt="A structured leather tote bag in a rich caramel tone, placed on a marble plinth. Soft, diffused lighting emphasizes the quality of the leather grain and hardware." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoF2Rh2nwRU6rE_q4VGTB5gW4-ZXlOW1GPZ96Mh5m19-pEi9N3le387mJ9AYqGNonTsQZ-aAUxS8F-e9aosPDeE78rMNUoPRspy506GcTtzQcp4mhFZUsdWBHgbeY03va2_Huo_ZCRulx2tCFJ8RHP58xZ7kpXv41IpzxfATW7ejLy_NwPBH7a2EwpXiIUplxfOoURiXpZlspJRROjb9fpicnczDSHoY7carxFmWJOH6zZqRZYFGcNZSXGyiM0Ol0XGOXS5wsRrd0V" />
+                                        </div>
+                                        <div class="w-10 h-10 rounded bg-surface border border-surface-container-highest overflow-hidden z-10">
+                                            <img alt="Scarf" class="w-full h-full object-cover" data-alt="A silk patterned scarf featuring elegant geometric designs in ivory and plum, casually draped over a velvet chair." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDUE7c1JPRVt0QubiKn2HqLhRiP_dhfBi0w4YFKpW6o2mI8xNloKaAKfnUx9CYLM9HDRXAa7d5J1hjpCtDEHcHeAj5SOg6hTRFDE8D7OkeA0a1LYR28ErffDOhVSan7xAFu5NLWo07zcxpUOA6kg4FeSte0qM9-_wUnF0KUMEpyF4VQP0pyfENDvY3kGQCFBEsSC8XMUOm49osFvgAMqZVw4KxR7l2dccLkF-UKKVIqf1E8jag_A4vHeC3pAQ_Qp5WGAyCiBI8h8ex" />
+                                        </div>
+                                        <div class="w-10 h-10 rounded bg-surface-container-high border border-surface-container-highest flex items-center justify-center z-0 text-xs font-bold text-on-surface-variant">
+                                            +1
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="p-4 align-middle text-right font-medium text-on-surface">
+                                    EGP 6,100
+                                </td>
+                                <td class="p-4 align-middle text-center">
+                                    <div class="inline-flex items-center justify-center w-8 h-8 rounded bg-surface-variant text-on-surface-variant tooltip-trigger" title="Cash on Delivery">
+                                        <span class="material-symbols-outlined text-[18px]">payments</span>
+                                    </div>
+                                </td>
+                                <td class="p-4 align-middle">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-variant text-on-surface-variant text-xs font-bold tracking-wide">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                                        SHIPPED
+                                    </span>
+                                </td>
+                                <td class="p-4 align-middle text-right">
+                                    <button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary-container/20 rounded-full transition-ease">
+                                        <span class="material-symbols-outlined">more_vert</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Pagination -->
+                <div class="p-4 border-t border-surface-container-highest flex items-center justify-between bg-surface-container-lowest">
+                    <span class="text-sm text-on-surface-variant">Showing 1 to 3 of 45 entries</span>
+                    <div class="flex items-center gap-1">
+                        <button class="p-1 rounded text-outline hover:text-on-surface hover:bg-surface-container transition-ease disabled:opacity-50" disabled="">
+                            <span class="material-symbols-outlined">chevron_left</span>
+                        </button>
+                        <button class="w-8 h-8 rounded bg-primary-container text-on-primary-container font-medium text-sm transition-ease">1</button>
+                        <button class="w-8 h-8 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-ease">2</button>
+                        <button class="w-8 h-8 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium text-sm transition-ease">3</button>
+                        <span class="px-1 text-on-surface-variant">...</span>
+                        <button class="p-1 rounded text-outline hover:text-on-surface hover:bg-surface-container transition-ease">
+                            <span class="material-symbols-outlined">chevron_right</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body></html>

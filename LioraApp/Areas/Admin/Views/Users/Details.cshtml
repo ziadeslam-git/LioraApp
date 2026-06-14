@@ -1,212 +1,323 @@
-@model UserAdminVM
-@{
-    ViewData["Title"] = "Customer Profile";
-}
+<!DOCTYPE html>
 
-@section Styles {
-    }
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Liora - Customer Details</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+        darkMode: "class",
+        theme: {
+        extend: {
+        "colors": {
+        "secondary-fixed-dim": "#d1c0de",
+        "surface-container-high": "#eee7e1",
+        "primary": "#7f5446",
+        "surface-dim": "#dfd9d3",
+        "secondary": "#665972",
+        "on-tertiary": "#ffffff",
+        "on-background": "#1e1b18",
+        "outline-variant": "#d5c2bd",
+        "primary-fixed": "#ffdbd0",
+        "on-tertiary-fixed-variant": "#4b4450",
+        "surface": "#fff8f3",
+        "outline": "#83746f",
+        "on-secondary-container": "#6c5f79",
+        "on-primary-fixed": "#311309",
+        "background": "#fff8f3",
+        "error-container": "#ffdad6",
+        "tertiary-fixed": "#eadfee",
+        "on-primary-container": "#4e2a1f",
+        "on-surface": "#1e1b18",
+        "surface-container-low": "#f9f2ec",
+        "on-secondary-fixed": "#21172c",
+        "on-error": "#ffffff",
+        "inverse-on-surface": "#f7efe9",
+        "primary-container": "#c49080",
+        "surface-container": "#f4ede7",
+        "tertiary": "#635b68",
+        "error": "#ba1a1a",
+        "secondary-container": "#eedcfa",
+        "on-primary-fixed-variant": "#643d30",
+        "surface-variant": "#e8e1db",
+        "tertiary-fixed-dim": "#cec3d2",
+        "on-secondary-fixed-variant": "#4e425a",
+        "inverse-primary": "#f2baa8",
+        "surface-tint": "#7f5446",
+        "on-primary": "#ffffff",
+        "surface-container-lowest": "#ffffff",
+        "tertiary-container": "#a299a7",
+        "surface-container-highest": "#e8e1db",
+        "on-tertiary-container": "#38313d",
+        "secondary-fixed": "#eedcfa",
+        "on-surface-variant": "#514440",
+        "on-error-container": "#93000a",
+        "surface-bright": "#fff8f3",
+        "primary-fixed-dim": "#f2baa8",
+        "on-secondary": "#ffffff",
+        "on-tertiary-fixed": "#1f1924",
+        "inverse-surface": "#33302c"
+        },
+        "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+        },
+        "spacing": {
+        "container-padding-mobile": "20px",
+        "stack-sm": "8px",
+        "stack-md": "16px",
+        "container-padding-desktop": "64px",
+        "stack-lg": "32px",
+        "section-gap": "120px",
+        "unit": "8px",
+        "gutter": "24px"
+        },
+        "fontFamily": {
+        "label-caps": ["DM Sans"],
+        "headline-lg-mobile": ["Playfair Display"],
+        "accent-italic": ["EB Garamond"],
+        "display-lg-mobile": ["Playfair Display"],
+        "headline-lg": ["Playfair Display"],
+        "display-lg": ["Playfair Display"],
+        "body-lg": ["DM Sans"],
+        "headline-md": ["Playfair Display"],
+        "body-md": ["DM Sans"]
+        },
+        "fontSize": {
+        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "700" }],
+        "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+        "accent-italic": ["20px", { "lineHeight": "1.5", "fontWeight": "400" }],
+        "display-lg-mobile": ["40px", { "lineHeight": "1.2", "fontWeight": "700" }],
+        "headline-lg": ["40px", { "lineHeight": "1.2", "fontWeight": "600" }],
+        "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "500" }],
+        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+        }
+        }
+        }
+        }
+    </script>
+    <style>
+        .ease-out-smooth {
+        transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+        transition-duration: 250ms;
+        }
 
-<div class="space-y-10 font-inter">
-    <!-- Breadcrumb -->
-    <nav class="mb-8">
-        <a asp-action="Index" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors group w-fit">
-            <span class="material-symbols-outlined text-sm">arrow_back</span>
-            <span class="text-sm font-medium">Back to Customers</span>
-        </a>
-    </nav>
+        .shadow-level-1 {
+        box-shadow: 0px 10px 30px rgba(26, 16, 37, 0.05);
+        }
 
-    <!-- Profile Header Section -->
-    <section class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        <div class="flex items-center gap-8">
-            <div class="relative">
-                @{
-                    var initial = !string.IsNullOrEmpty(Model.FullName) ? Model.FullName.Substring(0, 1).ToUpper() : "C";
-                }
-                <div class="w-24 h-24 rounded-full border-4 border-white shadow-xl bg-gradient-to-tr from-[#6063ee] to-[#c0c1ff] flex items-center justify-center text-4xl text-white font-bold">
-                    @initial
-                </div>
-                @if (Model.IsActive)
-                {
-                    <div class="absolute bottom-1 right-1 w-6 h-6 bg-green-500 border-4 border-white rounded-full"></div>
-                }
-                else
-                {
-                    <div class="absolute bottom-1 right-1 w-6 h-6 bg-red-500 border-4 border-white rounded-full"></div>
-                }
-            </div>
-            <div>
-                <div class="flex items-center gap-3 mb-1">
-                    <h2 class="text-3xl font-extrabold tracking-tight text-on-surface">@Model.FullName</h2>
-                    @if (Model.CreatedAt < DateTime.UtcNow.AddYears(-1))
-                    {
-                        <span class="bg-primary-fixed text-on-primary-fixed text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest">Loyal Customer</span>
-                    }
-                    @if (Model.IsActive)
-                    {
-                        <span class="bg-success-container text-on-success-container text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest">Active</span>
-                    }
-                    else
-                    {
-                        <span class="bg-error-container text-on-error-container text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest">Inactive</span>
-                    }
-                </div>
-                <p class="text-on-surface-variant font-medium flex items-center gap-2 text-sm">
-                    @Model.Email
-                    <span class="w-1 h-1 bg-outline-variant rounded-full"></span>
-                    Member since @Model.CreatedAt.ToString("MMM dd, yyyy")
-                </p>
-            </div>
+        .shadow-level-2 {
+        box-shadow: 0px 20px 50px rgba(26, 16, 37, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen">
+    <!-- Top Navigation -->
+    <nav class="fixed top-0 right-0 h-[60px] w-full md:w-[calc(100%-240px)] bg-surface-container border-b border-outline-variant flex items-center justify-between px-gutter z-50">
+        <div class="flex items-center gap-4">
+            <span class="font-headline-md text-headline-md font-extrabold text-primary">Liora</span>
         </div>
-        <div class="flex gap-3">
-            <form asp-action="ToggleActive" method="post">
-                <input type="hidden" name="id" value="@Model.Id" />
-                <button type="submit" class="bg-surface-container-high text-on-surface font-semibold px-5 py-2.5 rounded-xl hover:bg-surface-container-highest transition-all flex items-center gap-2">
-                    <span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' @(Model.IsActive ? 1 : 0);">
-                        @(Model.IsActive ? "block" : "task_alt")
-                    </span>
-                    @(Model.IsActive ? "Deactivate Account" : "Activate Account")
-                </button>
-            </form>
-            <button class="bg-primary text-white font-semibold px-6 py-2.5 rounded-xl hover:opacity-90 transition-all shadow-lg shadow-primary/20">
-                Contact Customer
+        <div class="flex items-center gap-4 text-on-surface-variant">
+            <button class="hover:bg-surface-container-highest rounded-full p-2 transition-colors duration-200 ease-in-out cursor-pointer active:scale-95">
+                <span class="material-symbols-outlined" data-icon="search">search</span>
+            </button>
+            <button class="hover:bg-surface-container-highest rounded-full p-2 transition-colors duration-200 ease-in-out cursor-pointer active:scale-95">
+                <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+            </button>
+            <button class="hover:bg-surface-container-highest rounded-full p-2 transition-colors duration-200 ease-in-out cursor-pointer active:scale-95">
+                <span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
             </button>
         </div>
-    </section>
-
-    <!-- Mini Stats Bento Grid -->
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-transparent hover:border-outline-variant/20 transition-all flex flex-col justify-between h-36">
-            <div class="flex justify-between items-start mb-4">
-                <span class="bg-secondary-container p-2 rounded-lg">
-                    <span class="material-symbols-outlined text-on-secondary-container">shopping_bag</span>
-                </span>
-            </div>
-            <div>
-                <p class="text-on-surface-variant text-[11px] font-bold mb-1 uppercase tracking-wider">Total Orders</p>
-                <p class="text-2xl font-extrabold flex items-baseline gap-2">
-                    @Model.TotalOrders <span class="text-sm font-medium text-slate-400">orders</span>
-                </p>
+    </nav>
+    <!-- Side Navigation -->
+    <aside class="fixed left-0 top-0 h-full w-[240px] bg-surface-container-low border-r border-outline-variant flex flex-col overflow-y-auto hidden md:flex z-40 pt-[60px]">
+        <div class="p-6 border-b border-outline-variant mb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold">
+                    LA
+                </div>
+                <div>
+                    <div class="font-body-md text-body-md font-bold text-primary">Liora Admin</div>
+                    <div class="font-label-caps text-label-caps text-on-surface-variant opacity-70">Enterprise Portal</div>
+                </div>
             </div>
         </div>
-        
-        <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-transparent hover:border-outline-variant/20 transition-all flex flex-col justify-between h-36">
-            <div class="flex justify-between items-start mb-4">
-                <span class="bg-green-100 p-2 rounded-lg">
-                    <span class="material-symbols-outlined text-green-700">payments</span>
-                </span>
-                <span class="text-green-600 font-bold text-xs flex items-center gap-1">
-                    Lifetime Value
-                </span>
-            </div>
+        <nav class="flex flex-col gap-1 px-2">
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-all duration-200 ease-in-out rounded-lg" href="#">
+                <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                <span>Overview</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-all duration-200 ease-in-out rounded-lg" href="#">
+                <span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+                <span>Catalog</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-all duration-200 ease-in-out rounded-lg" href="#">
+                <span class="material-symbols-outlined" data-icon="payments">payments</span>
+                <span>Sales</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 border-l-2 border-primary bg-surface-container-high text-primary font-bold rounded-r-lg" href="#">
+                <span class="material-symbols-outlined" data-icon="group" style="font-variation-settings: 'FILL' 1;">group</span>
+                <span>Customers</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-all duration-200 ease-in-out rounded-lg" href="#">
+                <span class="material-symbols-outlined" data-icon="settings">settings</span>
+                <span>Settings</span>
+            </a>
+        </nav>
+    </aside>
+    <!-- Main Content Canvas -->
+    <main class="md:ml-[240px] pt-[60px] p-container-padding-mobile md:p-container-padding-desktop max-w-[1280px] mx-auto min-h-screen">
+        <!-- Header & Actions -->
+        <header class="flex flex-col md:flex-row md:items-center justify-between mb-stack-lg gap-4">
             <div>
-                <p class="text-on-surface-variant text-[11px] font-bold mb-1 uppercase tracking-wider">Total Spent</p>
-                <p class="text-2xl font-extrabold text-slate-800">$@Model.TotalSpent.ToString("N2")</p>
+                <a class="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors mb-2 text-sm" href="#">
+                    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                    Back to Customers
+                </a>
+                <h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">Eleanor Vance</h1>
             </div>
-        </div>
-
-        <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-transparent hover:border-outline-variant/20 transition-all flex flex-col justify-between h-36">
-            <div class="flex justify-between items-start mb-4">
-                <span class="bg-amber-100 p-2 rounded-lg">
-                    <span class="material-symbols-outlined text-amber-700">event</span>
-                </span>
+            <div class="flex items-center gap-3">
+                <button class="px-6 py-2 border border-error text-error rounded-full font-label-caps text-label-caps hover:bg-error-container transition-all ease-out-smooth">
+                    Block User
+                </button>
+                <button class="px-6 py-2 bg-primary-container text-on-primary-container rounded-full font-label-caps text-label-caps hover:bg-primary hover:text-on-primary transition-all ease-out-smooth active:scale-95 shadow-level-1">
+                    Edit Profile
+                </button>
             </div>
-            <div>
-                <p class="text-on-surface-variant text-[11px] font-bold mb-1 uppercase tracking-wider">Last Order</p>
-                <p class="text-2xl font-extrabold flex items-baseline gap-2">
-                    @(Model.LastOrderDate?.ToString("MMM dd") ?? "None")
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Additional Details Panels -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="md:col-span-2 bg-surface-container-lowest p-8 rounded-2xl shadow-sm border border-slate-100">
-            <h3 class="text-lg font-bold text-on-surface mb-6 font-inter border-b border-slate-100 pb-4">Recent Order History</h3>
-            
-            @if (Model.RecentOrders.Any())
-            {
-                <table class="w-full text-left text-sm">
-                    <thead>
-                        <tr class="text-[11px] uppercase text-slate-400 font-bold tracking-wider">
-                            <th class="pb-3">Order</th>
-                            <th class="pb-3">Total</th>
-                            <th class="pb-3">Status</th>
-                            <th class="pb-3">Payment</th>
-                            <th class="pb-3">Date</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        @foreach (var order in Model.RecentOrders)
-                        {
-                            <tr class="hover:bg-slate-50/50 transition-colors">
-                                <td class="py-3">
-                                    <a asp-area="Admin" asp-controller="Orders" asp-action="Details" asp-route-id="@order.Id"
-                                       class="font-bold text-primary hover:underline">#ORD-@order.Id</a>
-                                </td>
-                                <td class="py-3 font-mono font-semibold text-slate-800">$@order.TotalAmount.ToString("N2")</td>
-                                <td class="py-3">
-                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase
-                                        @(order.Status == "Delivered" ? "bg-emerald-100 text-emerald-700"
-                                         : order.Status == "Cancelled" ? "bg-red-100 text-red-700"
-                                         : "bg-amber-100 text-amber-700")">@order.Status</span>
-                                </td>
-                                <td class="py-3">
-                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase
-                                        @(order.PaymentStatus == "Paid" ? "bg-emerald-100 text-emerald-700"
-                                         : order.PaymentStatus == "Failed" ? "bg-red-100 text-red-700"
-                                         : "bg-slate-100 text-slate-600")">@order.PaymentStatus</span>
-                                </td>
-                                <td class="py-3 text-xs text-slate-500">@order.CreatedAt.ToString("MMM dd, yyyy")</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-            else
-            {
-                <div class="flex flex-col items-center justify-center py-12 text-center">
-                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                        <span class="material-symbols-outlined text-3xl text-slate-300">receipt_long</span>
+        </header>
+        <!-- Bento Grid Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+            <!-- Left Column: Customer Card & Stats -->
+            <div class="lg:col-span-1 flex flex-col gap-gutter">
+                <!-- Customer Info Card -->
+                <div class="bg-surface rounded-[16px] p-6 shadow-level-1 border border-outline-variant/30 flex flex-col items-center text-center">
+                    <div class="w-24 h-24 rounded-full bg-secondary-container mb-4 overflow-hidden relative border-2 border-surface shadow-sm">
+                        <img alt="Eleanor Vance" class="w-full h-full object-cover" data-alt="A portrait of a sophisticated woman with elegant makeup and sleek hair, set against a soft, well-lit background. The lighting is flattering and high-key, conveying a sense of modern luxury and effortless grace. The color palette emphasizes warm, rosy tones and pristine whites, matching a premium editorial aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJGgwURBzwL5E-458c6qVF_h54piU9PlkiXAkJiF8cMxB53tfe2OcoMgAE-lxjauiqWs6GX3_OtkIE9H4h1rCAFxc9nfayvclo6tspogJedv6BmOmcjd9PJdJrahIxBtXEJSDqkTwXYcHMa9OQ3eRz3UnjbzFC3JQG7GtRIUnycvFJ1wcYn7ifHBbmu7X4XdsoXX5NC92xhw5qTgLXgYUdqB_llgo1QXbFO7PKyZwFd3jk-r_2_Dj709gLvZTS17E5JZzPZrxEOGmR" />
                     </div>
-                    <h4 class="text-slate-700 font-bold mb-1">No Orders Yet</h4>
-                    <p class="text-sm text-slate-500 max-w-sm">This customer hasn't placed any orders. When they do, their order history will appear here.</p>
+                    <h2 class="font-headline-md text-[24px] text-primary mb-1">Eleanor Vance</h2>
+                    <p class="text-on-surface-variant mb-6">eleanor.vance@example.com</p>
+                    <div class="w-full space-y-3 text-left">
+                        <div class="flex items-center gap-3 text-on-surface-variant">
+                            <span class="material-symbols-outlined text-primary/70">call</span>
+                            <span>+1 (555) 123-4567</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-on-surface-variant">
+                            <span class="material-symbols-outlined text-primary/70">calendar_today</span>
+                            <span>Joined Oct 12, 2023</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-on-surface-variant">
+                            <span class="material-symbols-outlined text-primary/70">loyalty</span>
+                            <span>Gold Tier Member</span>
+                        </div>
+                    </div>
                 </div>
-            }
-        </div>
-
-        <div class="bg-surface-container-lowest p-8 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
-            <h3 class="text-lg font-bold text-on-surface mb-6 font-inter border-b border-slate-100 pb-4">Account Information</h3>
-            
-            <div class="space-y-6 flex-1">
-                <div>
-                    <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">User ID</span>
-                    <span class="font-mono text-sm text-slate-700 font-medium">@Model.Id</span>
-                </div>
-                <div>
-                    <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Full Name</span>
-                    <span class="text-sm text-slate-800 font-medium">@Model.FullName</span>
-                </div>
-                <div>
-                    <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Primary Email</span>
-                    <span class="text-sm text-primary font-medium">@Model.Email</span>
-                </div>
-                <div>
-                    <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Registration Date</span>
-                    <span class="text-sm text-slate-700">@Model.CreatedAt.ToString("f")</span>
-                </div>
-                <div>
-                    <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Marketing Preferences</span>
-                    <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-slate-50 text-slate-600 text-[11px] font-bold border border-slate-200 mt-1">
-                        <span class="material-symbols-outlined text-[14px]">mail</span> Subscribed
-                    </span>
+                <!-- Stats Stack -->
+                <div class="bg-surface rounded-[16px] p-6 shadow-level-1 border border-outline-variant/30 space-y-6">
+                    <div>
+                        <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Total Orders</p>
+                        <p class="font-headline-md text-[28px] text-primary">14</p>
+                    </div>
+                    <div class="h-[1px] w-full bg-outline-variant/50"></div>
+                    <div>
+                        <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Total Spent</p>
+                        <p class="font-headline-md text-[28px] text-primary">$4,250.00</p>
+                    </div>
+                    <div class="h-[1px] w-full bg-outline-variant/50"></div>
+                    <div>
+                        <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Last Order</p>
+                        <p class="text-on-surface">May 24, 2024</p>
+                    </div>
                 </div>
             </div>
-            
-            <div class="bg-slate-50 rounded-xl p-4 mt-6 border border-slate-100 italic text-xs text-slate-500 text-center">
-                User details are subject to GDPR regulations. Handle with care.
+            <!-- Right Column: Orders & Addresses -->
+            <div class="lg:col-span-2 flex flex-col gap-gutter">
+                <!-- Recent Orders Table -->
+                <div class="bg-surface rounded-[16px] shadow-level-1 border border-outline-variant/30 overflow-hidden">
+                    <div class="p-6 border-b border-outline-variant/30 flex justify-between items-center bg-surface-container-low">
+                        <h3 class="font-headline-md text-[20px] text-primary">Recent Orders</h3>
+                        <a class="text-sm font-label-caps text-primary hover:underline" href="#">View All</a>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-outline-variant/30 bg-surface/50">
+                                    <th class="p-4 font-label-caps text-label-caps text-on-surface-variant font-normal">Order #</th>
+                                    <th class="p-4 font-label-caps text-label-caps text-on-surface-variant font-normal">Date</th>
+                                    <th class="p-4 font-label-caps text-label-caps text-on-surface-variant font-normal">Status</th>
+                                    <th class="p-4 font-label-caps text-label-caps text-on-surface-variant font-normal text-right">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-outline-variant/20">
+                                <tr class="hover:bg-surface-container-highest/50 transition-colors cursor-pointer">
+                                    <td class="p-4 font-medium text-primary">#ORD-092</td>
+                                    <td class="p-4 text-on-surface-variant">May 24, 2024</td>
+                                    <td class="p-4">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#e6f4ea] text-[#1e8e3e]">Delivered</span>
+                                    </td>
+                                    <td class="p-4 text-right font-medium">$345.00</td>
+                                </tr>
+                                <tr class="hover:bg-surface-container-highest/50 transition-colors cursor-pointer">
+                                    <td class="p-4 font-medium text-primary">#ORD-081</td>
+                                    <td class="p-4 text-on-surface-variant">Apr 12, 2024</td>
+                                    <td class="p-4">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#e6f4ea] text-[#1e8e3e]">Delivered</span>
+                                    </td>
+                                    <td class="p-4 text-right font-medium">$890.00</td>
+                                </tr>
+                                <tr class="hover:bg-surface-container-highest/50 transition-colors cursor-pointer">
+                                    <td class="p-4 font-medium text-primary">#ORD-065</td>
+                                    <td class="p-4 text-on-surface-variant">Feb 03, 2024</td>
+                                    <td class="p-4">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-variant text-on-surface-variant">Returned</span>
+                                    </td>
+                                    <td class="p-4 text-right font-medium">$120.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Saved Addresses -->
+                <div class="bg-surface rounded-[16px] p-6 shadow-level-1 border border-outline-variant/30">
+                    <h3 class="font-headline-md text-[20px] text-primary mb-6">Saved Addresses</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Address Card 1 -->
+                        <div class="border border-outline-variant/50 rounded-lg p-4 relative group hover:border-primary/50 transition-colors">
+                            <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button class="text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+                            </div>
+                            <div class="inline-block px-2 py-1 bg-surface-container rounded text-xs font-medium text-primary mb-2">Default Billing</div>
+                            <p class="font-medium text-on-background mb-1">Eleanor Vance</p>
+                            <p class="text-sm text-on-surface-variant leading-relaxed">
+                                123 Silkwood Lane, Apt 4B<br />
+                                New York, NY 10021<br />
+                                United States
+                            </p>
+                        </div>
+                        <!-- Address Card 2 -->
+                        <div class="border border-outline-variant/50 rounded-lg p-4 relative group hover:border-primary/50 transition-colors">
+                            <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button class="text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+                            </div>
+                            <div class="inline-block px-2 py-1 bg-surface-container rounded text-xs font-medium text-on-surface-variant mb-2">Shipping</div>
+                            <p class="font-medium text-on-background mb-1">Eleanor Vance</p>
+                            <p class="text-sm text-on-surface-variant leading-relaxed">
+                                456 Velvet Horizon Blvd<br />
+                                Los Angeles, CA 90210<br />
+                                United States
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-
+    </main>
+</body></html>

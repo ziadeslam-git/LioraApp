@@ -1,122 +1,415 @@
-@model DiscountVM
-@{
-    ViewData["Title"] = "Create Coupon";
-}
+<!DOCTYPE html>
 
-@section Styles {
-    }
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Liora Admin - Create Discount</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+        darkMode: "class",
+        theme: {
+        extend: {
+        "colors": {
+        "outline-variant": "#d5c2bd",
+        "surface": "#fff8f3",
+        "tertiary": "#635b68",
+        "on-error": "#ffffff",
+        "on-tertiary-fixed-variant": "#4b4450",
+        "on-surface": "#1e1b18",
+        "on-secondary-fixed": "#21172c",
+        "tertiary-container": "#a299a7",
+        "tertiary-fixed-dim": "#cec3d2",
+        "on-primary-fixed-variant": "#643d30",
+        "on-background": "#1e1b18",
+        "secondary-fixed-dim": "#d1c0de",
+        "secondary": "#665972",
+        "background": "#fff8f3",
+        "error": "#ba1a1a",
+        "primary-fixed-dim": "#f2baa8",
+        "surface-container-highest": "#e8e1db",
+        "on-secondary-container": "#6c5f79",
+        "on-primary": "#ffffff",
+        "inverse-surface": "#33302c",
+        "on-tertiary-container": "#38313d",
+        "tertiary-fixed": "#eadfee",
+        "primary-container": "#c49080",
+        "on-secondary": "#ffffff",
+        "surface-container-high": "#eee7e1",
+        "error-container": "#ffdad6",
+        "on-surface-variant": "#514440",
+        "outline": "#83746f",
+        "surface-container": "#f4ede7",
+        "on-primary-fixed": "#311309",
+        "surface-bright": "#fff8f3",
+        "on-tertiary-fixed": "#1f1924",
+        "surface-container-lowest": "#ffffff",
+        "secondary-fixed": "#eedcfa",
+        "surface-container-low": "#f9f2ec",
+        "on-primary-container": "#4e2a1f",
+        "on-error-container": "#93000a",
+        "inverse-primary": "#f2baa8",
+        "surface-variant": "#e8e1db",
+        "surface-tint": "#7f5446",
+        "surface-dim": "#dfd9d3",
+        "on-secondary-fixed-variant": "#4e425a",
+        "primary-fixed": "#ffdbd0",
+        "primary": "#7f5446",
+        "on-tertiary": "#ffffff",
+        "inverse-on-surface": "#f7efe9",
+        "secondary-container": "#eedcfa"
+        },
+        "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+        },
+        "spacing": {
+        "stack-sm": "8px",
+        "gutter": "24px",
+        "container-padding-mobile": "20px",
+        "stack-md": "16px",
+        "section-gap": "120px",
+        "container-padding-desktop": "64px",
+        "unit": "8px",
+        "stack-lg": "32px"
+        },
+        "fontFamily": {
+        "headline-lg-mobile": ["Playfair Display"],
+        "accent-italic": ["EB Garamond"],
+        "display-lg-mobile": ["Playfair Display"],
+        "body-md": ["DM Sans"],
+        "headline-md": ["Playfair Display"],
+        "label-caps": ["DM Sans"],
+        "headline-lg": ["Playfair Display"],
+        "body-lg": ["DM Sans"],
+        "display-lg": ["Playfair Display"]
+        },
+        "fontSize": {
+        "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+        "accent-italic": ["20px", { "lineHeight": "1.5", "fontWeight": "400" }],
+        "display-lg-mobile": ["40px", { "lineHeight": "1.2", "fontWeight": "700" }],
+        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "500" }],
+        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "700" }],
+        "headline-lg": ["40px", { "lineHeight": "1.2", "fontWeight": "600" }],
+        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+        "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+        }
+        }
+        }
+        }
+    </script>
+    <style>
+        body {
+        font-family: 'DM Sans', sans-serif;
+        }
 
-<div class="flex justify-center -m-4 md:-m-8">
-    <div class="w-full max-w-2xl bg-white shadow-xl min-h-[calc(100vh-64px)] rounded-l-2xl border-l border-slate-200 overflow-hidden relative">
-        <form asp-action="Create" method="post" class="flex flex-col h-full">
-            @Html.AntiForgeryToken()
-            
-            <!-- Sticky Header -->
-            <div class="sticky top-0 z-10 px-8 py-6 bg-white border-b border-surface-container-low flex items-center justify-between">
-                <div>
-                    <h2 class="text-xl font-extrabold text-on-surface tracking-tight">Create Coupon</h2>
-                    <p class="text-xs text-on-surface-variant font-medium mt-0.5">Define new promotional incentives</p>
-                </div>
-                <a asp-action="Index" class="p-2 hover:bg-surface-container-low rounded-full transition-colors text-on-surface-variant">
-                    <span class="material-symbols-outlined">close</span>
-                </a>
+        .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .material-symbols-outlined.fill {
+        font-variation-settings: 'FILL' 1;
+        }
+
+        .shadow-ambient-1 {
+        box-shadow: 0px 10px 30px rgba(26, 16, 37, 0.05);
+        }
+
+        .shadow-ambient-2 {
+        box-shadow: 0px 20px 50px rgba(26, 16, 37, 0.08);
+        }
+
+        .input-glow:focus-within {
+        border-color: theme('colors.primary-container');
+        box-shadow: 0 0 0 4px rgba(196, 144, 128, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col md:flex-row">
+    <!-- SideNavBar -->
+    <nav aria-label="Sidebar" class="hidden md:flex h-full w-64 fixed left-0 top-0 bg-surface dark:bg-inverse-surface shadow-[0px_10px_30px_rgba(26,16,37,0.05)] z-20 flex-col py-6 gap-stack-md">
+        <div class="px-6 mb-8">
+            <h1 class="font-headline-md text-headline-md font-semibold text-primary dark:text-primary-fixed-dim flex items-center gap-2">
+                <img alt="Liora Brand Logo" class="w-8 h-8 rounded-full object-cover" data-alt="A small, elegant circular logo placeholder image. The design is simple, minimalist, and uses soft, warm tones like rose gold and ivory, fitting a luxury brand aesthetic. High resolution, clear edges." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbigfVoQBThOoTwDlLhdgURdsRrGs4dRYQCyOh3HPpkdk83KltEBITv5IWN0YZJ79WkimTElumPebOL-vna56REP1pzxkmDDx7VX6OHtkO3DkyBKl__a8yAmrPROJwgqU75JohF5N9ZEMJZB7kV94Vm7l8-20FXoJgMFKnmXyClNCxNO1BZkaxY09gwYtqSFuDobqyzahOT7JcaOMYD-lwOOUYRq2B2FzQ8gTb8Rul_knI0jt2r7duAlXjeFX75ETyECsrYYYHy7kF" />
+                Liora
+            </h1>
+            <p class="font-body-md text-body-md text-on-surface-variant mt-1">Admin Dashboard</p>
+        </div>
+        <div class="flex-1 overflow-y-auto">
+            <ul class="flex flex-col gap-2">
+                <li>
+                    <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high transition-colors duration-250 mx-2 rounded-lg font-label-caps text-label-caps" href="#">
+                        <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                        Overview
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center gap-3 px-4 py-3 text-on-primary bg-primary rounded-lg mx-2 transition-transform duration-250 ease-out scale-98 active:scale-95 font-label-caps text-label-caps shadow-ambient-1" href="#">
+                        <span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+                        Catalog
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high transition-colors duration-250 mx-2 rounded-lg font-label-caps text-label-caps" href="#">
+                        <span class="material-symbols-outlined" data-icon="payments">payments</span>
+                        Sales
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high transition-colors duration-250 mx-2 rounded-lg font-label-caps text-label-caps" href="#">
+                        <span class="material-symbols-outlined" data-icon="group">group</span>
+                        Customers
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high transition-colors duration-250 mx-2 rounded-lg font-label-caps text-label-caps" href="#">
+                        <span class="material-symbols-outlined" data-icon="settings">settings</span>
+                        Settings
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="px-6 mt-auto">
+            <button class="w-full py-3 rounded-full bg-surface-container border border-outline text-primary font-label-caps text-label-caps hover:bg-surface-container-high transition-all duration-250 flex justify-center items-center gap-2">
+                View Boutique
+                <span class="material-symbols-outlined text-[18px]">open_in_new</span>
+            </button>
+        </div>
+    </nav>
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col md:ml-64 w-full">
+        <!-- TopNavBar -->
+        <header class="hidden md:flex fixed top-0 right-0 w-[calc(100%-16rem)] h-16 bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-md z-10 justify-between items-center px-container-desktop">
+            <div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">
+                Liora Admin
             </div>
-            
-            <!-- Scrollable Body -->
-            <div class="flex-1 overflow-y-auto px-8 py-8 space-y-8">
-                <div asp-validation-summary="ModelOnly" class="text-sm text-error"></div>
-
-                <!-- Coupon Code Section -->
-                <section class="space-y-3">
-                    <label asp-for="CouponCode" class="block text-sm font-bold text-on-surface tracking-tight">Coupon Code</label>
-                    <div class="flex gap-2">
-                        <div class="relative flex-1">
-                            <input asp-for="CouponCode" class="w-full bg-surface-container-low border-none rounded-lg py-3 px-4 font-mono text-sm text-primary font-semibold focus:ring-2 focus:ring-primary/20 transition-all uppercase" placeholder="e.g. SUMMER24" />
-                        </div>
-                    </div>
-                    <span asp-validation-for="CouponCode" class="text-xs text-error"></span>
-                    <p class="text-[11px] text-on-surface-variant italic">Customer will enter this code at checkout.</p>
-                </section>
-                
-                <!-- Discount Type & Value Section -->
-                <section class="space-y-6">
-                    <div class="space-y-3">
-                        <label asp-for="Type" class="block text-sm font-bold text-on-surface tracking-tight">Discount Type</label>
-                        <select asp-for="Type" class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-lg py-3 px-4 text-sm focus:border-primary/40 focus:ring-2 focus:ring-primary/20 transition-all">
-                            <option value="Percentage">Percentage (%)</option>
-                            <option value="FixedAmount">Fixed Amount ($)</option>
-                        </select>
-                        <span asp-validation-for="Type" class="text-xs text-error"></span>
-                    </div>
-
-                    <div class="space-y-3">
-                        <label asp-for="DiscountValue" class="block text-sm font-bold text-on-surface tracking-tight">Value</label>
-                        <div class="relative group">
-                            <input asp-for="DiscountValue" class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-lg py-3 px-4 text-on-surface font-mono focus:border-primary/40 focus:ring-2 focus:ring-primary/20 transition-all" placeholder="0.00" type="number" step="0.01" />
-                        </div>
-                        <span asp-validation-for="DiscountValue" class="text-xs text-error"></span>
-                    </div>
-                </section>
-                
-                <!-- Constraints Section -->
-                <section class="grid grid-cols-2 gap-4 pt-4 border-t border-surface-container-low">
-                    <div class="space-y-2">
-                        <label asp-for="MinOrderValue" class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Min Order</label>
+            <div class="flex items-center gap-4">
+                <div class="relative group cursor-pointer text-on-surface-variant dark:text-surface-variant font-medium hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-250 opacity-90 hover:opacity-100">
+                    <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+                    <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border border-surface"></span>
+                </div>
+                <div class="cursor-pointer text-on-surface-variant dark:text-surface-variant font-medium hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-250 opacity-90 hover:opacity-100">
+                    <span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+                </div>
+                <div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/20 ml-2 cursor-pointer shadow-ambient-1 hover:shadow-ambient-2 transition-shadow duration-250">
+                    <img alt="Administrator Profile" class="w-full h-full object-cover" data-alt="A professional portrait of an administrator, featuring a warm and elegant aesthetic. The subject is well-lit, conveying confidence and accessibility, set against a soft, neutral background that aligns with the overall minimalist and premium style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbguqT6ZTW137TsUMkkNkPNt1XTOalYk2jCJkS1y9xDKvoHm0MOYrUmXyyBPzNhZb6LpSC_9g_ZxKx9HO43vTSSta_PCkQKjOe7u4EsGOJAIukxnoDNvLJq9RkB-U0hIabhEj0ZdPU8ikF0qwHFz3TJ4Vxmv4m2pGSEaKQBNlrP_Jy_uRbJ7AzwjzPW2pTcUWuv1_DEDzNDp7aoiKTtXq0mxxlv3lMJwE6LxcV0PF5V_lmvfw33aovlZPmd6d494nu9x7IaIR9MCIn" />
+                </div>
+            </div>
+        </header>
+        <!-- Canvas -->
+        <main class="flex-1 pt-20 md:pt-24 px-container-padding-mobile md:px-container-padding-desktop pb-section-gap max-w-[1280px] mx-auto w-full">
+            <div class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <a class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1 font-body-md text-body-md mb-2" href="#">
+                        <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                        Back to Discounts
+                    </a>
+                    <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-background">Create Discount</h2>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label class="flex items-center cursor-pointer gap-2 bg-surface-container-low px-4 py-2 rounded-full border border-outline-variant/30 shadow-sm hover:bg-surface-container-high transition-colors">
                         <div class="relative">
-                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">$</span>
-                            <input asp-for="MinOrderValue" class="w-full bg-surface-container-low border-none rounded-lg py-3 pl-7 pr-3 text-sm font-mono focus:ring-2 focus:ring-primary/20 transition-all" placeholder="0.00" type="number" step="0.01" />
+                            <input checked="" class="sr-only" type="checkbox" />
+                            <div class="block bg-outline-variant w-10 h-6 rounded-full transition-colors duration-300 peer-checked:bg-primary-container"></div>
+                            <div class="dot absolute left-1 top-1 bg-surface w-4 h-4 rounded-full transition-transform duration-300 peer-checked:translate-x-4 shadow-sm"></div>
                         </div>
-                        <span asp-validation-for="MinOrderValue" class="text-xs text-error"></span>
-                    </div>
-                    <div class="space-y-2">
-                        <label asp-for="UsageLimit" class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Usage Limit</label>
-                        <input asp-for="UsageLimit" class="w-full bg-surface-container-low border-none rounded-lg py-3 px-3 text-sm font-mono focus:ring-2 focus:ring-primary/20 transition-all" placeholder="No limit" type="number" />
-                        <span asp-validation-for="UsageLimit" class="text-xs text-error"></span>
-                    </div>
-                </section>
-                
-                <!-- Expiry & Status -->
-                <section class="space-y-6">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="space-y-3">
-                            <label asp-for="StartDate" class="block text-sm font-bold text-on-surface tracking-tight">Start Date</label>
-                            <input asp-for="StartDate" class="w-full bg-surface-container-low border-none rounded-lg py-3 px-4 text-sm text-on-surface focus:ring-2 focus:ring-primary/20" type="date" />
-                            <span asp-validation-for="StartDate" class="text-xs text-error"></span>
-                        </div>
-                        <div class="space-y-3">
-                            <label asp-for="EndDate" class="block text-sm font-bold text-on-surface tracking-tight">Expiry Date</label>
-                            <input asp-for="EndDate" class="w-full bg-surface-container-low border-none rounded-lg py-3 px-4 text-sm text-on-surface focus:ring-2 focus:ring-primary/20" type="date" />
-                            <span asp-validation-for="EndDate" class="text-xs text-error"></span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl">
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                        <span class="font-label-caps text-label-caps text-on-surface">Is Active</span>
+                    </label>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Main Form Column -->
+                <div class="lg:col-span-2 flex flex-col gap-8">
+                    <!-- Basic Info Card -->
+                    <section class="bg-surface rounded-[16px] p-6 shadow-ambient-1 border border-outline-variant/20">
+                        <h3 class="font-headline-md text-[24px] mb-6 text-primary pb-4 border-b border-outline-variant/20">Discount Details</h3>
+                        <div class="space-y-6">
                             <div>
-                                <p class="text-sm font-bold text-on-surface">Active Status</p>
-                                <p class="text-[11px] text-on-surface-variant">Enable this coupon immediately</p>
+                                <label class="block font-label-caps text-label-caps text-on-surface-variant mb-2" for="discountName">Discount Name / Code</label>
+                                <div class="flex gap-2">
+                                    <div class="relative flex-1 input-glow border border-outline-variant/50 rounded-lg bg-surface transition-all duration-250">
+                                        <input class="w-full bg-transparent border-none focus:ring-0 font-body-md text-body-md p-3 text-on-surface placeholder:text-outline" id="discountName" placeholder="e.g. SUMMER24" type="text" />
+                                    </div>
+                                    <button class="px-4 py-2 border border-primary text-primary rounded-lg font-label-caps text-label-caps hover:bg-primary-container hover:text-on-primary-container transition-colors duration-250 whitespace-nowrap flex items-center gap-1" type="button">
+                                        <span class="material-symbols-outlined text-[18px]">magic_button</span>
+                                        Generate
+                                    </button>
+                                </div>
+                                <p class="text-[12px] text-on-surface-variant mt-1 font-body-md">Customers will enter this code at checkout.</p>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <label class="cursor-pointer">
+                                    <input checked="" class="peer sr-only" name="discountType" type="radio" value="percentage" />
+                                    <div class="p-4 rounded-xl border border-outline-variant/30 peer-checked:border-primary peer-checked:bg-surface-container-low peer-checked:shadow-sm transition-all duration-250 flex items-start gap-3">
+                                        <div class="w-5 h-5 rounded-full border-2 border-outline peer-checked:border-primary flex items-center justify-center mt-0.5">
+                                            <div class="w-2.5 h-2.5 rounded-full bg-primary scale-0 peer-checked:scale-100 transition-transform"></div>
+                                        </div>
+                                        <div>
+                                            <div class="font-body-md font-bold text-on-surface">Percentage Off</div>
+                                            <div class="text-[14px] text-on-surface-variant mt-1">Discount by a percentage (e.g. 20%)</div>
+                                        </div>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input class="peer sr-only" name="discountType" type="radio" value="fixed" />
+                                    <div class="p-4 rounded-xl border border-outline-variant/30 peer-checked:border-primary peer-checked:bg-surface-container-low peer-checked:shadow-sm transition-all duration-250 flex items-start gap-3">
+                                        <div class="w-5 h-5 rounded-full border-2 border-outline peer-checked:border-primary flex items-center justify-center mt-0.5">
+                                            <div class="w-2.5 h-2.5 rounded-full bg-primary scale-0 peer-checked:scale-100 transition-transform"></div>
+                                        </div>
+                                        <div>
+                                            <div class="font-body-md font-bold text-on-surface">Fixed Amount Off</div>
+                                            <div class="text-[14px] text-on-surface-variant mt-1">Discount by a set amount (e.g. LE 100)</div>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="block font-label-caps text-label-caps text-on-surface-variant mb-2" for="discountValue">Discount Value</label>
+                                <div class="relative input-glow border border-outline-variant/50 rounded-lg bg-surface transition-all duration-250 w-full md:w-1/2">
+                                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-on-surface-variant font-body-md">%</span>
+                                    <input class="w-full bg-transparent border-none focus:ring-0 font-body-md text-body-md py-3 pl-8 pr-3 text-on-surface placeholder:text-outline" id="discountValue" placeholder="20" type="number" />
+                                </div>
                             </div>
                         </div>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" asp-for="IsActive" class="sr-only peer" checked="checked">
-                            <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                        </label>
-                    </div>
-                </section>
-
+                    </section>
+                    <!-- Conditions Card -->
+                    <section class="bg-surface rounded-[16px] p-6 shadow-ambient-1 border border-outline-variant/20">
+                        <h3 class="font-headline-md text-[24px] mb-6 text-primary pb-4 border-b border-outline-variant/20">Conditions</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block font-label-caps text-label-caps text-on-surface-variant mb-3">Applies To</label>
+                                <div class="flex gap-4">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input checked="" class="text-primary focus:ring-primary h-4 w-4" name="appliesTo" type="radio" />
+                                        <span class="font-body-md text-on-surface">Entire Order</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input class="text-primary focus:ring-primary h-4 w-4" name="appliesTo" type="radio" />
+                                        <span class="font-body-md text-on-surface">Specific Products</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block font-label-caps text-label-caps text-on-surface-variant mb-2" for="minOrder">Minimum Order Amount (Optional)</label>
+                                    <div class="relative input-glow border border-outline-variant/50 rounded-lg bg-surface transition-all duration-250">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-on-surface-variant font-body-md">LE</span>
+                                        <input class="w-full bg-transparent border-none focus:ring-0 font-body-md text-body-md py-3 pl-10 pr-3 text-on-surface placeholder:text-outline" id="minOrder" placeholder="0.00" type="number" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block font-label-caps text-label-caps text-on-surface-variant mb-2" for="usageLimit">Usage Limit (Optional)</label>
+                                    <div class="relative input-glow border border-outline-variant/50 rounded-lg bg-surface transition-all duration-250">
+                                        <input class="w-full bg-transparent border-none focus:ring-0 font-body-md text-body-md p-3 text-on-surface placeholder:text-outline" id="usageLimit" placeholder="Unlimited" type="number" />
+                                    </div>
+                                    <p class="text-[12px] text-on-surface-variant mt-1 font-body-md">Total number of times this code can be used.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <!-- Sidebar Column -->
+                <div class="flex flex-col gap-8">
+                    <!-- Schedule Card -->
+                    <section class="bg-surface rounded-[16px] p-6 shadow-ambient-1 border border-outline-variant/20">
+                        <h3 class="font-headline-md text-[20px] mb-4 text-primary pb-3 border-b border-outline-variant/20">Schedule</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block font-label-caps text-label-caps text-on-surface-variant mb-2" for="startDate">Start Date</label>
+                                <div class="relative input-glow border border-outline-variant/50 rounded-lg bg-surface transition-all duration-250">
+                                    <input class="w-full bg-transparent border-none focus:ring-0 font-body-md text-body-md p-3 text-on-surface" id="startDate" type="date" />
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block font-label-caps text-label-caps text-on-surface-variant mb-2" for="endDate">End Date (Optional)</label>
+                                <div class="relative input-glow border border-outline-variant/50 rounded-lg bg-surface transition-all duration-250">
+                                    <input class="w-full bg-transparent border-none focus:ring-0 font-body-md text-body-md p-3 text-on-surface" id="endDate" type="date" />
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Live Preview Card -->
+                    <section class="bg-surface-container-low rounded-[16px] p-6 shadow-ambient-1 border border-primary/20 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/10 rounded-bl-full -z-10"></div>
+                        <h3 class="font-label-caps text-label-caps mb-4 text-primary flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[16px]">visibility</span>
+                            Live Preview
+                        </h3>
+                        <div class="bg-surface rounded-xl p-4 shadow-sm border border-outline-variant/30">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-body-md text-on-surface-variant">Original Price</span>
+                                <span class="font-body-md line-through text-outline">LE 500.00</span>
+                            </div>
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="font-body-md text-on-surface-variant">Discount applied</span>
+                                <span class="font-body-md text-error">- LE 100.00</span>
+                            </div>
+                            <div class="flex justify-between items-center pt-3 border-t border-outline-variant/20">
+                                <span class="font-headline-md text-[20px] text-on-surface">Final Price</span>
+                                <span class="font-headline-md text-[24px] text-primary">LE 400.00</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
             </div>
-            
-            <!-- Sticky Footer -->
-            <div class="sticky bottom-0 z-10 px-8 py-6 bg-white border-t border-surface-container-low flex items-center gap-4 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)]">
-                <a asp-action="Index" class="flex-1 text-center py-3 text-sm font-bold text-on-surface-variant hover:bg-surface-container-low rounded-xl transition-all">
+            <!-- Bottom Actions -->
+            <div class="mt-8 pt-6 border-t border-outline-variant/30 flex justify-end gap-4 items-center">
+                <button class="px-6 py-3 font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-colors duration-250 bg-transparent border-none" type="button">
                     Cancel
-                </a>
-                <button type="submit" class="flex-[2] py-3 bg-gradient-to-br from-primary to-[#6063ee] text-white text-sm font-bold rounded-xl shadow-lg shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all">
-                    Create Coupon
+                </button>
+                <button class="px-8 py-3 rounded-full bg-primary-container text-on-primary-container font-label-caps text-label-caps shadow-ambient-1 hover:shadow-ambient-2 hover:bg-[#b07d6d] transform active:scale-98 transition-all duration-250 flex items-center gap-2" type="submit">
+                    <span class="material-symbols-outlined text-[18px]">save</span>
+                    Save Discount
                 </button>
             </div>
-        </form>
+        </main>
     </div>
-</div>
+    <!-- Mobile Bottom NavBar (Hidden on md+) -->
+    <nav class="md:hidden fixed bottom-0 w-full bg-surface border-t border-outline-variant/20 shadow-[0px_-5px_20px_rgba(26,16,37,0.05)] z-20 flex justify-around items-center h-16 pb-safe">
+        <a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant hover:text-primary transition-colors" href="#">
+            <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+            <span class="text-[10px] mt-1 font-label-caps">Overview</span>
+        </a>
+        <a class="flex flex-col items-center justify-center w-full h-full text-primary relative" href="#">
+            <div class="absolute top-0 w-8 h-1 bg-primary rounded-b-full"></div>
+            <span class="material-symbols-outlined fill" data-icon="inventory_2">inventory_2</span>
+            <span class="text-[10px] mt-1 font-label-caps font-bold">Catalog</span>
+        </a>
+        <a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant hover:text-primary transition-colors" href="#">
+            <span class="material-symbols-outlined" data-icon="settings">settings</span>
+            <span class="text-[10px] mt-1 font-label-caps">Settings</span>
+        </a>
+    </nav>
+    <script>
+        // Simple logic for the custom toggle
+        const toggleInput = document.querySelector('input[type="checkbox"]');
+        const dot = document.querySelector('.dot');
+        const bg = toggleInput.nextElementSibling;
 
+        toggleInput.addEventListener('change', function() {
+        if(this.checked) {
+        dot.style.transform = 'translateX(16px)';
+        bg.classList.add('bg-primary-container');
+        bg.classList.remove('bg-outline-variant');
+        } else {
+        dot.style.transform = 'translateX(0)';
+        bg.classList.remove('bg-primary-container');
+        bg.classList.add('bg-outline-variant');
+        }
+        });
+
+        // Initial state
+        if(toggleInput.checked) {
+        dot.style.transform = 'translateX(16px)';
+        bg.classList.add('bg-primary-container');
+        bg.classList.remove('bg-outline-variant');
+        }
+    </script>
+</body></html>

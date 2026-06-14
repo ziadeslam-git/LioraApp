@@ -1,47 +1,167 @@
-@{
-    ViewData["Title"] = "Account Deactivated";
-}
+<!DOCTYPE html>
 
-<div class="flex min-h-screen w-full items-center justify-center bg-background-light dark:bg-background-dark px-6 py-12">
-    <div class="w-full max-w-md text-center space-y-8">
-        @* Lock Icon *@
-        <div class="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30 shadow-lg shadow-red-100/50">
-            <span class="material-symbols-outlined text-5xl text-red-500 dark:text-red-400" style="font-variation-settings: 'FILL' 1;">lock</span>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Account Deactivated - Liora</title>
+    <!-- Tailwind Setup -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+        darkMode: "class",
+        theme: {
+        extend: {
+        "colors": {
+        "on-tertiary-fixed-variant": "#4b4450",
+        "surface-container-low": "#f9f2ec",
+        "on-background": "#1e1b18",
+        "tertiary-container": "#a299a7",
+        "surface-variant": "#e8e1db",
+        "secondary-fixed": "#eedcfa",
+        "on-tertiary": "#ffffff",
+        "surface": "#fff8f3",
+        "on-error-container": "#93000a",
+        "on-primary-container": "#4e2a1f",
+        "tertiary-fixed": "#eadfee",
+        "outline": "#83746f",
+        "primary-fixed-dim": "#f2baa8",
+        "secondary": "#665972",
+        "inverse-surface": "#33302c",
+        "error": "#ba1a1a",
+        "surface-container": "#f4ede7",
+        "on-primary-fixed-variant": "#643d30",
+        "on-surface": "#1e1b18",
+        "secondary-container": "#eedcfa",
+        "inverse-on-surface": "#f7efe9",
+        "on-surface-variant": "#514440",
+        "on-secondary-fixed-variant": "#4e425a",
+        "on-secondary-container": "#6c5f79",
+        "on-primary": "#ffffff",
+        "surface-container-highest": "#e8e1db",
+        "surface-container-lowest": "#ffffff",
+        "secondary-fixed-dim": "#d1c0de",
+        "on-tertiary-container": "#38313d",
+        "tertiary": "#635b68",
+        "on-secondary-fixed": "#21172c",
+        "on-primary-fixed": "#311309",
+        "primary": "#7f5446",
+        "surface-tint": "#7f5446",
+        "error-container": "#ffdad6",
+        "primary-fixed": "#ffdbd0",
+        "tertiary-fixed-dim": "#cec3d2",
+        "on-error": "#ffffff",
+        "inverse-primary": "#f2baa8",
+        "surface-container-high": "#eee7e1",
+        "surface-bright": "#fff8f3",
+        "primary-container": "#c49080",
+        "background": "#fff8f3",
+        "outline-variant": "#d5c2bd",
+        "on-tertiary-fixed": "#1f1924",
+        "surface-dim": "#dfd9d3",
+        "on-secondary": "#ffffff"
+        },
+        "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+        },
+        "spacing": {
+        "stack-sm": "8px",
+        "gutter": "24px",
+        "container-padding-desktop": "64px",
+        "stack-lg": "32px",
+        "section-gap": "120px",
+        "stack-md": "16px",
+        "unit": "8px",
+        "container-padding-mobile": "20px"
+        },
+        "fontFamily": {
+        "display-lg-mobile": ["Playfair Display"],
+        "headline-lg-mobile": ["Playfair Display"],
+        "display-lg": ["Playfair Display"],
+        "body-lg": ["DM Sans"],
+        "accent-italic": ["EB Garamond"],
+        "label-caps": ["DM Sans"],
+        "headline-md": ["Playfair Display"],
+        "body-md": ["DM Sans"],
+        "headline-lg": ["Playfair Display"]
+        },
+        "fontSize": {
+        "display-lg-mobile": ["40px", {"lineHeight": "1.2", "fontWeight": "700"}],
+        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+        "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+        "accent-italic": ["20px", {"lineHeight": "1.5", "fontWeight": "400"}],
+        "label-caps": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "700"}],
+        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "500"}],
+        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+        "headline-lg": ["40px", {"lineHeight": "1.2", "fontWeight": "600"}]
+        }
+        }
+        }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700&amp;family=EB+Garamond:ital,wght@1,400&amp;family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&amp;display=swap" rel="stylesheet" />
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <style>
+        /* Ambient Shadow Layering */
+        .shadow-level-1 {
+        box-shadow: 0px 10px 30px rgba(26, 16, 37, 0.05);
+        }
+
+        .shadow-level-2 {
+        box-shadow: 0px 20px 50px rgba(26, 16, 37, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex items-center justify-center p-container-padding-mobile md:p-container-padding-desktop">
+    <!--
+        Navigation Shell Suppressed:
+        As per the "Semantic Shell Mandate", transactional/dead-end screens
+        (like Account Deactivated) must exclude the navigation shell to focus the canvas.
+    -->
+    <main class="w-full max-w-[480px] bg-surface-container-lowest rounded-2xl shadow-level-1 p-8 md:p-12 flex flex-col items-center text-center relative overflow-hidden">
+        <!-- Subtle background decoration -->
+        <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-error-container/20 to-transparent pointer-events-none"></div>
+        <!-- Brand Anchor -->
+        <div class="mb-stack-lg">
+            <h2 class="font-display-lg-mobile text-display-lg-mobile text-primary tracking-tighter">ELÉGANCE</h2>
         </div>
-
-        @* Title & Message *@
-        <div>
-            <h1 class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 mb-3">
-                Account Deactivated
-            </h1>
-            <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
-                Your account has been deactivated by an administrator.
-                If you believe this is a mistake, please contact our support team.
-            </p>
+        <!-- Warning Icon -->
+        <div class="w-[120px] h-[120px] rounded-full bg-error-container/30 flex items-center justify-center mb-stack-md shrink-0">
+            <span class="material-symbols-outlined text-[48px] text-error" style="font-variation-settings: 'FILL' 0;">
+                pause_circle
+            </span>
         </div>
-
-        @* Action Buttons *@
-        <div class="flex flex-col gap-3 items-center">
-            <a href="https://wa.me/201000000000"
-               target="_blank"
-               class="w-full max-w-xs inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-emerald-600/25 hover:bg-emerald-700 active:scale-[0.98] transition-all">
-                <span class="material-symbols-outlined text-lg">support_agent</span>
-                Contact Support
-            </a>
-            <a asp-area="Identity" asp-controller="Account" asp-action="Login"
-               class="w-full max-w-xs inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-6 py-3.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
-                <span class="material-symbols-outlined text-lg">arrow_back</span>
-                Back to Login
-            </a>
-            <a asp-area="Customer" asp-controller="Home" asp-action="Index"
-               class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary transition-colors mt-2">
-                Go to Home Page
-            </a>
-        </div>
-
-        @* Footer *@
-        <p class="text-xs text-slate-400 dark:text-slate-500 pt-4 border-t border-slate-200 dark:border-slate-800">
-            © 2026 Liora. All rights reserved.
+        <!-- Typography Content -->
+        <h1 class="font-headline-md text-headline-md text-on-background italic mb-stack-sm">
+            Account Deactivated
+        </h1>
+        <p class="font-body-md text-body-md text-on-surface-variant mb-stack-lg max-w-[90%]">
+            Your account has been temporarily deactivated. Please contact our support team to reactivate it.
         </p>
-    </div>
-</div>
+        <!-- Info Callout Box -->
+        <div class="w-full bg-surface-container border-l-4 border-primary-container p-stack-md rounded-r-xl rounded-l-sm text-left mb-stack-lg shadow-sm">
+            <div class="flex items-center gap-stack-sm mb-unit">
+                <span class="material-symbols-outlined text-primary-container text-[20px]">mail</span>
+                <span class="font-body-md text-body-md text-on-background">support@elegance.com</span>
+            </div>
+            <div class="flex items-center gap-stack-sm">
+                <span class="material-symbols-outlined text-primary-container text-[20px]">chat</span>
+                <span class="font-body-md text-body-md text-on-background">+1 (555) 123-4567</span>
+            </div>
+        </div>
+        <!-- Primary Action -->
+        <button class="w-full bg-primary-container text-on-primary-container font-label-caps text-label-caps py-4 px-8 rounded-full shadow-level-1 hover:shadow-level-2 transform scale-100 hover:scale-[0.98] transition-all duration-250 ease-out flex items-center justify-center gap-unit">
+            <span class="material-symbols-outlined text-[18px]">support_agent</span>
+            Contact Support
+        </button>
+    </main>
+</body></html>

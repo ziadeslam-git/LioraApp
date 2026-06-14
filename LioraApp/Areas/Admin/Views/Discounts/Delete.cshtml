@@ -1,70 +1,479 @@
-﻿@model DiscountVM
-@{
-    ViewData["Title"] = "Delete Coupon";
-}
+﻿<!DOCTYPE html>
 
-@section Styles {
-    }
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Discount Details - Liora Admin</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700&amp;family=EB+Garamond:ital,wght@0,400;0,700;1,400&amp;family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+        darkMode: "class",
+        theme: {
+        extend: {
+        "colors": {
+        "on-secondary-container": "#6c5f79",
+        "on-primary": "#ffffff",
+        "on-surface-variant": "#514440",
+        "on-secondary-fixed-variant": "#4e425a",
+        "secondary-container": "#eedcfa",
+        "on-surface": "#1e1b18",
+        "inverse-on-surface": "#f7efe9",
+        "error": "#ba1a1a",
+        "surface-container": "#f4ede7",
+        "on-primary-fixed-variant": "#643d30",
+        "primary-fixed-dim": "#f2baa8",
+        "inverse-surface": "#33302c",
+        "secondary": "#665972",
+        "tertiary-fixed": "#eadfee",
+        "outline": "#83746f",
+        "surface": "#fff8f3",
+        "on-error-container": "#93000a",
+        "on-tertiary": "#ffffff",
+        "on-primary-container": "#4e2a1f",
+        "tertiary-container": "#a299a7",
+        "surface-variant": "#e8e1db",
+        "on-background": "#1e1b18",
+        "secondary-fixed": "#eedcfa",
+        "on-tertiary-fixed-variant": "#4b4450",
+        "surface-container-low": "#f9f2ec",
+        "outline-variant": "#d5c2bd",
+        "background": "#fff8f3",
+        "surface-dim": "#dfd9d3",
+        "on-secondary": "#ffffff",
+        "on-tertiary-fixed": "#1f1924",
+        "primary-container": "#c49080",
+        "surface-container-high": "#eee7e1",
+        "surface-bright": "#fff8f3",
+        "tertiary-fixed-dim": "#cec3d2",
+        "on-error": "#ffffff",
+        "primary-fixed": "#ffdbd0",
+        "inverse-primary": "#f2baa8",
+        "error-container": "#ffdad6",
+        "primary": "#7f5446",
+        "on-secondary-fixed": "#21172c",
+        "on-primary-fixed": "#311309",
+        "surface-tint": "#7f5446",
+        "surface-container-lowest": "#ffffff",
+        "secondary-fixed-dim": "#d1c0de",
+        "on-tertiary-container": "#38313d",
+        "tertiary": "#635b68",
+        "surface-container-highest": "#e8e1db"
+        },
+        "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+        },
+        "spacing": {
+        "unit": "8px",
+        "container-padding-mobile": "20px",
+        "section-gap": "120px",
+        "stack-md": "16px",
+        "stack-lg": "32px",
+        "stack-sm": "8px",
+        "gutter": "24px",
+        "container-padding-desktop": "64px"
+        },
+        "fontFamily": {
+        "display-lg-mobile": ["Playfair Display"],
+        "headline-lg-mobile": ["Playfair Display"],
+        "display-lg": ["Playfair Display"],
+        "body-lg": ["DM Sans"],
+        "accent-italic": ["EB Garamond"],
+        "label-caps": ["DM Sans"],
+        "headline-md": ["Playfair Display"],
+        "body-md": ["DM Sans"],
+        "headline-lg": ["Playfair Display"],
+        "mono": ["DM Mono", "monospace"]
+        },
+        "fontSize": {
+        "display-lg-mobile": ["40px", {"lineHeight": "1.2", "fontWeight": "700"}],
+        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+        "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+        "accent-italic": ["20px", {"lineHeight": "1.5", "fontWeight": "400"}],
+        "label-caps": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "700"}],
+        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "500"}],
+        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+        "headline-lg": ["40px", {"lineHeight": "1.2", "fontWeight": "600"}]
+        }
+        }
+        }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
 
-<div class="flex items-center justify-center min-h-[calc(100vh-10rem)] p-4">
-    <div class="w-full max-w-[440px] bg-surface-container-lowest rounded-[1.25rem] shadow-[0_32px_64px_rgba(11,28,48,0.12)] p-10 flex flex-col items-center text-center overflow-hidden relative">
-        <form asp-action="Delete" method="post" class="w-full flex flex-col items-center relative z-10">
-            @Html.AntiForgeryToken()
-            <input type="hidden" asp-for="Id" />
-            
-            <!-- Large Red Trash Icon in Circle -->
-            <div class="w-20 h-20 bg-error-container rounded-full flex items-center justify-center mb-8 ring-8 ring-error-container/20 shadow-sm">
-                <span class="material-symbols-outlined text-error text-4xl" data-icon="delete" style="font-variation-settings: 'FILL' 1;">delete</span>
+        .icon-fill {
+        font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* Smooth scrolling and basic resets */
+        html {
+        scroll-behavior: smooth;
+        }
+
+        body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Soft Rose Tinted Shadows */
+        .shadow-rose-sm {
+        box-shadow: 0px 10px 30px rgba(26, 16, 37, 0.05);
+        }
+
+        .shadow-rose-md {
+        box-shadow: 0px 20px 50px rgba(26, 16, 37, 0.08);
+        }
+
+        /* Micro-interactions */
+        .btn-scale {
+        transition: transform 250ms ease-out;
+        }
+
+        .btn-scale:active {
+        transform: scale(0.98);
+        }
+
+        /* Custom Scrollbar for sleekness */
+        ::-webkit-scrollbar {
+        width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+        background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+        background: #d5c2bd;
+        border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+        background: #c49080;
+        }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface font-body-md text-body-md overflow-x-hidden min-h-screen flex">
+    <!-- SideNavBar -->
+    <nav class="hidden md:flex flex-col fixed left-0 top-0 h-full w-64 bg-on-background rounded-r-xl shadow-[0px_10px_30px_rgba(26,16,37,0.05)] p-unit-stack-md z-50">
+        <div class="mb-stack-lg px-unit-stack-md flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-headline-md text-headline-md">
+                L
             </div>
-
-            <!-- Title & Body -->
-            <div class="space-y-4 mb-8">
-                <h3 class="text-2xl font-extrabold text-on-surface tracking-tight" style="font-family: Inter, sans-serif;">Delete Coupon?</h3>
-                <p class="text-on-surface-variant leading-relaxed px-4" style="font-family: Inter, sans-serif;">
-                    Are you sure you want to delete coupon <span class="font-fira-precision font-bold text-primary px-1.5 py-0.5 bg-primary/5 rounded">@Model.CouponCode</span>?
-                </p>
+            <div>
+                <h1 class="font-headline-md text-headline-md text-primary tracking-tight text-xl">Liora Admin</h1>
+                <p class="font-body-md text-body-md text-surface-variant text-sm opacity-80">Fashion Management</p>
             </div>
-
-            @if (Model.UsageCount > 0)
-            {
-                <!-- Amber Warning Note -->
-                <div class="w-full bg-tertiary/5 rounded-xl p-5 mb-10 flex gap-4 text-left border-l-4 border-tertiary">
-                    <span class="material-symbols-outlined text-tertiary shrink-0" data-icon="warning">warning</span>
-                    <div class="space-y-1">
-                        <p class="text-[11px] font-bold text-tertiary-container uppercase tracking-wider font-inter">Usage Warning</p>
-                        <p class="text-[13px] text-on-tertiary-fixed-variant leading-tight font-inter">
-                            This coupon has been used <strong>@Model.UsageCount times</strong>. Deleting it will only prevent future use. To keep the history, you can set it to inactive instead.
-                        </p>
+        </div>
+        <div class="flex-1 flex flex-col gap-2">
+            <a class="flex items-center gap-3 px-4 py-3 text-surface-variant hover:text-on-primary hover:bg-on-secondary-fixed-variant transition-all duration-250 ease-out rounded-xl" href="#">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="font-label-caps text-label-caps">Overview</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-surface-variant hover:text-on-primary hover:bg-on-secondary-fixed-variant transition-all duration-250 ease-out rounded-xl" href="#">
+                <span class="material-symbols-outlined">inventory_2</span>
+                <span class="font-label-caps text-label-caps">Catalog</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-primary bg-primary rounded-xl font-bold btn-scale active" href="#">
+                <span class="material-symbols-outlined icon-fill">payments</span>
+                <span class="font-label-caps text-label-caps">Sales</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-surface-variant hover:text-on-primary hover:bg-on-secondary-fixed-variant transition-all duration-250 ease-out rounded-xl" href="#">
+                <span class="material-symbols-outlined">group</span>
+                <span class="font-label-caps text-label-caps">Customers</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-surface-variant hover:text-on-primary hover:bg-on-secondary-fixed-variant transition-all duration-250 ease-out rounded-xl mt-auto" href="#">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="font-label-caps text-label-caps">Settings</span>
+            </a>
+        </div>
+        <button class="mt-stack-md w-full py-3 bg-primary-container text-on-primary-container rounded-xl font-label-caps text-label-caps btn-scale hover:bg-primary hover:text-on-primary transition-colors duration-250">
+            New Collection
+        </button>
+    </nav>
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col md:ml-64 min-h-screen">
+        <!-- TopAppBar -->
+        <header class="flex justify-between items-center px-gutter py-unit-stack-md bg-surface full-width top-0 z-40 sticky shadow-sm h-[72px]">
+            <div class="flex items-center gap-4">
+                <button class="md:hidden text-primary">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <div class="relative flex items-center bg-surface-container-low rounded-full px-4 py-2 border border-outline-variant/20 focus-within:border-primary-container focus-within:shadow-[0_0_0_4px_rgba(196,144,128,0.2)] transition-all duration-250">
+                    <span class="material-symbols-outlined text-outline mr-2 text-sm">search</span>
+                    <input class="bg-transparent border-none focus:ring-0 text-sm font-body-md w-48 outline-none text-on-surface" placeholder="Search..." type="text" />
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="text-on-surface-variant hover:text-primary transition-colors duration-250 w-10 h-10 rounded-full hover:bg-surface-container-low flex items-center justify-center btn-scale">
+                    <span class="material-symbols-outlined">notifications</span>
+                </button>
+                <button class="text-on-surface-variant hover:text-primary transition-colors duration-250 w-10 h-10 rounded-full hover:bg-surface-container-low flex items-center justify-center btn-scale">
+                    <span class="material-symbols-outlined">person</span>
+                </button>
+            </div>
+        </header>
+        <!-- Page Content -->
+        <main class="flex-1 p-gutter lg:p-container-padding-desktop flex flex-col gap-stack-lg max-w-[1280px] mx-auto w-full">
+            <!-- Page Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <a class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface hover:bg-outline-variant/30 transition-colors btn-scale" href="#">
+                        <span class="material-symbols-outlined text-xl">arrow_back</span>
+                    </a>
+                    <div>
+                        <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Discount Details</h2>
+                        <div class="flex items-center gap-2 mt-1 text-sm text-on-surface-variant">
+                            <a class="hover:text-primary transition-colors" href="#">Sales</a>
+                            <span class="material-symbols-outlined text-xs">chevron_right</span>
+                            <a class="hover:text-primary transition-colors" href="#">Discounts</a>
+                            <span class="material-symbols-outlined text-xs">chevron_right</span>
+                            <span class="text-on-surface font-medium">Summer Silk '24</span>
+                        </div>
                     </div>
                 </div>
-            }
-            else
-            {
-                <!-- Info Note -->
-                <div class="w-full bg-slate-50 rounded-xl p-5 mb-10 text-left border-l-4 border-slate-300">
-                    <p class="text-[13px] text-slate-600 leading-tight font-inter">
-                        This coupon has never been used. You can safely delete it without affecting any previous orders.
+                <div class="flex items-center gap-3">
+                    <span class="px-3 py-1 bg-primary-container/20 text-on-primary-container rounded-full font-label-caps text-[10px] flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+                        Active
+                    </span>
+                </div>
+            </div>
+            <!-- Two Column Layout -->
+            <div class="flex flex-col lg:flex-row gap-gutter">
+                <!-- Left Column: Configuration (65%) -->
+                <div class="w-full lg:w-[65%] flex flex-col gap-stack-lg">
+                    <!-- Main Config Card -->
+                    <div class="bg-surface-container-lowest rounded-[16px] p-stack-lg shadow-rose-sm border border-outline-variant/10">
+                        <!-- Section 1: Overview -->
+                        <div class="pb-stack-md border-b border-outline-variant/20 mb-stack-md">
+                            <h3 class="font-headline-md text-headline-md text-xl mb-4">Overview</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+                                <div>
+                                    <label class="block text-xs font-label-caps text-on-surface-variant mb-1">Discount Name</label>
+                                    <p class="font-body-lg text-body-lg text-on-surface font-medium">Summer Silk '24 Collection Launch</p>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-label-caps text-on-surface-variant mb-1">Discount Code</label>
+                                    <div class="inline-flex items-center gap-2 bg-surface-variant/50 px-3 py-1.5 rounded-lg border border-outline-variant/30">
+                                        <span class="font-mono text-primary font-bold tracking-wider">SUMMERSILK20</span>
+                                        <button class="text-on-surface-variant hover:text-primary transition-colors ml-2" title="Copy Code">
+                                            <span class="material-symbols-outlined text-[16px]">content_copy</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Section 2: Configuration -->
+                        <div class="pb-stack-md border-b border-outline-variant/20 mb-stack-md">
+                            <h3 class="font-headline-md text-headline-md text-xl mb-4">Configuration</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-stack-md">
+                                <div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/10">
+                                    <span class="material-symbols-outlined text-primary mb-2">percent</span>
+                                    <label class="block text-xs font-label-caps text-on-surface-variant mb-1">Type</label>
+                                    <p class="font-body-md text-body-md text-on-surface font-medium">Percentage</p>
+                                </div>
+                                <div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/10">
+                                    <span class="material-symbols-outlined text-primary mb-2">sell</span>
+                                    <label class="block text-xs font-label-caps text-on-surface-variant mb-1">Value</label>
+                                    <p class="font-body-md text-body-md text-on-surface font-medium">20% Off</p>
+                                </div>
+                                <div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/10">
+                                    <span class="material-symbols-outlined text-primary mb-2">shopping_bag</span>
+                                    <label class="block text-xs font-label-caps text-on-surface-variant mb-1">Min. Requirement</label>
+                                    <p class="font-body-md text-body-md text-on-surface font-medium">2 Items</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Section 3: Applies To -->
+                        <div class="pb-stack-md border-b border-outline-variant/20 mb-stack-md">
+                            <h3 class="font-headline-md text-headline-md text-xl mb-4">Applies To</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-4 py-2 bg-secondary-container/50 text-on-secondary-container rounded-full text-sm font-medium border border-secondary/20">Specific Categories</span>
+                                <span class="px-4 py-2 bg-surface-container-highest text-on-surface rounded-full text-sm flex items-center gap-2">
+                                    Silk Blouses
+                                </span>
+                                <span class="px-4 py-2 bg-surface-container-highest text-on-surface rounded-full text-sm flex items-center gap-2">
+                                    Evening Wear
+                                </span>
+                            </div>
+                        </div>
+                        <!-- Section 4: Usage Limits -->
+                        <div class="pb-stack-md border-b border-outline-variant/20 mb-stack-md">
+                            <h3 class="font-headline-md text-headline-md text-xl mb-4 flex items-center justify-between">
+                                Usage Limits
+                                <span class="text-sm font-body-md text-on-surface-variant font-normal">342 / 500 Used</span>
+                            </h3>
+                            <div class="w-full bg-surface-variant rounded-full h-2.5 mb-2 overflow-hidden">
+                                <div class="bg-primary-container h-2.5 rounded-full" style="width: 68%"></div>
+                            </div>
+                            <p class="text-xs text-on-surface-variant mt-2">Limited to 1 per customer.</p>
+                        </div>
+                        <!-- Section 5: Schedule -->
+                        <div>
+                            <h3 class="font-headline-md text-headline-md text-xl mb-4">Schedule</h3>
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <div class="flex-1 flex items-center gap-3 p-4 bg-surface-container-low rounded-xl border border-outline-variant/10">
+                                    <div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-primary">
+                                        <span class="material-symbols-outlined">event</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-label-caps text-on-surface-variant">Starts</p>
+                                        <p class="text-sm font-medium text-on-surface">Jun 1, 2024 • 12:00 AM</p>
+                                    </div>
+                                </div>
+                                <div class="flex-1 flex items-center gap-3 p-4 bg-surface-container-low rounded-xl border border-outline-variant/10">
+                                    <div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-primary">
+                                        <span class="material-symbols-outlined">event_busy</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-label-caps text-on-surface-variant">Ends</p>
+                                        <p class="text-sm font-medium text-on-surface">Aug 31, 2024 • 11:59 PM</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right Column: Sidebar (35%) -->
+                <div class="w-full lg:w-[35%] flex flex-col gap-stack-lg">
+                    <!-- Performance Summary Card -->
+                    <div class="bg-surface-container-lowest rounded-[16px] p-stack-lg shadow-rose-sm border border-outline-variant/10">
+                        <h3 class="font-headline-md text-headline-md text-xl mb-6 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary-container">monitoring</span>
+                            Performance
+                        </h3>
+                        <div class="flex flex-col gap-6">
+                            <div class="flex justify-between items-end pb-4 border-b border-outline-variant/10">
+                                <div>
+                                    <p class="text-xs font-label-caps text-on-surface-variant mb-1">Total Orders</p>
+                                    <p class="font-headline-lg text-headline-lg text-3xl text-on-surface">342</p>
+                                </div>
+                                <span class="material-symbols-outlined text-outline-variant/50 text-4xl">shopping_cart</span>
+                            </div>
+                            <div class="flex justify-between items-end pb-4 border-b border-outline-variant/10">
+                                <div>
+                                    <p class="text-xs font-label-caps text-on-surface-variant mb-1">Total Revenue Saved</p>
+                                    <p class="font-headline-lg text-headline-lg text-3xl text-on-surface">£4,250</p>
+                                </div>
+                                <span class="material-symbols-outlined text-outline-variant/50 text-4xl">savings</span>
+                            </div>
+                            <div class="flex justify-between items-end">
+                                <div>
+                                    <p class="text-xs font-label-caps text-on-surface-variant mb-1">Avg. Order Value (w/ Disc)</p>
+                                    <p class="font-headline-lg text-headline-lg text-3xl text-on-surface">£185</p>
+                                </div>
+                                <span class="material-symbols-outlined text-outline-variant/50 text-4xl">receipt_long</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Quick Actions -->
+                    <div class="bg-surface-container-lowest rounded-[16px] p-stack-md shadow-rose-sm border border-outline-variant/10 flex flex-col gap-3">
+                        <button class="w-full py-3 bg-primary-container text-on-primary-container rounded-full font-label-caps text-label-caps btn-scale hover:bg-primary hover:text-on-primary transition-colors flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-[18px]">edit</span>
+                            Edit Discount
+                        </button>
+                        <button class="w-full py-3 bg-transparent border border-outline-variant text-on-surface rounded-full font-label-caps text-label-caps btn-scale hover:bg-surface-variant transition-colors flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-[18px]">content_copy</span>
+                            Duplicate
+                        </button>
+                        <div class="mt-2 pt-4 border-t border-outline-variant/20 flex items-center justify-between px-2">
+                            <span class="text-sm font-medium text-on-surface">Discount Status</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input checked="" class="sr-only peer" type="checkbox" value="" />
+                                <div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Bottom Section: Usage History -->
+            <div class="bg-surface-container-lowest rounded-[16px] shadow-rose-sm border border-outline-variant/10 overflow-hidden">
+                <div class="p-stack-md border-b border-outline-variant/20 flex justify-between items-center bg-surface-container-low/50">
+                    <h3 class="font-headline-md text-headline-md text-xl">Recent Usage History</h3>
+                    <button class="text-sm text-primary hover:text-primary-container transition-colors font-medium">View All</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-on-surface">
+                        <thead class="text-xs font-label-caps text-on-surface-variant bg-surface-container-highest/30">
+                            <tr>
+                                <th class="px-6 py-4 font-normal" scope="col">Order #</th>
+                                <th class="px-6 py-4 font-normal" scope="col">Customer Name</th>
+                                <th class="px-6 py-4 font-normal" scope="col">Date</th>
+                                <th class="px-6 py-4 font-normal text-right" scope="col">Savings (LE)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-outline-variant/10">
+                            <tr class="hover:bg-surface-container-low/50 transition-colors">
+                                <td class="px-6 py-4 font-mono font-medium text-primary">#ORD-9021</td>
+                                <td class="px-6 py-4">Amina El-Sayed</td>
+                                <td class="px-6 py-4 text-on-surface-variant">Today, 10:42 AM</td>
+                                <td class="px-6 py-4 text-right font-medium">£45.00</td>
+                            </tr>
+                            <tr class="hover:bg-surface-container-low/50 transition-colors">
+                                <td class="px-6 py-4 font-mono font-medium text-primary">#ORD-9018</td>
+                                <td class="px-6 py-4">Nour Youssef</td>
+                                <td class="px-6 py-4 text-on-surface-variant">Yesterday, 04:15 PM</td>
+                                <td class="px-6 py-4 text-right font-medium">£82.50</td>
+                            </tr>
+                            <tr class="hover:bg-surface-container-low/50 transition-colors">
+                                <td class="px-6 py-4 font-mono font-medium text-primary">#ORD-8994</td>
+                                <td class="px-6 py-4">Salma Hassan</td>
+                                <td class="px-6 py-4 text-on-surface-variant">Jul 24, 02:30 PM</td>
+                                <td class="px-6 py-4 text-right font-medium">£120.00</td>
+                            </tr>
+                            <tr class="hover:bg-surface-container-low/50 transition-colors">
+                                <td class="px-6 py-4 font-mono font-medium text-primary">#ORD-8982</td>
+                                <td class="px-6 py-4">Farida Kamel</td>
+                                <td class="px-6 py-4 text-on-surface-variant">Jul 23, 09:12 AM</td>
+                                <td class="px-6 py-4 text-right font-medium">£30.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-sm">
+        <div class="bg-surface-container-lowest rounded-[16px] shadow-rose-md border border-outline-variant/20 max-w-md w-full overflow-hidden">
+            <div class="p-stack-lg flex flex-col items-center text-center">
+                <!-- Warning Icon -->
+                <div class="w-16 h-16 rounded-full bg-error-container flex items-center justify-center text-error mb-6">
+                    <span class="material-symbols-outlined text-3xl">delete_forever</span>
+                </div>
+                <!-- Headline -->
+                <h2 class="font-headline-md text-headline-md text-on-surface mb-4">Delete Discount?</h2>
+                <!-- Body Text -->
+                <p class="font-body-md text-body-md text-on-surface-variant mb-6">
+                    Are you sure you want to delete the <span class="font-bold text-on-surface">'SUMMER25'</span> discount code? This action cannot be undone and will prevent customers from using this code in future transactions.
+                </p>
+                <!-- Active Usage Warning -->
+                <div class="w-full bg-[#fff4e5] border border-[#ffb049]/30 rounded-lg p-3 mb-8 flex items-start gap-3 text-left">
+                    <span class="material-symbols-outlined text-[#b26b00] text-xl">warning</span>
+                    <p class="text-sm text-[#663d00] font-medium">
+                        Note: This discount is currently active and has 45 pending usages.
                     </p>
                 </div>
-            }
-
-            <!-- Action Buttons -->
-            <div class="flex flex-col w-full gap-3 mt-auto">
-                <!-- Delete Button (Red) -->
-                <button type="submit" class="w-full py-4 bg-error text-white rounded-xl font-bold tracking-tight shadow-lg shadow-error/20 hover:opacity-90 active:scale-[0.98] transition-all font-inter">
-                    Delete Coupon
-                </button>
-                <!-- Cancel Button (Tertiary) -->
-                <a asp-action="Index" class="w-full py-3.5 text-on-surface-variant text-sm font-semibold hover:bg-surface-container-low rounded-xl transition-colors font-inter block">
-                    Cancel
-                </a>
+                <!-- Actions -->
+                <div class="flex flex-col sm:flex-row gap-3 w-full">
+                    <button class="flex-1 py-3 px-6 border border-outline-variant text-on-surface rounded-full font-label-caps text-label-caps btn-scale hover:bg-surface-variant transition-colors">
+                        Cancel
+                    </button>
+                    <button class="flex-1 py-3 px-6 bg-error text-on-error rounded-full font-label-caps text-label-caps btn-scale hover:opacity-90 transition-opacity">
+                        Delete Discount
+                    </button>
+                </div>
             </div>
-        </form>
-
-        <!-- Subtle "Ghost" Branding Element -->
-        <div class="absolute -bottom-8 -right-8 opacity-5 pointer-events-none z-0">
-            <span class="material-symbols-outlined text-9xl text-on-surface block" data-icon="sell" style="font-variation-settings: 'FILL' 1;">sell</span>
         </div>
     </div>
-</div>
-
+</body></html>

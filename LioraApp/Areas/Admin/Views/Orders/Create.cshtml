@@ -1,465 +1,432 @@
-@model LioraApp.ViewModels.Admin.CreateOrderVM
-@using LioraApp.Utilities
+<!DOCTYPE html>
 
-@{
-    ViewData["Title"] = "Create POS Order";
-    Layout = "_AdminLayout";
-
-    var orderStatuses   = ViewBag.OrderStatuses   as IReadOnlyList<string> ?? [];
-    var paymentStatuses = ViewBag.PaymentStatuses as IReadOnlyList<string> ?? [];
-    
-    // JSON needed for dynamic product selection
-    var productsJson = ViewBag.ProductsListJson as string ?? "[]";
-}
-
-@* ── Breadcrumb ── *@
-<div class="mb-8">
-    <nav class="flex items-center gap-2 text-sm text-slate-400 mb-2">
-        <a asp-action="Index" class="hover:text-primary transition-colors">Orders</a>
-        <span class="material-symbols-outlined text-xs">chevron_right</span>
-        <span class="text-slate-700 dark:text-slate-300 font-medium">Create Order</span>
-    </nav>
-    <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Create Order</h2>
-    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Quickly create an order for a walk-in or phone customer.</p>
-</div>
-
-<form asp-action="Create" asp-controller="Orders" id="createOrderForm" method="post" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-    @Html.AntiForgeryToken()
-
-    @* ─── Left Column (Customer & Order Settings) ─── *@
-    <div class="lg:col-span-4 space-y-6">
-        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6">
-            <h3 class="font-bold text-slate-800 dark:text-slate-200 mb-4 border-b border-slate-100 dark:border-slate-800 pb-2">Customer Info</h3>
-            
-            <div asp-validation-summary="ModelOnly" class="text-sm text-red-500 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-4 py-3 mb-4 hidden [&:not(:empty)]:block"></div>
-
-            <div class="space-y-4">
-                <div>
-                    <label asp-for="CustomerName" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Full Name</label>
-                    <input asp-for="CustomerName" placeholder="e.g. Ahmed Ali" class="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm focus:ring-2 focus:ring-primary/30" />
-                    <span asp-validation-for="CustomerName" class="text-xs text-red-500 mt-1 block"></span>
-                </div>
-                <div>
-                    <label asp-for="CustomerPhone" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Phone Number</label>
-                    <input asp-for="CustomerPhone" placeholder="010..." class="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm focus:ring-2 focus:ring-primary/30" />
-                    <span asp-validation-for="CustomerPhone" class="text-xs text-red-500 mt-1 block"></span>
-                </div>
-                <div class="space-y-4 border-t border-slate-100 dark:border-slate-800 pt-4 mt-4">
-                    <h4 class="text-xs font-bold uppercase text-slate-500 tracking-wider">Shipping Details</h4>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label asp-for="ShippingCountry" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Country</label>
-                            <input asp-for="ShippingCountry" placeholder="e.g. Egypt" class="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm focus:ring-2 focus:ring-primary/30" readonly="readonly" />
-                            <span asp-validation-for="ShippingCountry" class="text-xs text-red-500 mt-1 block"></span>
-                        </div>
-                        <div>
-                            <label asp-for="ShippingState" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Governorate</label>
-                            <input asp-for="ShippingState" placeholder="e.g. Cairo" class="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm focus:ring-2 focus:ring-primary/30" />
-                            <span asp-validation-for="ShippingState" class="text-xs text-red-500 mt-1 block"></span>
-                        </div>
-                        <div class="col-span-2 sm:col-span-1">
-                            <label asp-for="ShippingCity" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">City / Region</label>
-                            <input asp-for="ShippingCity" placeholder="e.g. Nasr City" class="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm focus:ring-2 focus:ring-primary/30" />
-                            <span asp-validation-for="ShippingCity" class="text-xs text-red-500 mt-1 block"></span>
-                        </div>
-                        <div class="col-span-2">
-                            <label asp-for="ShippingStreet" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Street Address</label>
-                            <input asp-for="ShippingStreet" placeholder="e.g. 15 Abbas El Akkad St." class="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm focus:ring-2 focus:ring-primary/30" />
-                            <span asp-validation-for="ShippingStreet" class="text-xs text-red-500 mt-1 block"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6">
-            <h3 class="font-bold text-slate-800 dark:text-slate-200 mb-4 border-b border-slate-100 dark:border-slate-800 pb-2">Order Tracking</h3>
-            <div class="space-y-4">
-                <div>
-                    <label asp-for="Status" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Order Status</label>
-                    <select asp-for="Status" class="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm focus:ring-2 focus:ring-primary/30">
-                        @foreach (var s in orderStatuses) { <option value="@s">@s</option> }
-                    </select>
-                </div>
-                <div>
-                    <label asp-for="PaymentStatus" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Payment Status</label>
-                    <select asp-for="PaymentStatus" class="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm focus:ring-2 focus:ring-primary/30">
-                        @foreach (var p in paymentStatuses) { <option value="@p">@p</option> }
-                    </select>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    @* ─── Right Column (Products & Totals) ─── *@
-    <div class="lg:col-span-8 space-y-6">
-        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col h-full">
-            
-            @* Add Product Bar *@
-            <div class="p-4 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
-                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Search & Add Product</label>
-                <div class="flex gap-2">
-                    <div class="relative flex-1" id="productDropdownContainer">
-                        <div class="relative">
-                            <input type="text" id="productSearchInput" placeholder="Type to search products..." 
-                                   class="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2.5 pr-10 text-sm focus:ring-2 focus:ring-primary/30" autocomplete="off" />
-                            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">arrow_drop_down</span>
-                        </div>
-                        
-                        <ul id="customProductDropdown" class="absolute z-50 w-full mt-1 max-h-60 overflow-y-auto bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl hidden divide-y divide-slate-100 dark:divide-slate-700">
-                            <!-- Items injected via JS -->
-                        </ul>
-                    </div>
-                    <button type="button" id="btnAddProduct"
-                            class="px-5 py-2.5 bg-slate-800 dark:bg-slate-100 text-white dark:text-slate-900 rounded-lg text-sm font-bold hover:opacity-90 transition-all flex items-center gap-1">
-                        <span class="material-symbols-outlined text-sm">add</span> Add
-                    </button>
-                </div>
-                <p id="productSearchError" class="text-red-500 text-xs mt-1 hidden">Please select a valid product from the list.</p>
-            </div>
-
-            @* Items Table *@
-            <div class="flex-1 overflow-x-auto p-0">
-                <table class="w-full text-left text-sm" id="itemsTable">
-                    <thead class="bg-slate-50 dark:bg-slate-800/50">
-                        <tr>
-                            <th class="px-4 py-3 text-xs font-semibold text-slate-500">Product</th>
-                            <th class="px-4 py-3 text-xs font-semibold text-slate-500 w-24">Price</th>
-                            <th class="px-4 py-3 text-xs font-semibold text-slate-500 w-28">Quantity</th>
-                            <th class="px-4 py-3 text-xs font-semibold text-slate-500 w-24 text-right">Total</th>
-                            <th class="px-4 py-3 text-xs font-semibold text-slate-500 w-12 text-center"></th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800" id="itemsBody">
-                        <tr id="emptyRow">
-                            <td colspan="5" class="px-6 py-12 text-center text-slate-400">
-                                <span class="material-symbols-outlined text-3xl mb-2 opacity-50">shopping_basket</span>
-                                <p>No products added yet.</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            @* Footer Totals & Coupon *@
-            <div class="bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-800 p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    
-                    @* Coupon *@
-                    <div>
-                        <label asp-for="CouponCode" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Have a Coupon?</label>
-                        <div class="flex gap-2 relative">
-                            <input asp-for="CouponCode" id="CouponCode" placeholder="Enter coupon code here..." class="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-primary/30 uppercase" />
-                            <button type="button" id="btnApplyCoupon" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-lg text-sm font-semibold transition-all">Apply</button>
-                        </div>
-                        <p id="couponMessage" class="text-xs mt-2 hidden"></p>
-                    </div>
-
-                    @* Summary Table *@
-                    <div class="space-y-3">
-                        <div class="flex justify-between text-sm font-medium text-slate-600 dark:text-slate-400">
-                            <span>Subtotal</span>
-                            <span id="displaySubtotal">EGP 0.00</span>
-                        </div>
-                        <div class="flex justify-between text-sm font-medium text-emerald-600 dark:text-emerald-400 pb-3 border-b border-slate-200 dark:border-slate-700">
-                            <span>Discount</span>
-                            <span id="displayDiscount">- EGP 0.00</span>
-                        </div>
-                        <div class="flex justify-between font-bold text-lg text-slate-900 dark:text-slate-100 pt-1">
-                            <span>Total</span>
-                            <span id="displayTotal" class="text-primary">EGP 0.00</span>
-                        </div>
-
-                        <input type="hidden" id="hiddenSubtotal" asp-for="Subtotal" value="0" />
-                        <input type="hidden" id="hiddenDiscount" asp-for="DiscountAmount" value="0" />
-                    </div>
-                </div>
-
-                <div class="mt-6 flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
-                    <a asp-action="Index" class="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">Cancel</a>
-                    <button type="button" id="btnSubmitForm" class="px-6 py-2.5 bg-primary text-white rounded-lg text-sm font-bold shadow-md shadow-primary/20 hover:bg-primary-dark transition-all flex items-center gap-2">
-                        <span class="material-symbols-outlined text-sm">check_circle</span> Create Order
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</form>
-
-@section Scripts {
-    @await Html.PartialAsync("_ValidationScriptsPartial")
-
-    <script>
-        // 1. Load Products from server
-        const products = @Html.Raw(productsJson);
-        const searchInput = document.getElementById('productSearchInput');
-        const customDropdown = document.getElementById('customProductDropdown');
-        const container = document.getElementById('productDropdownContainer');
-        const itemsBody = document.getElementById('itemsBody');
-        const emptyRow = document.getElementById('emptyRow');
-        let orderItems = []; 
-        let currentSubtotal = 0;
-        let currentDiscount = 0;
-        let selectedProduct = null;
-
-        // Custom Dropdown Logic
-        function renderDropdown(filterText = '') {
-            customDropdown.innerHTML = '';
-            let filtered = products;
-            
-            if (filterText.trim() !== '') {
-                const lowerFilter = filterText.toLowerCase();
-                filtered = products.filter(p => p.name.toLowerCase().includes(lowerFilter));
-            }
-
-            if (filtered.length === 0) {
-                const li = document.createElement('li');
-                li.className = "px-4 py-3 text-sm text-slate-400 italic text-center";
-                li.innerText = "No products found.";
-                customDropdown.appendChild(li);
-            } else {
-                filtered.forEach(p => {
-                    const li = document.createElement('li');
-                    li.className = "px-4 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer transition-colors flex justify-between items-center";
-                    li.innerHTML = `
-                        <span class="font-medium">${p.name}</span>
-                        <div class="text-right">
-                            <span class="block font-mono font-bold text-xs text-primary">EGP ${p.price.toFixed(2)}</span>
-                            <span class="block text-[10px] text-slate-400">Stock: ${p.stock}</span>
-                        </div>
-                    `;
-                    
-                    li.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        selectedProduct = p;
-                        searchInput.value = p.name;
-                        closeDropdown();
-                    });
-                    
-                    customDropdown.appendChild(li);
-                });
-            }
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Liora - Create Order</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+        darkMode: "class",
+        theme: {
+        extend: {
+        "colors": {
+        "on-background": "#1e1b18",
+        "secondary-fixed-dim": "#d1c0de",
+        "secondary": "#665972",
+        "background": "#fff8f3",
+        "surface-container-highest": "#e8e1db",
+        "on-secondary-container": "#6c5f79",
+        "on-primary": "#ffffff",
+        "inverse-surface": "#33302c",
+        "error": "#ba1a1a",
+        "primary-fixed-dim": "#f2baa8",
+        "tertiary-fixed": "#eadfee",
+        "primary-container": "#c49080",
+        "on-secondary": "#ffffff",
+        "on-tertiary-container": "#38313d",
+        "outline-variant": "#d5c2bd",
+        "surface": "#fff8f3",
+        "tertiary-container": "#a299a7",
+        "tertiary": "#635b68",
+        "on-error": "#ffffff",
+        "on-tertiary-fixed-variant": "#4b4450",
+        "on-surface": "#1e1b18",
+        "on-secondary-fixed": "#21172c",
+        "tertiary-fixed-dim": "#cec3d2",
+        "on-primary-fixed-variant": "#643d30",
+        "surface-dim": "#dfd9d3",
+        "on-secondary-fixed-variant": "#4e425a",
+        "primary-fixed": "#ffdbd0",
+        "secondary-container": "#eedcfa",
+        "primary": "#7f5446",
+        "on-tertiary": "#ffffff",
+        "inverse-on-surface": "#f7efe9",
+        "on-surface-variant": "#514440",
+        "outline": "#83746f",
+        "surface-container-high": "#eee7e1",
+        "error-container": "#ffdad6",
+        "surface-bright": "#fff8f3",
+        "on-tertiary-fixed": "#1f1924",
+        "surface-container-lowest": "#ffffff",
+        "secondary-fixed": "#eedcfa",
+        "surface-container": "#f4ede7",
+        "on-primary-fixed": "#311309",
+        "surface-container-low": "#f9f2ec",
+        "on-primary-container": "#4e2a1f",
+        "on-error-container": "#93000a",
+        "inverse-primary": "#f2baa8",
+        "surface-tint": "#7f5446",
+        "surface-variant": "#e8e1db"
+        },
+        "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "2xl": "1rem",
+        "full": "9999px"
+        },
+        "spacing": {
+        "unit": "8px",
+        "stack-lg": "32px",
+        "stack-sm": "8px",
+        "gutter": "24px",
+        "container-padding-mobile": "20px",
+        "stack-md": "16px",
+        "section-gap": "120px",
+        "container-padding-desktop": "64px"
+        },
+        "fontFamily": {
+        "headline-md": ["Playfair Display"],
+        "label-caps": ["DM Sans"],
+        "headline-lg": ["Playfair Display"],
+        "body-lg": ["DM Sans"],
+        "headline-lg-mobile": ["Playfair Display"],
+        "accent-italic": ["EB Garamond"],
+        "display-lg-mobile": ["Playfair Display"],
+        "body-md": ["DM Sans"],
+        "display-lg": ["Playfair Display"],
+        "mono": ["DM Mono"]
+        },
+        "fontSize": {
+        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "500" }],
+        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "700" }],
+        "headline-lg": ["40px", { "lineHeight": "1.2", "fontWeight": "600" }],
+        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+        "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+        "accent-italic": ["20px", { "lineHeight": "1.5", "fontWeight": "400" }],
+        "display-lg-mobile": ["40px", { "lineHeight": "1.2", "fontWeight": "700" }],
+        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+        "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+        },
+        "boxShadow": {
+        "level-1": "0px 10px 30px rgba(26,16,37,0.05)",
+        "level-2": "0px 20px 50px rgba(26,16,37,0.08)"
         }
-
-        function openDropdown() {
-            customDropdown.classList.remove('hidden');
-            renderDropdown(searchInput.value);
         }
-
-        function closeDropdown() {
-            customDropdown.classList.add('hidden');
         }
-
-        searchInput.addEventListener('focus', openDropdown);
-        searchInput.addEventListener('click', openDropdown);
-        
-        searchInput.addEventListener('input', (e) => {
-            selectedProduct = null; // reset selection if typing
-            openDropdown();
-            renderDropdown(e.target.value);
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!container.contains(e.target)) {
-                closeDropdown();
-            }
-        });
-
-        // Add Product Button
-        document.getElementById('btnAddProduct').addEventListener('click', function() {
-            if (!selectedProduct) {
-                document.getElementById('productSearchError').classList.remove('hidden');
-                return;
-            }
-            document.getElementById('productSearchError').classList.add('hidden');
-
-            const id = selectedProduct.id;
-            const price = parseFloat(selectedProduct.price);
-            const maxStock = parseInt(selectedProduct.stock);
-            const name = selectedProduct.name;
-
-            // Check if already in list
-            let existing = orderItems.find(i => i.id === id);
-            if (existing) {
-                if (existing.qty < maxStock) {
-                    existing.qty++;
-                    updateRowUI(id);
-                } else {
-                    alert('Cannot add more than available stock (' + maxStock + ')');
-                }
-            } else {
-                orderItems.push({ id: id, name: name, price: price, maxStock: maxStock, qty: 1 });
-                renderNewRow(orderItems[orderItems.length - 1], orderItems.length - 1);
-            }
-            
-            // Reset search input
-            searchInput.value = '';
-            selectedProduct = null;
-            calculateTotals();
-        });
-
-        // Re-renders all row indices after a remove to keep sequential binding
-        function refreshAllIndices() {
-            orderItems.forEach((item, idx) => {
-                const tr = document.getElementById('row-' + item.id);
-                if (!tr) return;
-                tr.querySelector('input[name$=".ProductVariantId"]').name = `Items[${idx}].ProductVariantId`;
-                tr.querySelector('input[name$=".Quantity"]').name = `Items[${idx}].Quantity`;
-            });
         }
-
-        function renderNewRow(item, index) {
-            emptyRow.style.display = 'none';
-            const tr = document.createElement('tr');
-            tr.id = 'row-' + item.id;
-            tr.className = 'hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors group';
-
-            tr.innerHTML = `
-                <td class="px-4 py-3">
-                    <p class="font-medium text-slate-900 dark:text-slate-100">${item.name}</p>
-                    <input type="hidden" name="Items[${index}].ProductVariantId" value="${item.id}" />
-                </td>
-                <td class="px-4 py-3 text-slate-600 dark:text-slate-400 font-mono text-xs">EGP ${item.price.toFixed(2)}</td>
-                <td class="px-4 py-3">
-                    <input type="number" name="Items[${index}].Quantity" value="${item.qty}" min="1" max="${item.maxStock}"
-                           class="qty-input w-20 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-1 text-sm font-medium text-center focus:ring-1 focus:ring-primary/50" 
-                           data-id="${item.id}" />
-                </td>
-                <td class="px-4 py-3 text-right font-bold text-slate-900 dark:text-slate-100 font-mono text-sm" id="subtotal-${item.id}">
-                    EGP ${(item.price * item.qty).toFixed(2)}
-                </td>
-                <td class="px-4 py-3 text-center">
-                    <button type="button" class="btn-remove text-red-500 hover:text-red-700 transition-colors opacity-50 group-hover:opacity-100" data-id="${item.id}">
-                        <span class="material-symbols-outlined text-sm">close</span>
-                    </button>
-                </td>
-            `;
-
-            itemsBody.appendChild(tr);
-
-            // Bind events for this row
-            tr.querySelector('.qty-input').addEventListener('input', function(e) {
-                const newQty = parseInt(e.target.value) || 1;
-                const id = parseInt(e.target.dataset.id);
-                const obj = orderItems.find(i => i.id === id);
-                if (obj) {
-                    if (newQty > obj.maxStock) {
-                        e.target.value = obj.maxStock;
-                        obj.qty = obj.maxStock;
-                        alert('Max stock available is ' + obj.maxStock);
-                    } else if (newQty < 1) {
-                        e.target.value = 1;
-                        obj.qty = 1;
-                    } else {
-                        obj.qty = newQty;
-                    }
-                    updateRowUI(id);
-                    calculateTotals();
-                }
-            });
-
-            tr.querySelector('.btn-remove').addEventListener('click', function(e) {
-                const id = parseInt(e.currentTarget.dataset.id);
-                orderItems = orderItems.filter(i => i.id !== id);
-                document.getElementById('row-' + id).remove();
-                if (orderItems.length === 0) emptyRow.style.display = '';
-                refreshAllIndices(); // FIX: re-sequence after remove
-                calculateTotals();
-            });
-        }
-
-        function updateRowUI(id) {
-            const item = orderItems.find(i => i.id === id);
-            if (!item) return;
-            const row = document.getElementById('row-' + id);
-            row.querySelector('.qty-input').value = item.qty;
-            document.getElementById('subtotal-' + id).innerText = 'EGP ' + (item.price * item.qty).toFixed(2);
-        }
-
-        // Totals Calculation & Coupon validation
-        function calculateTotals() {
-            currentSubtotal = orderItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            
-            // Re-validate coupon quickly if applied
-            const code = document.getElementById('CouponCode').value;
-            if (code && code.trim() !== '') {
-                validateCouponOnServer(code, currentSubtotal);
-            } else {
-                currentDiscount = 0;
-                updateTotalsUI();
-            }
-        }
-
-        document.getElementById('btnApplyCoupon').addEventListener('click', function() {
-            if(orderItems.length === 0) {
-                alert("Add products first before applying a coupon.");
-                return;
-            }
-            const code = document.getElementById('CouponCode').value.trim();
-            if(code === '') {
-                currentDiscount = 0;
-                updateTotalsUI();
-                const msg = document.getElementById('couponMessage');
-                msg.className = "text-xs mt-2 hidden";
-                return;
-            }
-            validateCouponOnServer(code, currentSubtotal);
-        });
-
-        function validateCouponOnServer(code, subtotal) {
-            const btn = document.getElementById('btnApplyCoupon');
-            btn.innerHTML = '<span class="material-symbols-outlined text-sm animate-spin">refresh</span>';
-            btn.disabled = true;
-
-            const phone = document.getElementById('CustomerPhone').value.trim();
-            fetch(`/Admin/Orders/ValidateCoupon?code=${encodeURIComponent(code)}&subtotal=${subtotal}&phone=${encodeURIComponent(phone)}`)
-                .then(res => res.json())
-                .then(data => {
-                    const msg = document.getElementById('couponMessage');
-                    msg.classList.remove('hidden');
-                    if (data.success) {
-                        currentDiscount = data.discountAmount;
-                        msg.className = "text-xs mt-2 font-medium text-emerald-600 dark:text-emerald-400";
-                        msg.innerText = data.message;
-                    } else {
-                        currentDiscount = 0;
-                        msg.className = "text-xs mt-2 font-medium text-red-500";
-                        msg.innerText = data.message;
-                    }
-                    updateTotalsUI();
-                })
-                .catch(err => {
-                    console.error(err);
-                    currentDiscount = 0;
-                    updateTotalsUI();
-                })
-                .finally(() => {
-                    btn.innerHTML = 'Apply';
-                    btn.disabled = false;
-                });
-        }
-
-        function updateTotalsUI() {
-            document.getElementById('displaySubtotal').innerText = 'EGP ' + currentSubtotal.toFixed(2);
-            document.getElementById('displayDiscount').innerText = '- EGP ' + currentDiscount.toFixed(2);
-            
-            let total = currentSubtotal - currentDiscount;
-            if (total < 0) total = 0;
-            document.getElementById('displayTotal').innerText = 'EGP ' + total.toFixed(2);
-            
-            // Update hidden inputs for server form submission
-            document.getElementById('hiddenSubtotal').value = currentSubtotal;
-            document.getElementById('hiddenDiscount').value = currentDiscount;
-        }
-
-        // Final Submit Validator
-        document.getElementById('btnSubmitForm').addEventListener('click', function() {
-            if (orderItems.length === 0) {
-                alert("Please add at least one product to the order.");
-                return;
-            }
-            document.getElementById('createOrderForm').submit();
-        });
     </script>
-}
+    <style>
+        .input-focus-ring:focus-within {
+        border-color: #c49080 !important;
+        box-shadow: 0 0 0 4px rgba(196, 144, 128, 0.2);
+        opacity: 1 !important;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex font-body-md text-body-md antialiased selection:bg-primary-container selection:text-on-primary-container">
+    <!-- SideNavBar -->
+    <nav class="fixed left-0 top-0 h-full flex flex-col p-unit-stack-md bg-on-background dark:bg-on-background shadow-lg shadow-[0px_10px_30px_rgba(26,16,37,0.05)] h-full w-64 rounded-r-xl z-50">
+        <div class="mb-stack-lg px-unit-stack-md pt-unit-stack-md">
+            <h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed-dim tracking-tight">Liora Admin</h1>
+            <p class="font-label-caps text-label-caps text-surface-variant mt-1 opacity-80">Fashion Management</p>
+        </div>
+        <ul class="flex flex-col gap-2 flex-grow">
+            <li>
+                <a class="flex items-center gap-3 px-4 py-3 text-surface-variant dark:text-outline-variant hover:text-on-primary hover:bg-on-secondary-fixed-variant transition-all duration-250 ease-out rounded-xl" href="#">
+                    <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                    <span class="font-body-md text-body-md">Overview</span>
+                </a>
+            </li>
+            <li>
+                <a class="flex items-center gap-3 px-4 py-3 text-surface-variant dark:text-outline-variant hover:text-on-primary hover:bg-on-secondary-fixed-variant transition-all duration-250 ease-out rounded-xl" href="#">
+                    <span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+                    <span class="font-body-md text-body-md">Catalog</span>
+                </a>
+            </li>
+            <li>
+                <a class="flex items-center gap-3 px-4 py-3 text-on-primary bg-primary rounded-xl font-bold transition-all duration-250 ease-out shadow-level-1" href="#">
+                    <span class="material-symbols-outlined" data-icon="payments">payments</span>
+                    <span class="font-body-md text-body-md">Sales</span>
+                </a>
+            </li>
+            <li>
+                <a class="flex items-center gap-3 px-4 py-3 text-surface-variant dark:text-outline-variant hover:text-on-primary hover:bg-on-secondary-fixed-variant transition-all duration-250 ease-out rounded-xl" href="#">
+                    <span class="material-symbols-outlined" data-icon="group">group</span>
+                    <span class="font-body-md text-body-md">Customers</span>
+                </a>
+            </li>
+            <li>
+                <a class="flex items-center gap-3 px-4 py-3 text-surface-variant dark:text-outline-variant hover:text-on-primary hover:bg-on-secondary-fixed-variant transition-all duration-250 ease-out rounded-xl" href="#">
+                    <span class="material-symbols-outlined" data-icon="settings">settings</span>
+                    <span class="font-body-md text-body-md">Settings</span>
+                </a>
+            </li>
+        </ul>
+        <div class="mt-auto pt-stack-md border-t border-surface-variant/20">
+            <button class="w-full flex items-center justify-center gap-2 py-3 px-4 bg-primary-container text-on-primary-container rounded-xl font-body-md hover:opacity-90 transition-all duration-250 ease-out">
+                <span class="material-symbols-outlined text-[20px]" data-icon="add">add</span>
+                New Collection
+            </button>
+            <div class="mt-stack-md flex items-center gap-3 px-2">
+                <img alt="Liora Admin Profile" class="w-10 h-10 rounded-full object-cover border border-surface-variant/30" data-alt="A close-up portrait of a professional woman with a minimalist aesthetic, suitable for an administrative profile picture. Soft, natural lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDy-O4HP6YKgTspnLRDohGQmxPNWzIRnLDllEpDRa8yxx97_t37oofDjgMk0RX-n7gBhv8ZU_0LJLmM93I7Ovm9q1PrhV5D_P6wkMoIo6Y4ieHc_tortBR0bMNlLSdhc-eM8unC4CWmjdzWgN2wrxdnS_7O72nqL89MWqZ0E-5KGlRhzA3-7d2aEDWpGswtnyWYD4tlJs73wIg4LCFeZwgn0osVVaws8pjbDdwFk2XoxxFENK7QG-9VcYqeGGfUat3ZXZEOZdIM2Yl9" />
+                <div class="flex flex-col">
+                    <span class="font-body-md text-on-primary text-sm">Liora Admin</span>
+                    <span class="font-label-caps text-[10px] text-surface-variant">Profile</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- Main Content Canvas -->
+    <main class="flex-grow ml-64 flex flex-col min-h-screen">
+        <!-- TopAppBar -->
+        <header class="flex justify-between items-center px-gutter py-unit-stack-md bg-surface border-b border-outline-variant/20 sticky top-0 z-40 w-full transition-colors duration-250">
+            <div class="flex items-center gap-4 w-1/3">
+                <div class="relative w-full max-w-md input-focus-ring rounded-full bg-surface border border-primary/20 flex items-center px-4 py-2 transition-all duration-250">
+                    <span class="material-symbols-outlined text-on-surface-variant mr-2" data-icon="search">search</span>
+                    <input class="bg-transparent border-none outline-none w-full font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:ring-0 p-0" placeholder="Search orders, customers..." type="text" />
+                </div>
+            </div>
+            <div class="flex items-center justify-center w-1/3">
+                <span class="font-headline-md text-headline-md text-primary dark:text-primary-fixed-dim">liora</span>
+            </div>
+            <div class="flex items-center justify-end gap-4 w-1/3 text-on-surface-variant">
+                <button class="hover:text-primary hover:bg-surface-container-low p-2 rounded-full transition-colors duration-250 relative group">
+                    <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+                    <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-primary-container rounded-full border border-surface"></span>
+                </button>
+                <button class="hover:text-primary hover:bg-surface-container-low p-2 rounded-full transition-colors duration-250">
+                    <span class="material-symbols-outlined" data-icon="person">person</span>
+                </button>
+            </div>
+        </header>
+        <!-- Content Area -->
+        <div class="p-container-padding-desktop max-w-[1280px] mx-auto w-full">
+            <!-- Page Header -->
+            <div class="mb-stack-lg flex items-end justify-between">
+                <div>
+                    <a class="inline-flex items-center text-sm font-label-caps text-on-surface-variant hover:text-primary mb-2 transition-colors duration-250" href="#">
+                        <span class="material-symbols-outlined text-[16px] mr-1" data-icon="arrow_back">arrow_back</span>
+                        Back to Orders
+                    </a>
+                    <h2 class="font-headline-lg text-headline-lg text-on-surface">Create New Order</h2>
+                </div>
+                <div class="font-mono text-sm text-on-surface-variant">
+                    Draft #10492
+                </div>
+            </div>
+            <!-- 2-Column Layout -->
+            <div class="flex flex-col lg:flex-row gap-gutter">
+                <!-- Left Column (65%) -->
+                <div class="w-full lg:w-[65%] flex flex-col gap-stack-lg">
+                    <!-- Customer Information Card -->
+                    <section class="bg-surface rounded-2xl shadow-level-1 p-8 relative overflow-hidden group">
+                        <div class="flex justify-between items-center mb-stack-md">
+                            <h3 class="font-headline-md text-xl text-on-surface">Customer Information</h3>
+                            <label class="flex items-center cursor-pointer">
+                                <span class="mr-3 font-body-md text-sm text-on-surface-variant">Guest Checkout</span>
+                                <div class="relative">
+                                    <input class="sr-only peer" type="checkbox" />
+                                    <div class="w-11 h-6 bg-surface-variant rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+                                </div>
+                            </label>
+                        </div>
+                        <!-- Customer Search Picker -->
+                        <div class="mb-stack-md">
+                            <div class="relative w-full input-focus-ring rounded-full bg-surface-container-lowest border border-primary/20 flex items-center px-4 py-3 transition-all duration-250">
+                                <span class="material-symbols-outlined text-primary mr-3" data-icon="person_search">person_search</span>
+                                <input class="bg-transparent border-none outline-none w-full font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:ring-0 p-0" placeholder="Search existing customers by name or email..." type="text" />
+                            </div>
+                        </div>
+                        <!-- Customer Fields Form -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+                            <div class="flex flex-col gap-1">
+                                <label class="font-label-caps text-on-surface-variant">First Name</label>
+                                <div class="input-focus-ring rounded-lg bg-surface-container-lowest border border-primary/20 px-4 py-2.5 transition-all duration-250">
+                                    <input class="bg-transparent border-none outline-none w-full font-body-md text-on-surface focus:ring-0 p-0" type="text" />
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <label class="font-label-caps text-on-surface-variant">Last Name</label>
+                                <div class="input-focus-ring rounded-lg bg-surface-container-lowest border border-primary/20 px-4 py-2.5 transition-all duration-250">
+                                    <input class="bg-transparent border-none outline-none w-full font-body-md text-on-surface focus:ring-0 p-0" type="text" />
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-1 md:col-span-2">
+                                <label class="font-label-caps text-on-surface-variant">Email Address</label>
+                                <div class="input-focus-ring rounded-lg bg-surface-container-lowest border border-primary/20 px-4 py-2.5 transition-all duration-250">
+                                    <input class="bg-transparent border-none outline-none w-full font-body-md text-on-surface focus:ring-0 p-0" type="email" />
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-1 md:col-span-2">
+                                <label class="font-label-caps text-on-surface-variant">Phone Number</label>
+                                <div class="input-focus-ring rounded-lg bg-surface-container-lowest border border-primary/20 px-4 py-2.5 transition-all duration-250">
+                                    <input class="bg-transparent border-none outline-none w-full font-body-md text-on-surface focus:ring-0 p-0" type="tel" />
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-1 md:col-span-2 mt-2">
+                                <label class="font-label-caps text-on-surface-variant">Shipping Address</label>
+                                <div class="input-focus-ring rounded-lg bg-surface-container-lowest border border-primary/20 px-4 py-2.5 transition-all duration-250 h-24">
+                                    <textarea class="bg-transparent border-none outline-none w-full h-full resize-none font-body-md text-on-surface focus:ring-0 p-0"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Order Items Card -->
+                    <section class="bg-surface rounded-2xl shadow-level-1 p-8">
+                        <div class="flex justify-between items-center mb-stack-md">
+                            <h3 class="font-headline-md text-xl text-on-surface">Order Items</h3>
+                        </div>
+                        <!-- Product Search Picker -->
+                        <div class="mb-stack-lg">
+                            <div class="relative w-full input-focus-ring rounded-full bg-surface-container-lowest border border-primary/20 flex items-center px-4 py-3 transition-all duration-250">
+                                <span class="material-symbols-outlined text-primary mr-3" data-icon="search">search</span>
+                                <input class="bg-transparent border-none outline-none w-full font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:ring-0 p-0" placeholder="Search products to add..." type="text" />
+                                <button class="ml-2 font-label-caps text-primary hover:text-primary-container transition-colors">Browse</button>
+                            </div>
+                        </div>
+                        <!-- Added Items List -->
+                        <div class="flex flex-col gap-4">
+                            <!-- Item Row 1 -->
+                            <div class="flex items-center gap-4 p-4 rounded-xl border border-surface-variant/30 bg-surface-container-lowest hover:border-primary/20 transition-all duration-250 group">
+                                <img alt="Silk Evening Gown" class="w-16 h-16 rounded-xl object-cover" data-alt="A luxurious silk evening gown in deep plum color, draped elegantly on a mannequin in a softly lit studio with a minimalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYArY_bzVcsXaAA87JjJdUjhYdVWjKt5khOss_CI389Hx5ytDYrXXiRzZ98ICuyQLc9YT65h_8yqWq_l6I-Z1qsDLoODrJoBSKrg6v-BzcKhML0PljBBFHO0mk3fVXruDCln6J8j_oaE0K-4h4qf_c6ROHUFH8Mf2iWduK5w_-_RIzQr623Fts_41VXkUCoyfEsZT2TouzyN7zZSaAtGG_x_yuBUqnNF_-vTmBxP-E0CNViiM-xhEj28hXT87IB1MQmQUcPszPp9Vq" />
+                                <div class="flex-grow flex flex-col justify-center">
+                                    <h4 class="font-headline-md text-lg text-on-surface leading-tight mb-1">Silk Evening Gown</h4>
+                                    <div class="flex gap-2 text-sm">
+                                        <div class="relative">
+                                            <select class="appearance-none bg-transparent border-b border-outline-variant/30 font-body-md text-on-surface-variant focus:outline-none focus:border-primary pb-1 pr-6 cursor-pointer">
+                                                <option>Size S</option>
+                                                <option selected="">Size M</option>
+                                                <option>Size L</option>
+                                            </select>
+                                            <span class="material-symbols-outlined absolute right-0 top-0.5 text-[16px] text-outline-variant pointer-events-none" data-icon="arrow_drop_down">arrow_drop_down</span>
+                                        </div>
+                                        <span class="text-outline-variant">•</span>
+                                        <div class="relative">
+                                            <select class="appearance-none bg-transparent border-b border-outline-variant/30 font-body-md text-on-surface-variant focus:outline-none focus:border-primary pb-1 pr-6 cursor-pointer">
+                                                <option selected="">Plum</option>
+                                                <option>Rose</option>
+                                                <option>Ivory</option>
+                                            </select>
+                                            <span class="material-symbols-outlined absolute right-0 top-0.5 text-[16px] text-outline-variant pointer-events-none" data-icon="arrow_drop_down">arrow_drop_down</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-6">
+                                    <div class="flex items-center border border-outline-variant/30 rounded-lg bg-surface px-2 py-1">
+                                        <button class="text-on-surface-variant hover:text-primary transition-colors p-1"><span class="material-symbols-outlined text-[16px]" data-icon="remove">remove</span></button>
+                                        <input class="w-8 text-center bg-transparent border-none outline-none font-mono text-sm focus:ring-0 p-0 text-on-surface appearance-none" min="1" type="number" value="1" />
+                                        <button class="text-on-surface-variant hover:text-primary transition-colors p-1"><span class="material-symbols-outlined text-[16px]" data-icon="add">add</span></button>
+                                    </div>
+                                    <div class="text-right w-20">
+                                        <span class="font-mono text-lg text-on-surface">£850</span>
+                                    </div>
+                                    <button class="text-surface-variant hover:text-error transition-colors p-2 rounded-full hover:bg-error-container/20 opacity-0 group-hover:opacity-100 duration-250">
+                                        <span class="material-symbols-outlined text-[20px]" data-icon="delete">delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Item Row 2 -->
+                            <div class="flex items-center gap-4 p-4 rounded-xl border border-surface-variant/30 bg-surface-container-lowest hover:border-primary/20 transition-all duration-250 group">
+                                <img alt="Cashmere Wrap" class="w-16 h-16 rounded-xl object-cover" data-alt="A softly folded cashmere wrap in a gentle rose gold hue, resting on an ivory marble surface. High fashion editorial style lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCHIPqADtzoTx2DzWCMsOkLwdeI_aulxOr6Ttsft6vAXB_XnSIDIydXbTbmoYJ_V8a6mlSCPkMEVGPt_qAwCLBG__56jNr2TLstO4AyFXGUP6b_YlNDJaXfW1PNBBDXmLX1OOcSGyPC_4JaXxs2hg0-B-bey6r_pXy8ZISjpTi7T8MIoEuCkmv2KTidcUFm-whKQtgUBT01FqyEpo2ZR6QS7kXz-UaOOyQC3NlWkArTTXMSXM2zPmBPjSrPCOFRoq935wbD-NJAtGn" />
+                                <div class="flex-grow flex flex-col justify-center">
+                                    <h4 class="font-headline-md text-lg text-on-surface leading-tight mb-1">Cashmere Wrap</h4>
+                                    <div class="flex gap-2 text-sm">
+                                        <span class="font-body-md text-on-surface-variant">One Size</span>
+                                        <span class="text-outline-variant">•</span>
+                                        <div class="relative">
+                                            <select class="appearance-none bg-transparent border-b border-outline-variant/30 font-body-md text-on-surface-variant focus:outline-none focus:border-primary pb-1 pr-6 cursor-pointer">
+                                                <option selected="">Rose Gold</option>
+                                                <option>Oatmeal</option>
+                                            </select>
+                                            <span class="material-symbols-outlined absolute right-0 top-0.5 text-[16px] text-outline-variant pointer-events-none" data-icon="arrow_drop_down">arrow_drop_down</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-6">
+                                    <div class="flex items-center border border-outline-variant/30 rounded-lg bg-surface px-2 py-1">
+                                        <button class="text-on-surface-variant hover:text-primary transition-colors p-1"><span class="material-symbols-outlined text-[16px]" data-icon="remove">remove</span></button>
+                                        <input class="w-8 text-center bg-transparent border-none outline-none font-mono text-sm focus:ring-0 p-0 text-on-surface appearance-none" min="1" type="number" value="2" />
+                                        <button class="text-on-surface-variant hover:text-primary transition-colors p-1"><span class="material-symbols-outlined text-[16px]" data-icon="add">add</span></button>
+                                    </div>
+                                    <div class="text-right w-20 flex flex-col">
+                                        <span class="font-mono text-lg text-on-surface">£500</span>
+                                        <span class="font-mono text-[10px] text-on-surface-variant">£250/ea</span>
+                                    </div>
+                                    <button class="text-surface-variant hover:text-error transition-colors p-2 rounded-full hover:bg-error-container/20 opacity-0 group-hover:opacity-100 duration-250">
+                                        <span class="material-symbols-outlined text-[20px]" data-icon="delete">delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Add Custom Item Line -->
+                        <button class="mt-4 flex items-center gap-2 font-label-caps text-primary hover:text-primary-container transition-colors p-2 rounded-lg hover:bg-primary/5">
+                            <span class="material-symbols-outlined text-[18px]" data-icon="add_circle">add_circle</span>
+                            Add Custom Item
+                        </button>
+                    </section>
+                </div>
+                <!-- Right Column (35% Sticky) -->
+                <div class="w-full lg:w-[35%] flex flex-col gap-stack-lg lg:sticky lg:top-24 h-fit">
+                    <!-- Order Summary Card -->
+                    <section class="bg-surface rounded-2xl shadow-level-1 p-8 relative">
+                        <h3 class="font-headline-md text-xl text-on-surface mb-stack-md">Order Summary</h3>
+                        <div class="flex flex-col gap-4 font-body-md text-on-surface">
+                            <div class="flex justify-between items-center">
+                                <span class="text-on-surface-variant">Subtotal (3 items)</span>
+                                <span class="font-mono">£1,350.00</span>
+                            </div>
+                            <div class="flex justify-between items-center group">
+                                <span class="text-on-surface-variant flex items-center gap-1 cursor-help" title="Click amount to edit">
+                                    Shipping
+                                    <span class="material-symbols-outlined text-[14px] opacity-50" data-icon="info">info</span>
+                                </span>
+                                <div class="relative w-24">
+                                    <span class="absolute left-2 top-1 font-mono text-on-surface-variant">£</span>
+                                    <input class="w-full text-right bg-transparent border-b border-dashed border-outline-variant focus:border-primary focus:outline-none focus:border-solid font-mono px-1 py-1 group-hover:border-primary/50 transition-colors" type="text" value="25.00" />
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-on-surface-variant">Tax (20% VAT included)</span>
+                                <span class="font-mono text-on-surface-variant">£275.00</span>
+                            </div>
+                            <div class="w-full h-px bg-outline-variant/30 my-2"></div>
+                            <div class="flex justify-between items-end">
+                                <span class="font-headline-md text-2xl">Total</span>
+                                <div class="flex flex-col items-end">
+                                    <span class="font-mono text-2xl font-medium text-primary">£1,375.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Payment Method Card -->
+                    <section class="bg-surface rounded-2xl shadow-level-1 p-8">
+                        <h3 class="font-headline-md text-xl text-on-surface mb-stack-md">Payment Method</h3>
+                        <div class="relative w-full">
+                            <div class="input-focus-ring rounded-xl bg-surface-container-lowest border border-primary/20 p-1 transition-all duration-250 relative">
+                                <select class="appearance-none bg-transparent border-none w-full font-body-md text-on-surface py-3 pl-4 pr-10 focus:ring-0 cursor-pointer">
+                                    <option disabled="" selected="" value="">Select a payment method...</option>
+                                    <option value="vodafone_cash">Vodafone Cash</option>
+                                    <option value="instapay">InstaPay</option>
+                                    <option value="cod">Cash on Delivery (COD)</option>
+                                    <option value="bank_transfer">Bank Transfer</option>
+                                    <option value="credit_card">Credit Card (Link)</option>
+                                </select>
+                                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" data-icon="keyboard_arrow_down">keyboard_arrow_down</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-start gap-2 p-3 rounded-lg bg-surface-container-low text-sm text-on-surface-variant">
+                            <span class="material-symbols-outlined text-[18px] text-primary shrink-0 mt-0.5" data-icon="receipt_long">receipt_long</span>
+                            <p>An invoice link will be generated automatically and can be sent to the customer upon creation.</p>
+                        </div>
+                    </section>
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col gap-3 mt-4">
+                        <button class="w-full py-4 px-6 bg-primary-container text-on-primary-container rounded-full font-label-caps text-sm hover:opacity-90 active:scale-[0.98] transition-all duration-250 ease-out shadow-level-1 flex items-center justify-center gap-2 group">
+                            Create Order
+                            <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform duration-250" data-icon="arrow_forward">arrow_forward</span>
+                        </button>
+                        <button class="w-full py-3 px-6 bg-transparent text-tertiary rounded-full font-label-caps text-sm border border-transparent hover:border-outline-variant/50 hover:bg-surface-variant/30 active:scale-[0.98] transition-all duration-250 ease-out">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body></html>

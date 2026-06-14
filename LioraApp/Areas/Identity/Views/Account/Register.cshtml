@@ -1,195 +1,300 @@
-@model LioraApp.ViewModels.Identity.RegisterVM
-@{
-    ViewData["Title"] = "Register";
-}
+<!DOCTYPE html>
 
-@section Styles {
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Register - liora</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+        darkMode: "class",
+        theme: {
+        extend: {
+        "colors": {
+        "primary-fixed": "#ffdbd0",
+        "on-tertiary-fixed-variant": "#4b4450",
+        "outline-variant": "#d5c2bd",
+        "surface-dim": "#dfd9d3",
+        "secondary": "#665972",
+        "on-tertiary": "#ffffff",
+        "on-background": "#1e1b18",
+        "secondary-fixed-dim": "#d1c0de",
+        "surface-container-high": "#eee7e1",
+        "primary": "#7f5446",
+        "background": "#fff8f3",
+        "on-primary-fixed": "#311309",
+        "on-secondary-container": "#6c5f79",
+        "surface": "#fff8f3",
+        "outline": "#83746f",
+        "on-primary-container": "#4e2a1f",
+        "tertiary-fixed": "#eadfee",
+        "error-container": "#ffdad6",
+        "surface-container-low": "#f9f2ec",
+        "on-surface": "#1e1b18",
+        "on-error": "#ffffff",
+        "inverse-on-surface": "#f7efe9",
+        "on-secondary-fixed": "#21172c",
+        "secondary-container": "#eedcfa",
+        "on-primary-fixed-variant": "#643d30",
+        "surface-variant": "#e8e1db",
+        "error": "#ba1a1a",
+        "tertiary": "#635b68",
+        "primary-container": "#c49080",
+        "surface-container": "#f4ede7",
+        "on-tertiary-container": "#38313d",
+        "surface-container-highest": "#e8e1db",
+        "surface-container-lowest": "#ffffff",
+        "tertiary-container": "#a299a7",
+        "tertiary-fixed-dim": "#cec3d2",
+        "on-secondary-fixed-variant": "#4e425a",
+        "inverse-primary": "#f2baa8",
+        "surface-tint": "#7f5446",
+        "on-primary": "#ffffff",
+        "on-tertiary-fixed": "#1f1924",
+        "inverse-surface": "#33302c",
+        "surface-bright": "#fff8f3",
+        "primary-fixed-dim": "#f2baa8",
+        "on-secondary": "#ffffff",
+        "on-surface-variant": "#514440",
+        "on-error-container": "#93000a",
+        "secondary-fixed": "#eedcfa"
+        },
+        "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+        },
+        "spacing": {
+        "stack-lg": "32px",
+        "section-gap": "120px",
+        "stack-sm": "8px",
+        "stack-md": "16px",
+        "container-padding-desktop": "64px",
+        "container-padding-mobile": "20px",
+        "gutter": "24px",
+        "unit": "8px"
+        },
+        "fontFamily": {
+        "display-lg-mobile": [
+        "Playfair Display"
+        ],
+        "headline-lg": [
+        "Playfair Display"
+        ],
+        "display-lg": [
+        "Playfair Display"
+        ],
+        "headline-md": [
+        "Playfair Display"
+        ],
+        "body-md": [
+        "DM Sans"
+        ],
+        "body-lg": [
+        "DM Sans"
+        ],
+        "label-caps": [
+        "DM Sans"
+        ],
+        "headline-lg-mobile": [
+        "Playfair Display"
+        ],
+        "accent-italic": [
+        "EB Garamond"
+        ]
+        },
+        "fontSize": {
+        "display-lg-mobile": [
+        "40px",
+        {
+        "lineHeight": "1.2",
+        "fontWeight": "700"
+        }
+        ],
+        "headline-lg": [
+        "40px",
+        {
+        "lineHeight": "1.2",
+        "fontWeight": "600"
+        }
+        ],
+        "display-lg": [
+        "64px",
+        {
+        "lineHeight": "1.1",
+        "letterSpacing": "-0.02em",
+        "fontWeight": "700"
+        }
+        ],
+        "headline-md": [
+        "32px",
+        {
+        "lineHeight": "1.3",
+        "fontWeight": "500"
+        }
+        ],
+        "body-md": [
+        "16px",
+        {
+        "lineHeight": "1.6",
+        "fontWeight": "400"
+        }
+        ],
+        "body-lg": [
+        "18px",
+        {
+        "lineHeight": "1.6",
+        "fontWeight": "400"
+        }
+        ],
+        "label-caps": [
+        "12px",
+        {
+        "lineHeight": "1.2",
+        "letterSpacing": "0.1em",
+        "fontWeight": "700"
+        }
+        ],
+        "headline-lg-mobile": [
+        "32px",
+        {
+        "lineHeight": "1.2",
+        "fontWeight": "600"
+        }
+        ],
+        "accent-italic": [
+        "20px",
+        {
+        "lineHeight": "1.5",
+        "fontWeight": "400"
+        }
+        ]
+        }
+        },
+        },
+        }
+    </script>
     <style>
-        .geometric-pattern {
-            background-color: #101122;
-            background-image: radial-gradient(#6467f2 0.5px, transparent 0.5px);
-            background-size: 24px 24px;
+        /* Ambient Shadows */
+        .shadow-level-1 {
+        box-shadow: 0px 10px 30px rgba(26, 16, 37, 0.05);
         }
 
-        .iti {
-            width: 100%;
+        .shadow-level-2 {
+        box-shadow: 0px 20px 50px rgba(26, 16, 37, 0.08);
         }
-
-        .iti__country-container {
-            border-radius: 0.75rem 0 0 0.75rem;
-        }
-
-        .iti input.smart-phone-input {
-            padding-left: 3.75rem !important;
-        }
-
-        .field-validation-error {
-            color: #f43f5e;
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 500;
-            margin-top: 0.25rem;
+        /* Custom Input Focus Glow */
+        .input-glow:focus-within {
+        box-shadow: 0 0 0 4px rgba(196, 144, 128, 0.2);
+        border-color: #c49080;
         }
     </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@28.0.4/build/css/intlTelInput.css" />
-}
-
-<div class="flex min-h-screen">
-    <!-- Left Section: Branding & Graphics -->
-    <div class="hidden lg:flex lg:w-1/2 relative flex-col justify-between p-12 overflow-hidden bg-background-dark text-white">
-        <!-- Abstract Background -->
-        <div class="absolute inset-0 geometric-pattern opacity-20"></div>
-        <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-primary/20 rounded-full blur-3xl"></div>
-        <div class="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
-        
-        <div class="relative z-10 flex items-center gap-3">
-            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/10 backdrop-blur-sm">
-                <img src="~/images/site-logo.png" asp-append-version="true" alt="Liora logo" class="h-9 w-9 object-contain" />
-            </div>
-            <h1 class="text-2xl font-bold tracking-tight">Liora</h1>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased h-screen w-full overflow-hidden flex flex-col md:flex-row">
+    <!-- Top Navigation Placeholder (Hidden for transactional page per rules, only a simplified brand header visible on mobile) -->
+    <header class="md:hidden flex justify-between items-center px-container-padding-mobile py-stack-md w-full z-50 fixed top-0 bg-transparent">
+        <a class="font-display-lg-mobile text-display-lg-mobile text-primary tracking-tighter" href="#">ELÉGANCE</a>
+    </header>
+    <!-- Left Screen: AuthQuote (Hidden on Mobile) -->
+    <div class="hidden md:flex w-1/2 h-full bg-on-secondary-fixed relative items-center justify-center p-container-padding-desktop overflow-hidden">
+        <!-- Background Image overlaying dark void -->
+        <div class="absolute inset-0 w-full h-full opacity-30 bg-cover bg-center" data-alt="A moody, high-fashion editorial portrait of a woman draped in delicate silk, bathed in soft, ethereal lighting against a dark void. The scene exudes luxury, empowerment, and intimate elegance, perfectly complementing a sophisticated, modern Egyptian craftsmanship brand identity. The palette is rich with deep plums, soft ivories, and subtle rose gold highlights, embodying effortless grace." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD1QE0cMwKp41TzYC3uLby438OytRKfsu1KsNkfPjZwsOlQA7kvnfYdAgWkCYVwtrMWZ3gs1VT5i4ChLmbRILOeX-_iHqQifJk3Pt5JtarjDX0he-mmXLLhBYCxuy7t118kCHUngJYNFPgfKimIRAXvq1GHoZQCueNrbEp1h_sKuaONJqC7ZnCzxXPc6suY1XPiCLZzxkmRUW_B9vijrPttGY9TuW5RFkRPFsQUfHD2Z_CkLD62pw9Ulo4Jn_oqiY7fqdD7B627CCPt');">
         </div>
-        
-        <div class="relative z-10">
-            <h2 class="text-5xl font-extrabold leading-tight mb-6">Elevate your <br/><span class="text-primary">shopping experience</span></h2>
-            <p class="text-slate-400 text-lg max-w-md leading-relaxed">
-                Join our community of millions of shoppers and get access to exclusive deals, personalized recommendations, and seamless checkout.
-            </p>
-        </div>
-        
-        <div class="relative z-10 flex items-center gap-4 text-sm text-slate-500">
-            <span>© 2026 Liora</span>
-            <span class="h-1 w-1 rounded-full bg-slate-700"></span>
-            <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
-            <span class="h-1 w-1 rounded-full bg-slate-700"></span>
-            <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+        <div class="relative z-10 text-center max-w-lg">
+            <a class="font-display-lg text-display-lg text-primary-fixed tracking-tighter mb-section-gap block" href="#">ELÉGANCE</a>
+            <p class="font-headline-lg text-headline-lg text-surface-container-low mb-stack-md">"Your journey to confidence starts here."</p>
+            <p class="font-accent-italic text-accent-italic text-surface-variant opacity-80">Discover modern Egyptian craftsmanship.</p>
         </div>
     </div>
-    
-    <!-- Right Section: Registration Form -->
-    <div class="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16 bg-white dark:bg-background-dark">
-        <div class="max-w-[480px] w-full space-y-8">
-            <div class="space-y-2">
-                <h3 class="text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight">Create your account</h3>
-                <p class="text-slate-500 dark:text-slate-400">Already have an account? <a asp-action="Login" class="text-primary font-semibold hover:underline">Log in</a></p>
+    <!-- Right Screen: Registration Form -->
+    <div class="w-full md:w-1/2 h-full bg-surface flex items-center justify-center p-container-padding-mobile md:p-container-padding-desktop overflow-y-auto">
+        <div class="w-full max-w-md mt-16 md:mt-0">
+            <!-- Form Header -->
+            <div class="mb-stack-lg text-center md:text-left">
+                <span class="font-label-caps text-label-caps text-secondary uppercase tracking-[0.1em] block mb-stack-sm">JOIN liora</span>
+                <h1 class="font-headline-md text-headline-md text-on-surface mb-stack-sm">Create your account</h1>
+                <p class="font-body-md text-body-md text-on-surface-variant">Experience effortless grace and premium quality.</p>
             </div>
-            
-            <form asp-action="Register" method="post" class="space-y-6">
-                <div asp-validation-summary="ModelOnly" class="text-rose-500 text-sm font-semibold mb-4"></div>
-
-                <!-- Full Name -->
-                <div class="space-y-2">
-                    <label asp-for="FullName" class="text-sm font-semibold text-slate-700 dark:text-slate-300 px-1"></label>
-                    <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <span class="material-symbols-outlined text-slate-400 group-focus-within:text-primary transition-colors text-[20px]">person</span>
+            <!-- Registration Form -->
+            <form action="#" class="space-y-stack-md" method="POST">
+                <!-- Row 1: First & Last Name -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-stack-md">
+                    <div class="flex flex-col space-y-unit">
+                        <label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-[0.1em]" for="firstName">First Name</label>
+                        <div class="relative rounded-xl overflow-hidden input-glow border border-outline-variant/50 transition-all duration-250 ease-out bg-surface-container-lowest">
+                            <input class="w-full bg-transparent border-none text-on-surface py-3 px-4 focus:ring-0 font-body-md" id="firstName" name="firstName" placeholder="Jane" required="" type="text" />
                         </div>
-                        <input asp-for="FullName" class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="John Doe" />
                     </div>
-                    <span asp-validation-for="FullName" class="text-rose-500 text-xs mt-1 block"></span>
-                </div>
-                
-                <!-- Email Address -->
-                <div class="space-y-2">
-                    <label asp-for="Email" class="text-sm font-semibold text-slate-700 dark:text-slate-300 px-1"></label>
-                    <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <span class="material-symbols-outlined text-slate-400 group-focus-within:text-primary transition-colors text-[20px]">mail</span>
+                    <div class="flex flex-col space-y-unit">
+                        <label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-[0.1em]" for="lastName">Last Name</label>
+                        <div class="relative rounded-xl overflow-hidden input-glow border border-outline-variant/50 transition-all duration-250 ease-out bg-surface-container-lowest">
+                            <input class="w-full bg-transparent border-none text-on-surface py-3 px-4 focus:ring-0 font-body-md" id="lastName" name="lastName" placeholder="Doe" required="" type="text" />
                         </div>
-                        <input asp-for="Email" class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="name@company.com" />
                     </div>
-                    <span asp-validation-for="Email" class="text-rose-500 text-xs mt-1 block"></span>
                 </div>
-
-                <!-- Phone Number -->
-                <div class="space-y-2">
-                    <label asp-for="PhoneNumber" class="text-sm font-semibold text-slate-700 dark:text-slate-300 px-1"></label>
-                    <input asp-for="PhoneCountryIso2" type="hidden" class="js-phone-country" />
-                    <input asp-for="PhoneNumber"
-                           type="tel"
-                           autocomplete="tel"
-                           inputmode="tel"
-                           class="js-phone-input smart-phone-input w-full pr-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
-                           data-phone-required="true"
-                           data-phone-error-required="Phone number is required."
-                           data-phone-error-invalid="Please enter a valid phone number for the selected country."
-                           placeholder="+20 10 1234 5678" />
-                    <span asp-validation-for="PhoneNumber" class="text-rose-500 text-xs mt-1 block"></span>
+                <!-- Row 2: Email -->
+                <div class="flex flex-col space-y-unit">
+                    <label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-[0.1em]" for="email">Email</label>
+                    <div class="relative rounded-xl overflow-hidden input-glow border border-outline-variant/50 transition-all duration-250 ease-out bg-surface-container-lowest">
+                        <input class="w-full bg-transparent border-none text-on-surface py-3 px-4 focus:ring-0 font-body-md" id="email" name="email" placeholder="jane@example.com" required="" type="email" />
+                    </div>
                 </div>
-                
-                <!-- Password -->
-                <div class="space-y-2">
-                    <label asp-for="Password" class="text-sm font-semibold text-slate-700 dark:text-slate-300 px-1"></label>
-                    <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <span class="material-symbols-outlined text-slate-400 group-focus-within:text-primary transition-colors text-[20px]">lock</span>
-                        </div>
-                        <input asp-for="Password" class="w-full pl-11 pr-12 py-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="Create a strong password" />
-                        <button type="button" onclick="const p = document.getElementById('Password'); p.type = p.type === 'password' ? 'text' : 'password';" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors">
-                            <span class="material-symbols-outlined text-[20px]">visibility</span>
+                <!-- Row 3: Password -->
+                <div class="flex flex-col space-y-unit">
+                    <label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-[0.1em]" for="password">Password</label>
+                    <div class="relative rounded-xl overflow-hidden input-glow border border-outline-variant/50 transition-all duration-250 ease-out bg-surface-container-lowest flex items-center">
+                        <input class="w-full bg-transparent border-none text-on-surface py-3 px-4 focus:ring-0 font-body-md" id="password" name="password" placeholder="••••••••" required="" type="password" />
+                        <button aria-label="Toggle password visibility" class="absolute right-4 text-outline hover:text-primary transition-colors duration-250 focus:outline-none" type="button">
+                            <span class="material-symbols-outlined" data-icon="visibility">visibility</span>
                         </button>
                     </div>
-                    <span asp-validation-for="Password" class="text-rose-500 text-xs mt-1 block"></span>
                 </div>
-                
-                <!-- Confirm Password -->
-                <div class="space-y-2">
-                    <label asp-for="ConfirmPassword" class="text-sm font-semibold text-slate-700 dark:text-slate-300 px-1"></label>
-                    <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <span class="material-symbols-outlined text-slate-400 group-focus-within:text-primary transition-colors text-[20px]">lock_reset</span>
-                        </div>
-                        <input asp-for="ConfirmPassword" class="w-full pl-11 pr-12 py-3.5 rounded-xl border border-primary bg-primary/5 dark:bg-primary/10 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="Repeat your password" />
-                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center text-primary">
-                            <span class="material-symbols-outlined text-[20px] font-bold">check_circle</span>
-                        </div>
+                <!-- Password Strength Meter (4 segments) -->
+                <div class="flex space-x-2 mt-unit">
+                    <div class="h-1 w-1/4 rounded-full bg-primary-container"></div>
+                    <div class="h-1 w-1/4 rounded-full bg-surface-variant"></div>
+                    <div class="h-1 w-1/4 rounded-full bg-surface-variant"></div>
+                    <div class="h-1 w-1/4 rounded-full bg-surface-variant"></div>
+                </div>
+                <!-- Row 4: Confirm Password -->
+                <div class="flex flex-col space-y-unit pt-stack-sm">
+                    <label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-[0.1em]" for="confirmPassword">Confirm Password</label>
+                    <div class="relative rounded-xl overflow-hidden input-glow border border-outline-variant/50 transition-all duration-250 ease-out bg-surface-container-lowest">
+                        <input class="w-full bg-transparent border-none text-on-surface py-3 px-4 focus:ring-0 font-body-md" id="confirmPassword" name="confirmPassword" placeholder="••••••••" required="" type="password" />
                     </div>
-                    <span asp-validation-for="ConfirmPassword" class="text-rose-500 text-xs mt-1 block"></span>
                 </div>
-                
-                <!-- Terms -->
-                <div class="flex items-start gap-3 px-1 py-1">
-                    <input type="checkbox" id="terms" required class="mt-1 size-4 rounded border-slate-300 text-primary focus:ring-primary" />
-                    <label for="terms" class="text-sm text-slate-600 dark:text-slate-400 leading-snug">
-                        I agree to the <a href="#" class="text-primary font-medium">Terms of Service</a> and <a href="#" class="text-primary font-medium">Privacy Policy</a>.
-                    </label>
+                <!-- Terms Checkbox -->
+                <div class="flex items-start py-stack-sm">
+                    <div class="flex items-center h-5">
+                        <input aria-describedby="terms-description" class="w-5 h-5 bg-surface-container-lowest border-outline-variant rounded-md text-primary focus:ring-primary focus:ring-offset-surface" id="terms" name="terms" required="" type="checkbox" />
+                    </div>
+                    <div class="ml-3 text-sm">
+                        <label class="font-body-md text-body-md text-on-surface-variant" for="terms">
+                            I agree to the <a class="text-primary hover:underline transition-all duration-250" href="#">Terms</a> &amp; <a class="text-primary hover:underline transition-all duration-250" href="#">Privacy Policy</a>
+                        </label>
+                    </div>
                 </div>
-                
-                <!-- Action Button -->
-                <button type="submit" class="w-full py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl transition-all shadow-lg shadow-primary/25 flex items-center justify-center gap-2 group">
-                    <span>Create Account</span>
-                    <span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                <!-- Submit Button -->
+                <button class="w-full bg-primary-container text-on-primary py-4 px-6 rounded-full font-label-caps text-label-caps uppercase tracking-[0.1em] hover:opacity-90 active:scale-95 transition-all duration-250 ease-out shadow-level-1 hover:shadow-level-2 mt-stack-md" type="submit">
+                    CREATE MY ACCOUNT
                 </button>
-                
             </form>
-            
-            <!-- Social Login Divider -->
-            <div class="relative py-4">
-                <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t border-slate-200 dark:border-slate-800"></div>
-                </div>
-                <div class="relative flex justify-center text-sm">
-                    <span class="px-4 bg-white dark:bg-background-dark text-slate-500 uppercase tracking-widest text-[10px] font-bold">Or continue with</span>
-                </div>
+            <!-- Footer Link -->
+            <div class="mt-stack-lg text-center">
+                <p class="font-body-md text-body-md text-on-surface-variant">
+                    Already have an account?
+                    <a class="text-primary hover:underline transition-all duration-250 font-medium inline-flex items-center" href="#">
+                        Sign in <span class="material-symbols-outlined ml-1 text-sm" data-icon="arrow_forward">arrow_forward</span>
+                    </a>
+                </p>
             </div>
-            
-            <form asp-area="Identity" asp-controller="ExternalLogin" asp-action="ExternalLogin" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
-                <div class="grid grid-cols-1 gap-4">
-                    <button type="submit" name="provider" value="Google" class="flex items-center justify-center gap-3 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                        <svg class="size-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                        </svg>
-                        <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Google</span>
-                    </button>
-                </div>
-            </form>
         </div>
     </div>
-</div>
-
-@section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@28.0.4/build/js/intlTelInput.min.js"></script>
-    <script src="~/js/phone-input.js" asp-append-version="true"></script>
-}
+</body></html>

@@ -1,74 +1,112 @@
-@inject Microsoft.Extensions.Localization.IStringLocalizer<LioraApp.Resources.SharedResource> SR
-@model OrderSuccessCustomerVM
+@model LioraApp.ViewModels.Customer.OrderSuccessCustomerVM
 @{
-    ViewData["Title"] = SR["OrderPlaced"];
-    var etaFrom = Model.EstimatedDeliveryFrom?.ToString("MMM dd, yyyy") ?? SR["Tbd"].Value;
-    var etaTo = Model.EstimatedDeliveryTo?.ToString("MMM dd, yyyy") ?? etaFrom;
-    var email = string.IsNullOrWhiteSpace(Model.CustomerEmail) ? SR["YourEmailAddress"].Value : Model.CustomerEmail;
-    var statusMessage = Model.IsPaid
-        ? SR["OrderPlacedStatusPaid"].Value
-        : SR["OrderPlacedStatusPending"].Value;
+    Layout = "_CustomerLayout";
+    ViewData["Title"] = "Order Confirmed";
 }
 
-<section class="relative flex min-h-[calc(100vh-10rem)] items-center justify-center overflow-hidden px-4 py-10 sm:px-6 lg:px-8">
-    <div class="pointer-events-none absolute left-1/4 top-1/4 -z-10 h-80 w-80 rounded-full bg-primary/20 blur-3xl"></div>
-    <div class="pointer-events-none absolute bottom-1/4 right-1/4 -z-10 h-[26rem] w-[26rem] rounded-full bg-indigo-200/30 blur-3xl"></div>
+<style>
+    .check-anim {
+        stroke-dasharray: 100;
+        stroke-dashoffset: 100;
+        animation: dash 1s ease-out forwards;
+        animation-delay: 0.2s;
+    }
+    @@keyframes dash {
+        to {
+            stroke-dashoffset: 0;
+        }
+    }
+    .scale-in {
+        animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    @@keyframes scaleIn {
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    .fade-up {
+        animation: fadeUp 0.6s ease-out forwards;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    .fade-up-delay-1 { animation-delay: 0.3s; }
+    .fade-up-delay-2 { animation-delay: 0.5s; }
+    .fade-up-delay-3 { animation-delay: 0.7s; }
+    
+    @@keyframes fadeUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
 
-    <div class="w-full max-w-3xl rounded-[28px] border border-slate-200/70 bg-white/95 p-8 text-center shadow-[0_24px_70px_rgba(15,23,42,0.08)] backdrop-blur-xl sm:p-12">
-        <div class="mx-auto mb-8 flex h-24 w-24 items-center justify-center">
-            <div class="absolute h-24 w-24 rounded-full bg-primary/10 blur-md"></div>
-            <div class="relative flex h-20 w-20 items-center justify-center rounded-full bg-primary text-white shadow-[0_12px_30px_rgba(70,72,212,0.28)]">
-                <span class="material-symbols-outlined text-4xl" style="font-variation-settings:'FILL' 1">check</span>
-            </div>
-        </div>
+<main class="flex-grow flex items-center justify-center py-section-gap px-container-padding-mobile md:px-container-padding-desktop">
+<div class="w-full max-w-[560px] mx-auto text-center">
+<!-- Success Icon -->
+<div class="scale-in mx-auto w-[100px] h-[100px] rounded-full bg-primary/15 flex items-center justify-center mb-stack-lg shadow-[0_10px_30px_rgba(26,16,37,0.05)]">
+<svg class="w-12 h-12 text-primary" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<path class="check-anim" d="M20 6L9 17l-5-5"></path>
+</svg>
+</div>
 
-        <div class="mx-auto mb-10 max-w-2xl space-y-4">
-            <h1 class="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">@SR["OrderPlaced"]</h1>
-            <p class="text-base leading-7 text-slate-500 sm:text-lg">@statusMessage</p>
+<!-- Headlines -->
+<h1 class="fade-up fade-up-delay-1 font-headline-md text-headline-md text-primary mb-stack-sm">Your Order is Confirmed! ✨</h1>
+<p class="fade-up fade-up-delay-1 font-body-lg text-body-lg text-on-surface-variant mb-stack-lg max-w-md mx-auto">
+    We'll prepare your order and contact you for delivery details.
+</p>
 
-            <div class="mt-4 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-2">
-                <span class="text-sm font-medium text-slate-500">@SR["OrderNumber"]:</span>
-                <span class="font-mono text-sm font-bold tracking-[0.18em] text-primary">#ORD-@Model.Id</span>
-            </div>
-        </div>
+<!-- Order Summary Card -->
+<div class="fade-up fade-up-delay-2 bg-surface-container-lowest rounded-xl p-6 md:p-8 mb-stack-lg shadow-[0_10px_30px_rgba(26,16,37,0.05)] text-left border border-outline-variant/20">
+<div class="flex justify-between items-center mb-6 pb-6 border-b border-outline-variant/20">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">ORDER ID</p>
+<p class="font-body-md text-body-md text-on-surface">#@Model.Id</p>
+</div>
+<div class="text-right">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">DATE</p>
+<p class="font-body-md text-body-md text-on-surface">@Model.CreatedAt.ToString("MMM dd, yyyy")</p>
+</div>
+</div>
+<div class="pt-2 flex justify-between items-end">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">PAYMENT STATUS</p>
+<p class="font-body-md text-body-md text-on-surface flex items-center gap-1">
+    @if (Model.PaymentStatus == LioraApp.Utilities.SD.Payment_Paid)
+    {
+        <span class="material-symbols-outlined text-[18px] text-primary">check_circle</span>
+        <text>Verified</text>
+    }
+    else
+    {
+        <span class="material-symbols-outlined text-[18px]">pending</span>
+        <text>@Model.PaymentStatus</text>
+    }
+</p>
+</div>
+<div class="text-right">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">ESTIMATED DELIVERY</p>
+<p class="font-body-md text-body-md text-primary">@(Model.EstimatedDeliveryFrom?.ToString("MMM dd") ?? "") - @(Model.EstimatedDeliveryTo?.ToString("MMM dd") ?? "")</p>
+</div>
+</div>
+</div>
 
-        <div class="mb-10 grid gap-5 text-left md:grid-cols-2">
-            <div class="rounded-2xl border border-slate-200/80 bg-slate-50/80 p-6">
-                <div class="mb-3 flex items-center gap-2 text-slate-500">
-                    <span class="material-symbols-outlined text-xl">local_shipping</span>
-                    <h3 class="text-sm font-semibold uppercase tracking-[0.14em]">@SR["EstimatedDelivery"]</h3>
-                </div>
-                <p class="text-lg font-semibold text-slate-900">@etaFrom - @etaTo</p>
-                <p class="mt-2 text-sm text-slate-500">@Model.ShippingLabel</p>
-            </div>
+<!-- CTAs -->
+<div class="fade-up fade-up-delay-3 flex flex-col gap-4 mb-section-gap">
+<a href="@Url.Action("Details", "Orders", new { id = Model.Id, area = "Customer" })" class="w-full bg-primary-container text-on-primary-container font-label-caps text-label-caps py-4 px-8 rounded-full hover:scale-[0.98] transition-transform duration-250 ease-out shadow-[0_10px_30px_rgba(26,16,37,0.05)] hover:shadow-[0_20px_50px_rgba(26,16,37,0.08)] inline-block">
+    TRACK MY ORDER
+</a>
+<a href="@Url.Action("Index", "Products", new { area = "Customer" })" class="w-full bg-transparent border border-primary text-primary font-label-caps text-label-caps py-4 px-8 rounded-full hover:bg-primary/5 transition-colors duration-250 ease-out inline-block">
+    CONTINUE SHOPPING
+</a>
+</div>
 
-            <div class="rounded-2xl border border-slate-200/80 bg-slate-50/80 p-6">
-                <div class="mb-3 flex items-center gap-2 text-slate-500">
-                    <span class="material-symbols-outlined text-xl">mail</span>
-                    <h3 class="text-sm font-semibold uppercase tracking-[0.14em]">@SR["ConfirmationSentTo"]</h3>
-                </div>
-                <p class="truncate text-base font-semibold text-slate-900">@email</p>
-                <p class="mt-2 text-sm text-slate-500">@SR["ShippingAndPaymentUpdatesHere"]</p>
-            </div>
-        </div>
-
-        <div class="flex flex-col justify-center gap-4 sm:flex-row">
-            <a asp-area="Customer"
-               asp-controller="Orders"
-               asp-action="Details"
-               asp-route-id="@Model.Id"
-               class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-primary to-indigo-500 px-8 py-3.5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(70,72,212,0.22)] transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_28px_rgba(70,72,212,0.28)]">
-                @SR["TrackMyOrder"]
-                <span class="material-symbols-outlined text-sm">arrow_forward</span>
-            </a>
-
-            <a asp-area="Customer"
-               asp-controller="Products"
-               asp-action="Index"
-               class="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-slate-200 bg-white px-8 py-3.5 text-sm font-bold text-primary transition-colors hover:border-slate-300 hover:bg-slate-50">
-                <span class="material-symbols-outlined text-sm">storefront</span>
-                @SR["ContinueShopping"]
-            </a>
-        </div>
-    </div>
-</section>
+<!-- Brand Moment -->
+<div class="fade-up fade-up-delay-3 font-accent-italic text-accent-italic text-primary/80 italic">
+    Thank you for choosing liora. Wear it. Own it. Wear your confidence.
+</div>
+</div>
+</main>

@@ -1,158 +1,521 @@
-@model IEnumerable<GiftBundleIndexVM>
+<!DOCTYPE html>
 
-@{
-    ViewData["Title"] = "Gift Bundles";
-    var bundles = Model.ToList();
-}
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Liora - Gift Bundles</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&amp;family=Playfair+Display:wght@500;600;700&amp;family=EB+Garamond:ital@1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+        darkMode: "class",
+        theme: {
+        extend: {
+        "colors": {
+        "on-error": "#ffffff",
+        "inverse-on-surface": "#f7efe9",
+        "on-secondary-fixed": "#21172c",
+        "error": "#ba1a1a",
+        "secondary-container": "#eedcfa",
+        "on-primary-fixed-variant": "#643d30",
+        "surface-variant": "#e8e1db",
+        "primary-container": "#c49080",
+        "surface-container": "#f4ede7",
+        "tertiary": "#635b68",
+        "surface-container-highest": "#e8e1db",
+        "on-tertiary-container": "#38313d",
+        "tertiary-fixed-dim": "#cec3d2",
+        "on-secondary-fixed-variant": "#4e425a",
+        "inverse-primary": "#f2baa8",
+        "surface-tint": "#7f5446",
+        "on-primary": "#ffffff",
+        "surface-container-lowest": "#ffffff",
+        "tertiary-container": "#a299a7",
+        "surface-bright": "#fff8f3",
+        "primary-fixed-dim": "#f2baa8",
+        "on-secondary": "#ffffff",
+        "on-tertiary-fixed": "#1f1924",
+        "inverse-surface": "#33302c",
+        "secondary-fixed": "#eedcfa",
+        "on-surface-variant": "#514440",
+        "on-error-container": "#93000a",
+        "outline-variant": "#d5c2bd",
+        "primary-fixed": "#ffdbd0",
+        "on-tertiary-fixed-variant": "#4b4450",
+        "secondary-fixed-dim": "#d1c0de",
+        "surface-container-high": "#eee7e1",
+        "primary": "#7f5446",
+        "surface-dim": "#dfd9d3",
+        "secondary": "#665972",
+        "on-tertiary": "#ffffff",
+        "on-background": "#1e1b18",
+        "on-primary-fixed": "#311309",
+        "background": "#fff8f3",
+        "surface": "#fff8f3",
+        "outline": "#83746f",
+        "on-secondary-container": "#6c5f79",
+        "on-primary-container": "#4e2a1f",
+        "error-container": "#ffdad6",
+        "tertiary-fixed": "#eadfee",
+        "on-surface": "#1e1b18",
+        "surface-container-low": "#f9f2ec"
+        },
+        "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px",
+        "bundle": "16px"
+        },
+        "spacing": {
+        "stack-sm": "8px",
+        "stack-md": "16px",
+        "container-padding-desktop": "64px",
+        "container-padding-mobile": "20px",
+        "stack-lg": "32px",
+        "section-gap": "120px",
+        "gutter": "24px",
+        "unit": "8px"
+        },
+        "fontFamily": {
+        "label-caps": [
+        "DM Sans"
+        ],
+        "headline-lg-mobile": [
+        "Playfair Display"
+        ],
+        "accent-italic": [
+        "EB Garamond"
+        ],
+        "display-lg-mobile": [
+        "Playfair Display"
+        ],
+        "headline-lg": [
+        "Playfair Display"
+        ],
+        "display-lg": [
+        "Playfair Display"
+        ],
+        "headline-md": [
+        "Playfair Display"
+        ],
+        "body-md": [
+        "DM Sans"
+        ],
+        "body-lg": [
+        "DM Sans"
+        ]
+        },
+        "fontSize": {
+        "label-caps": [
+        "12px",
+        {
+        "lineHeight": "1.2",
+        "letterSpacing": "0.1em",
+        "fontWeight": "700"
+        }
+        ],
+        "headline-lg-mobile": [
+        "32px",
+        {
+        "lineHeight": "1.2",
+        "fontWeight": "600"
+        }
+        ],
+        "accent-italic": [
+        "20px",
+        {
+        "lineHeight": "1.5",
+        "fontWeight": "400"
+        }
+        ],
+        "display-lg-mobile": [
+        "40px",
+        {
+        "lineHeight": "1.2",
+        "fontWeight": "700"
+        }
+        ],
+        "headline-lg": [
+        "40px",
+        {
+        "lineHeight": "1.2",
+        "fontWeight": "600"
+        }
+        ],
+        "display-lg": [
+        "64px",
+        {
+        "lineHeight": "1.1",
+        "letterSpacing": "-0.02em",
+        "fontWeight": "700"
+        }
+        ],
+        "headline-md": [
+        "32px",
+        {
+        "lineHeight": "1.3",
+        "fontWeight": "500"
+        }
+        ],
+        "body-md": [
+        "16px",
+        {
+        "lineHeight": "1.6",
+        "fontWeight": "400"
+        }
+        ],
+        "body-lg": [
+        "18px",
+        {
+        "lineHeight": "1.6",
+        "fontWeight": "400"
+        }
+        ]
+        }
+        },
+        },
+        }
+    </script>
+    <style>
+        body {
+        background-color: theme('colors.background');
+        color: theme('colors.on-background');
+        }
 
-<div class="space-y-6">
-    <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-            <nav class="mb-2 flex items-center gap-2 text-sm text-slate-500">
-                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="transition-colors hover:text-primary">Dashboard</a>
-                <span class="material-symbols-outlined text-sm">chevron_right</span>
-                <span class="font-medium text-slate-900">Gift Bundles</span>
-            </nav>
-            <h1 class="text-3xl font-black tracking-tight">Gift Bundles</h1>
-            <p class="mt-1 text-slate-500">Build one-price offers from multiple products and control what appears in the home page bundle section.</p>
-        </div>
+        .dark body {
+        background-color: #1e1b18; /* Dark mode override for background */
+        color: #fff8f3; /* Dark mode override for text */
+        }
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+        width: 8px;
+        }
 
-        <a asp-area="Admin" asp-controller="GiftBundles" asp-action="Create"
-           class="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90">
-            <span class="material-symbols-outlined text-[18px]">add</span>
-            New Gift Bundle
-        </a>
-    </div>
+        ::-webkit-scrollbar-track {
+        background: transparent;
+        }
 
-    <div class="grid gap-4 md:grid-cols-4">
-        <div class="rounded-2xl border border-slate-200 bg-white p-4">
-            <p class="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Total Bundles</p>
-            <p class="mt-2 text-3xl font-black text-slate-900">@bundles.Count</p>
-        </div>
-        <div class="rounded-2xl border border-slate-200 bg-white p-4">
-            <p class="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Active</p>
-            <p class="mt-2 text-3xl font-black text-emerald-600">@bundles.Count(bundle => bundle.IsActive)</p>
-        </div>
-        <div class="rounded-2xl border border-slate-200 bg-white p-4">
-            <p class="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Featured on Home</p>
-            <p class="mt-2 text-3xl font-black text-primary">@bundles.Count(bundle => bundle.IsFeatured)</p>
-        </div>
-        <div class="rounded-2xl border border-slate-200 bg-white p-4">
-            <p class="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Total Savings</p>
-            <p class="mt-2 text-3xl font-black text-slate-900">@bundles.Sum(bundle => Math.Max(0, bundle.OriginalTotal - bundle.BundlePrice)).ToString("0.00") EGP</p>
-        </div>
-    </div>
+        ::-webkit-scrollbar-thumb {
+        background-color: theme('colors.surface-variant');
+        border-radius: theme('borderRadius.full');
+        }
 
-    @if (!bundles.Any())
-    {
-        <div class="rounded-[2rem] border border-dashed border-slate-300 bg-white p-12 text-center">
-            <span class="material-symbols-outlined text-5xl text-slate-300">redeem</span>
-            <h2 class="mt-4 text-2xl font-black text-slate-900">No gift bundles yet</h2>
-            <p class="mt-2 text-slate-500">Create your first grouped offer and pin it to the home page.</p>
-            <a asp-area="Admin" asp-controller="GiftBundles" asp-action="Create"
-               class="mt-5 inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90">
-                <span class="material-symbols-outlined text-[18px]">add</span>
-                Create First Bundle
+        .dark ::-webkit-scrollbar-thumb {
+        background-color: #33302c;
+        }
+
+        .ambient-shadow-1 {
+        box-shadow: 0px 10px 30px rgba(26, 16, 37, 0.05);
+        }
+
+        .dark .ambient-shadow-1 {
+        box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .ambient-shadow-2 {
+        box-shadow: 0px 20px 50px rgba(26, 16, 37, 0.08);
+        }
+
+        .dark .ambient-shadow-2 {
+        box-shadow: 0px 20px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        .transition-ease-out {
+        transition-property: all;
+        transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+        transition-duration: 250ms;
+        }
+
+        /* Toggle switch styles */
+        .toggle-checkbox:checked {
+        right: 0;
+        border-color: theme('colors.primary');
+        }
+
+        .toggle-checkbox:checked + .toggle-label {
+        background-color: theme('colors.primary');
+        }
+
+        .dark .toggle-checkbox:checked + .toggle-label {
+        background-color: theme('colors.primary');
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md antialiased min-h-screen flex">
+    <!-- SideNavBar -->
+    <nav class="fixed left-0 top-0 h-full w-[240px] bg-surface-container-low dark:bg-[#2c2825] border-r border-outline-variant dark:border-[#4a4541] flex flex-col overflow-y-auto z-40 transition-ease-out hidden md:flex">
+        <div class="px-6 py-8">
+            <h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-[#c49080]">Liora</h1>
+            <p class="font-label-caps text-label-caps text-on-surface-variant dark:text-[#a299a7] mt-2">Enterprise Portal</p>
+        </div>
+        <div class="flex-1 px-4 py-4 space-y-2">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-[#d1c0de] hover:bg-surface-container-highest dark:hover:bg-[#3d3733] hover:text-on-surface dark:hover:text-[#fff8f3] transition-all duration-200 ease-in-out group" href="#">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+                <span>Overview</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-surface-container-high dark:bg-[#3d3733] text-primary dark:text-[#c49080] font-bold border-l-2 border-primary dark:border-[#c49080] transition-all duration-200 ease-in-out" href="#">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+                <span>Catalog</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-[#d1c0de] hover:bg-surface-container-highest dark:hover:bg-[#3d3733] hover:text-on-surface dark:hover:text-[#fff8f3] transition-all duration-200 ease-in-out group" href="#">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">payments</span>
+                <span>Sales</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-[#d1c0de] hover:bg-surface-container-highest dark:hover:bg-[#3d3733] hover:text-on-surface dark:hover:text-[#fff8f3] transition-all duration-200 ease-in-out group" href="#">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">group</span>
+                <span>Customers</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-[#d1c0de] hover:bg-surface-container-highest dark:hover:bg-[#3d3733] hover:text-on-surface dark:hover:text-[#fff8f3] transition-all duration-200 ease-in-out group" href="#">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+                <span>Settings</span>
             </a>
         </div>
-    }
-    else
-    {
-        <div class="grid gap-5 xl:grid-cols-2">
-            @foreach (var bundle in bundles)
-            {
-                <article class="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg @(bundle.IsFeatured ? "ring-2 ring-primary/15" : string.Empty)">
-                    <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                        <div class="space-y-3">
-                            <div class="flex flex-wrap items-center gap-2">
-                                <h2 class="text-2xl font-black text-slate-900">@bundle.Name</h2>
-                                @if (bundle.IsFeatured)
-                                {
-                                    <span class="rounded-full bg-primary/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-primary">Home Featured</span>
-                                }
-                                <span class="rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] @(bundle.IsActive ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-500")">
-                                    @(bundle.IsActive ? "Active" : "Inactive")
-                                </span>
-                            </div>
-
-                            @if (!string.IsNullOrWhiteSpace(bundle.Description))
-                            {
-                                <p class="max-w-2xl text-sm leading-6 text-slate-500">@bundle.Description</p>
-                            }
-
-                            <div class="flex flex-wrap items-end gap-3">
-                                <span class="text-3xl font-black text-primary">@bundle.BundlePrice.ToString("0.00") EGP</span>
-                                @if (bundle.OriginalTotal > 0)
-                                {
-                                    <span class="pb-1 text-lg text-slate-400 line-through">@bundle.OriginalTotal.ToString("0.00") EGP</span>
-                                }
-                                <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">
-                                    Save @Math.Max(0, bundle.OriginalTotal - bundle.BundlePrice).ToString("0.00") EGP
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-wrap items-center gap-2">
-                            <form asp-area="Admin" asp-controller="GiftBundles" asp-action="SetFeatured" method="post">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="id" value="@bundle.Id" />
-                                <button type="submit"
-                                        class="inline-flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-4 py-2.5 text-sm font-semibold text-primary transition hover:bg-primary/10">
-                                    <span class="material-symbols-outlined text-[18px]">star</span>
-                                    @(bundle.IsFeatured ? "Featured" : "Feature")
-                                </button>
-                            </form>
-
-                            <form asp-area="Admin" asp-controller="GiftBundles" asp-action="ToggleActive" method="post">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="id" value="@bundle.Id" />
-                                <button type="submit"
-                                        class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
-                                    <span class="material-symbols-outlined text-[18px]">toggle_on</span>
-                                    @(bundle.IsActive ? "Deactivate" : "Activate")
-                                </button>
-                            </form>
-
-                            <a asp-area="Admin" asp-controller="GiftBundles" asp-action="Edit" asp-route-id="@bundle.Id"
-                               class="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800">
-                                <span class="material-symbols-outlined text-[18px]">edit</span>
-                                Edit
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="mt-6 flex flex-wrap items-center gap-3">
-                        @for (var index = 0; index < bundle.Products.Count; index++)
-                        {
-                            var product = bundle.Products[index];
-                            <div class="flex items-center gap-3">
-                                <div class="flex items-center gap-3 rounded-[1.25rem] border border-slate-200 bg-slate-50 px-3 py-3">
-                                    <div class="size-16 overflow-hidden rounded-xl bg-white">
-                                        @if (!string.IsNullOrWhiteSpace(product.ImageUrl))
-                                        {
-                                            <img src="@product.ImageUrl" alt="@product.ProductName" class="h-full w-full object-cover" />
-                                        }
-                                        else
-                                        {
-                                            <div class="flex h-full w-full items-center justify-center bg-slate-100 text-slate-300">
-                                                <span class="material-symbols-outlined">image</span>
-                                            </div>
-                                        }
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-bold text-slate-900">@product.ProductName</p>
-                                        <p class="mt-1 text-xs text-slate-500">Product ID: @product.ProductId</p>
-                                    </div>
-                                </div>
-                                @if (index < bundle.Products.Count - 1)
-                                {
-                                    <span class="material-symbols-outlined text-2xl text-slate-300">add</span>
-                                }
-                            </div>
-                        }
-                    </div>
-                </article>
-            }
+        <div class="p-6 mt-auto">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-primary-container dark:bg-[#4e2a1f] flex items-center justify-center text-on-primary-container dark:text-[#f2baa8] font-bold">
+                    LA
+                </div>
+                <div>
+                    <p class="font-body-md text-on-surface dark:text-[#fff8f3] font-bold">Liora Admin</p>
+                </div>
+            </div>
         </div>
-    }
-</div>
+    </nav>
+    <!-- TopNavBar -->
+    <header class="fixed top-0 right-0 h-[60px] w-full md:w-[calc(100%-240px)] bg-surface-container dark:bg-[#1e1b18] border-b border-outline-variant dark:border-[#4a4541] flex items-center justify-between px-gutter z-30 transition-ease-out">
+        <div class="flex items-center gap-4 md:hidden">
+            <span class="material-symbols-outlined text-primary dark:text-[#c49080] font-bold cursor-pointer">menu</span>
+            <span class="font-headline-md text-headline-md font-extrabold text-primary dark:text-[#c49080]">Liora</span>
+        </div>
+        <div class="hidden md:flex flex-1 max-w-md ml-4">
+            <div class="relative w-full">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-on-surface-variant dark:text-[#a299a7]">search</span>
+                <input class="w-full bg-surface dark:bg-[#2c2825] border border-outline-variant dark:border-[#4a4541] rounded-full py-2 pl-10 pr-4 text-body-md text-on-surface dark:text-[#fff8f3] focus:outline-none focus:border-primary dark:focus:border-[#c49080] focus:ring-1 focus:ring-primary dark:focus:ring-[#c49080] transition-ease-out placeholder:text-on-surface-variant dark:placeholder:text-[#a299a7]" placeholder="Search bundles..." type="text" />
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <button class="p-2 rounded-full text-on-surface-variant dark:text-[#d1c0de] hover:bg-surface-container-highest dark:hover:bg-[#3d3733] transition-colors duration-200 ease-in-out cursor-pointer active:scale-95">
+                <span class="material-symbols-outlined">notifications</span>
+            </button>
+            <button class="p-2 rounded-full text-on-surface-variant dark:text-[#d1c0de] hover:bg-surface-container-highest dark:hover:bg-[#3d3733] transition-colors duration-200 ease-in-out cursor-pointer active:scale-95">
+                <span class="material-symbols-outlined">account_circle</span>
+            </button>
+        </div>
+    </header>
+    <!-- Main Canvas -->
+    <main class="flex-1 mt-[60px] md:ml-[240px] p-container-padding-mobile md:p-container-padding-desktop overflow-x-hidden min-h-[calc(100vh-60px)] flex flex-col">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-stack-lg">
+            <div>
+                <p class="font-label-caps text-label-caps text-primary dark:text-[#c49080] mb-2 uppercase tracking-widest">Catalog Management</p>
+                <h2 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface dark:text-[#fff8f3]">Gift Bundles</h2>
+            </div>
+            <button class="bg-primary-container dark:bg-[#c49080] text-on-primary-container dark:text-[#311309] px-6 py-3 rounded-lg font-bold hover:opacity-90 active:scale-98 transition-ease-out flex items-center justify-center gap-2 self-start md:self-auto">
+                <span class="material-symbols-outlined text-[20px]">add</span>
+                Create Bundle
+            </button>
+        </div>
+        <!-- Bundle Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-gutter pb-section-gap">
+            <!-- Bundle Card 1 -->
+            <div class="bg-surface dark:bg-[#2c2825] rounded-bundle ambient-shadow-1 hover:ambient-shadow-2 transition-ease-out overflow-hidden flex flex-col group relative border border-transparent dark:border-[#4a4541] hover:border-primary-container dark:hover:border-[#7f5446]">
+                <div class="absolute top-4 right-4 z-10">
+                    <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                        <input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 right-0 border-primary dark:border-[#c49080]" id="toggle1" name="toggle1" type="checkbox" />
+                        <label class="toggle-label block overflow-hidden h-5 rounded-full bg-primary dark:bg-[#c49080] cursor-pointer" for="toggle1"></label>
+                    </div>
+                </div>
+                <div class="h-48 relative overflow-hidden bg-surface-container dark:bg-[#3d3733]">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-0"></div>
+                    <img alt="Silk Robe and Candle Set" class="w-full h-full object-cover group-hover:scale-105 transition-ease-out" data-alt="A luxurious lifestyle shot of a neatly folded champagne-colored silk robe next to an artisanal glass candle on a dark marble surface. Soft, moody lighting highlights the sheen of the silk and the elegant packaging. The aesthetic is modern minimalism meets high-fashion editorial, embodying intimate luxury." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgVPhEaJ8x3unflF41Y988pnRQ1wtIdPlMPSxdVOB5XMbWZKiw1Ut32X0OvnKbnWR8nKTq1DZCTD0G7N3ExH-mnH_SyrkiszPn6VO7QJ2YVDlvIk4LfuXyQ-YUeqpgkquZZ9lcRIgdQnHorwtYCdMNa0Pt-ahWWvejW9LBJIurpIpqlAl6_7AOSOzZ0Cx115i2oyY-1K2n9LPqq1STIXPgkP89lxOJR1d6p-7yEb6xx_iMJRyyCcjdYb6bev_dPafukne43pGhclUp" />
+                    <div class="absolute bottom-4 left-4 z-10">
+                        <span class="bg-surface dark:bg-[#1e1b18] text-on-surface dark:text-[#fff8f3] font-label-caps text-label-caps px-3 py-1 rounded-full uppercase tracking-wider">Best Seller</span>
+                    </div>
+                </div>
+                <div class="p-6 flex-1 flex flex-col">
+                    <h3 class="font-headline-md text-headline-md text-on-surface dark:text-[#fff8f3] mb-1">The Evening Unwind Set</h3>
+                    <p class="font-body-md text-on-surface-variant dark:text-[#a299a7] mb-6 line-clamp-2">A curated collection featuring our signature silk robe, sleep mask, and calming lavender candle.</p>
+                    <div class="mt-auto space-y-3">
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-on-surface-variant dark:text-[#a299a7]">Base Price</span>
+                            <span class="font-bold text-on-surface dark:text-[#fff8f3]">$240.00</span>
+                        </div>
+                        <div class="bg-surface-container-low dark:bg-[#1e1b18] p-3 rounded-lg border border-outline-variant dark:border-[#4a4541]">
+                            <p class="font-label-caps text-[10px] text-primary dark:text-[#c49080] mb-1 uppercase">Discount Tiers</p>
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-on-surface dark:text-[#e8e1db]">2 Items</span>
+                                    <span class="font-bold text-tertiary dark:text-[#d1c0de]">10% OFF</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-on-surface dark:text-[#e8e1db]">3+ Items</span>
+                                    <span class="font-bold text-tertiary dark:text-[#d1c0de]">15% OFF</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-outline-variant dark:border-[#4a4541] flex divide-x divide-outline-variant dark:divide-[#4a4541]">
+                    <button class="flex-1 py-3 text-on-surface dark:text-[#e8e1db] font-bold hover:bg-surface-container-highest dark:hover:bg-[#3d3733] transition-colors flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                        Edit
+                    </button>
+                    <button class="flex-1 py-3 text-error dark:text-[#ffdad6] font-bold hover:bg-error-container dark:hover:bg-[#93000a] hover:text-on-error-container dark:hover:text-[#ffdad6] transition-colors flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                        Delete
+                    </button>
+                </div>
+            </div>
+            <!-- Bundle Card 2 -->
+            <div class="bg-surface dark:bg-[#2c2825] rounded-bundle ambient-shadow-1 hover:ambient-shadow-2 transition-ease-out overflow-hidden flex flex-col group relative border border-transparent dark:border-[#4a4541] hover:border-primary-container dark:hover:border-[#7f5446]">
+                <div class="absolute top-4 right-4 z-10">
+                    <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                        <input class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 border-outline-variant dark:border-[#a299a7]" id="toggle2" name="toggle2" type="checkbox" />
+                        <label class="toggle-label block overflow-hidden h-5 rounded-full bg-outline-variant dark:bg-[#6c5f79] cursor-pointer" for="toggle2"></label>
+                    </div>
+                </div>
+                <div class="h-48 relative overflow-hidden bg-surface-container dark:bg-[#3d3733]">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <img alt="Satin Pajama Set" class="w-full h-full object-cover group-hover:scale-105 transition-ease-out grayscale opacity-60" data-alt="A stylized flat lay of a dark plum satin pajama set with delicate lace trim, arranged elegantly on a clean ivory background. The composition is asymmetrical, leaving generous whitespace. Lighting is soft and diffused, emphasizing the smooth texture of the fabric. The overall mood is sophisticated and minimal." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0X9bTamQxq_nOk2n-g1zUwCOxmMrv5HDIdfJtrpTdVwQS5hV0dMC5d76ie7LUycuBgBZPR_qPjpUd0PDLw90TyWY7fa4kabR5VydfD6ITYF3U0RvoMFMUb8hyBBOcPXQ21W5ssheM9GqUAavO9_EM0De0qeNdBR2Sb4mWj9vb1XOQXd1i6xBRM4wmD_3UV7Y2F2zOS8abxHB0b2Ys_42SOgidsADdjADimkp9HCSVfUkh0RCmrApYzbN7clR99gFVP_ukyvW6dFUd" />
+                    <div class="absolute inset-0 bg-black/20 z-0"></div>
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+                        <span class="bg-surface/90 dark:bg-[#1e1b18]/90 text-on-surface dark:text-[#fff8f3] font-label-caps text-label-caps px-4 py-2 rounded-full uppercase tracking-wider backdrop-blur-sm">Draft</span>
+                    </div>
+                </div>
+                <div class="p-6 flex-1 flex flex-col">
+                    <h3 class="font-headline-md text-headline-md text-on-surface dark:text-[#a299a7] mb-1">Lace Elegance Duo</h3>
+                    <p class="font-body-md text-on-surface-variant dark:text-[#6c5f79] mb-6 line-clamp-2">Matching camisole and shorts crafted from premium Egyptian cotton and French lace.</p>
+                    <div class="mt-auto space-y-3 opacity-60">
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-on-surface-variant dark:text-[#a299a7]">Base Price</span>
+                            <span class="font-bold text-on-surface dark:text-[#fff8f3]">$180.00</span>
+                        </div>
+                        <div class="bg-surface-container-low dark:bg-[#1e1b18] p-3 rounded-lg border border-outline-variant dark:border-[#4a4541] border-dashed">
+                            <p class="font-label-caps text-[10px] text-on-surface-variant dark:text-[#6c5f79] mb-1 uppercase text-center mt-2">No tiers configured</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-outline-variant dark:border-[#4a4541] flex divide-x divide-outline-variant dark:divide-[#4a4541]">
+                    <button class="flex-1 py-3 text-on-surface dark:text-[#e8e1db] font-bold hover:bg-surface-container-highest dark:hover:bg-[#3d3733] transition-colors flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                        Edit
+                    </button>
+                    <button class="flex-1 py-3 text-error dark:text-[#ffdad6] font-bold hover:bg-error-container dark:hover:bg-[#93000a] hover:text-on-error-container dark:hover:text-[#ffdad6] transition-colors flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                        Delete
+                    </button>
+                </div>
+            </div>
+            <!-- Bundle Card 3 -->
+            <div class="bg-surface dark:bg-[#2c2825] rounded-bundle ambient-shadow-1 hover:ambient-shadow-2 transition-ease-out overflow-hidden flex flex-col group relative border border-transparent dark:border-[#4a4541] hover:border-primary-container dark:hover:border-[#7f5446]">
+                <div class="absolute top-4 right-4 z-10">
+                    <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                        <input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 right-0 border-primary dark:border-[#c49080]" id="toggle3" name="toggle3" type="checkbox" />
+                        <label class="toggle-label block overflow-hidden h-5 rounded-full bg-primary dark:bg-[#c49080] cursor-pointer" for="toggle3"></label>
+                    </div>
+                </div>
+                <div class="h-48 relative overflow-hidden bg-surface-container dark:bg-[#3d3733]">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <img alt="Spa Day Collection" class="w-full h-full object-cover group-hover:scale-105 transition-ease-out" data-alt="A beautifully styled array of spa products including a plush towel, bath salts in an elegant jar, and a natural sponge, arranged on a textured dark slate surface. The lighting is bright yet moody, casting soft shadows that highlight the textures. The scene exudes a sense of serene luxury and pampering." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzi1M1MYvdfnStnbO_HnBxxuW439NdJdFMF-SxbG5GzdSC8CbqOMUTySr2kmhBPkoCglgE7biGJ6JTbNuAZJdTPbRs6nRknp_DV_S88Zxr1WUR9p0X9SMbnG53SDupgpKoEvz5pzbTRY9pcTZQe2tp_QD7S6VprcDbKcJX2r-MuFOYIpAmV8Vrzx4DmSfUh9mqiQtpr8fKH799XBCJt9KD6c-yS59OaSUA5HayLQcY3X64fptLMNRO4x1fYcK8TS_CzIzr-wFnUGhZ" />
+                    <div class="absolute bottom-4 left-4 z-10">
+                        <span class="bg-primary/20 text-primary dark:text-[#f2baa8] font-label-caps text-label-caps px-3 py-1 rounded-full border border-primary/30 uppercase tracking-wider backdrop-blur-md">Seasonal</span>
+                    </div>
+                </div>
+                <div class="p-6 flex-1 flex flex-col">
+                    <h3 class="font-headline-md text-headline-md text-on-surface dark:text-[#fff8f3] mb-1">At-Home Spa Retreat</h3>
+                    <p class="font-body-md text-on-surface-variant dark:text-[#a299a7] mb-6 line-clamp-2">Transform any evening with our plush waffle robe, bath salts, and hydrating body oil.</p>
+                    <div class="mt-auto space-y-3">
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-on-surface-variant dark:text-[#a299a7]">Base Price</span>
+                            <span class="font-bold text-on-surface dark:text-[#fff8f3]">$310.00</span>
+                        </div>
+                        <div class="bg-surface-container-low dark:bg-[#1e1b18] p-3 rounded-lg border border-outline-variant dark:border-[#4a4541]">
+                            <p class="font-label-caps text-[10px] text-primary dark:text-[#c49080] mb-1 uppercase">Discount Tiers</p>
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-on-surface dark:text-[#e8e1db]">3 Items</span>
+                                    <span class="font-bold text-tertiary dark:text-[#d1c0de]">15% OFF</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-on-surface dark:text-[#e8e1db]">4+ Items</span>
+                                    <span class="font-bold text-tertiary dark:text-[#d1c0de]">25% OFF</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-outline-variant dark:border-[#4a4541] flex divide-x divide-outline-variant dark:divide-[#4a4541]">
+                    <button class="flex-1 py-3 text-on-surface dark:text-[#e8e1db] font-bold hover:bg-surface-container-highest dark:hover:bg-[#3d3733] transition-colors flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                        Edit
+                    </button>
+                    <button class="flex-1 py-3 text-error dark:text-[#ffdad6] font-bold hover:bg-error-container dark:hover:bg-[#93000a] hover:text-on-error-container dark:hover:text-[#ffdad6] transition-colors flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                        Delete
+                    </button>
+                </div>
+            </div>
+            <!-- Add New Bundle Placeholder -->
+            <div class="bg-surface-container-low dark:bg-[#1e1b18] rounded-bundle border-2 border-dashed border-outline-variant dark:border-[#4a4541] flex flex-col items-center justify-center p-8 text-center hover:bg-surface-container dark:hover:bg-[#2c2825] hover:border-primary dark:hover:border-[#c49080] transition-ease-out cursor-pointer group min-h-[450px]">
+                <div class="w-16 h-16 rounded-full bg-surface-container dark:bg-[#3d3733] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <span class="material-symbols-outlined text-[32px] text-primary dark:text-[#c49080]">add_box</span>
+                </div>
+                <h3 class="font-headline-md text-on-surface dark:text-[#fff8f3] mb-2">Create New Bundle</h3>
+                <p class="text-on-surface-variant dark:text-[#a299a7] text-sm max-w-[200px]">Combine products to create custom gift experiences with tiered pricing.</p>
+            </div>
+        </div>
+    </main>
+    <script>
+        // Simple toggle functionality demonstration
+        document.querySelectorAll('.toggle-checkbox').forEach(toggle => {
+        toggle.addEventListener('change', function() {
+        const card = this.closest('.rounded-bundle');
+        const img = card.querySelector('img');
+        const badge = card.querySelector('.backdrop-blur-sm');
+
+        if(!this.checked) {
+        if(img) {
+        img.classList.add('grayscale', 'opacity-60');
+        }
+        if(!badge && card.querySelector('.absolute.inset-0.bg-black\\/20')) {
+        // Already draft style
+        } else if (!badge) {
+        const imgContainer = card.querySelector('.relative.overflow-hidden');
+        const overlay = document.createElement('div');
+        overlay.className = 'absolute inset-0 bg-black/20 z-0 draft-overlay';
+        const badgeContainer = document.createElement('div');
+        badgeContainer.className = 'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 draft-badge';
+        badgeContainer.innerHTML = '<span class="bg-surface/90 dark:bg-[#1e1b18]/90 text-on-surface dark:text-[#fff8f3] font-label-caps text-label-caps px-4 py-2 rounded-full uppercase tracking-wider backdrop-blur-sm">Draft</span>';
+        imgContainer.appendChild(overlay);
+        imgContainer.appendChild(badgeContainer);
+
+        const title = card.querySelector('h3');
+        const desc = card.querySelector('p');
+        title.classList.add('text-on-surface-variant', 'dark:text-[#a299a7]');
+        title.classList.remove('text-on-surface', 'dark:text-[#fff8f3]');
+
+        card.querySelector('.mt-auto').classList.add('opacity-60');
+        }
+        } else {
+        if(img) {
+        img.classList.remove('grayscale', 'opacity-60');
+        }
+        const draftOverlay = card.querySelector('.draft-overlay');
+        const draftBadge = card.querySelector('.draft-badge');
+        if(draftOverlay) draftOverlay.remove();
+        if(draftBadge) draftBadge.remove();
+
+        const title = card.querySelector('h3');
+        title.classList.remove('text-on-surface-variant', 'dark:text-[#a299a7]');
+        title.classList.add('text-on-surface', 'dark:text-[#fff8f3]');
+
+        card.querySelector('.mt-auto').classList.remove('opacity-60');
+        }
+        });
+        });
+    </script>
+</body></html>

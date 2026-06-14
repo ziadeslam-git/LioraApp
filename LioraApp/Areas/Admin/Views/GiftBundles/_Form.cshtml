@@ -1,192 +1,512 @@
-@model GiftBundleFormVM
+<!DOCTYPE html>
 
-@{
-    var isEdit = Model.Id > 0;
-    var selectedCount = Model.ProductCards.Count(product => product.Selected);
-}
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Liora - Create Gift Bundle</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&amp;family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+        darkMode: "class",
+        theme: {
+        extend: {
+        "colors": {
+        "on-error": "#ffffff",
+        "inverse-on-surface": "#f7efe9",
+        "on-secondary-fixed": "#21172c",
+        "error": "#ba1a1a",
+        "secondary-container": "#eedcfa",
+        "on-primary-fixed-variant": "#643d30",
+        "surface-variant": "#e8e1db",
+        "primary-container": "#c49080",
+        "surface-container": "#f4ede7",
+        "tertiary": "#635b68",
+        "surface-container-highest": "#e8e1db",
+        "on-tertiary-container": "#38313d",
+        "tertiary-fixed-dim": "#cec3d2",
+        "on-secondary-fixed-variant": "#4e425a",
+        "inverse-primary": "#f2baa8",
+        "surface-tint": "#7f5446",
+        "on-primary": "#ffffff",
+        "surface-container-lowest": "#ffffff",
+        "tertiary-container": "#a299a7",
+        "surface-bright": "#fff8f3",
+        "primary-fixed-dim": "#f2baa8",
+        "on-secondary": "#ffffff",
+        "on-tertiary-fixed": "#1f1924",
+        "inverse-surface": "#33302c",
+        "secondary-fixed": "#eedcfa",
+        "on-surface-variant": "#514440",
+        "on-error-container": "#93000a",
+        "outline-variant": "#d5c2bd",
+        "primary-fixed": "#ffdbd0",
+        "on-tertiary-fixed-variant": "#4b4450",
+        "secondary-fixed-dim": "#d1c0de",
+        "surface-container-high": "#eee7e1",
+        "primary": "#7f5446",
+        "surface-dim": "#dfd9d3",
+        "secondary": "#665972",
+        "on-tertiary": "#ffffff",
+        "on-background": "#1e1b18",
+        "on-primary-fixed": "#311309",
+        "background": "#fff8f3",
+        "surface": "#fff8f3",
+        "outline": "#83746f",
+        "on-secondary-container": "#6c5f79",
+        "on-primary-container": "#4e2a1f",
+        "error-container": "#ffdad6",
+        "tertiary-fixed": "#eadfee",
+        "on-surface": "#1e1b18",
+        "surface-container-low": "#f9f2ec"
+        },
+        "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+        },
+        "spacing": {
+        "stack-sm": "8px",
+        "stack-md": "16px",
+        "container-padding-desktop": "64px",
+        "container-padding-mobile": "20px",
+        "stack-lg": "32px",
+        "section-gap": "120px",
+        "gutter": "24px",
+        "unit": "8px"
+        },
+        "fontFamily": {
+        "label-caps": [
+        "DM Sans"
+        ],
+        "headline-lg-mobile": [
+        "Playfair Display"
+        ],
+        "accent-italic": [
+        "EB Garamond"
+        ],
+        "display-lg-mobile": [
+        "Playfair Display"
+        ],
+        "headline-lg": [
+        "Playfair Display"
+        ],
+        "display-lg": [
+        "Playfair Display"
+        ],
+        "headline-md": [
+        "Playfair Display"
+        ],
+        "body-md": [
+        "DM Sans"
+        ],
+        "body-lg": [
+        "DM Sans"
+        ]
+        },
+        "fontSize": {
+        "label-caps": [
+        "12px",
+        {
+        "lineHeight": "1.2",
+        "letterSpacing": "0.1em",
+        "fontWeight": "700"
+        }
+        ],
+        "headline-lg-mobile": [
+        "32px",
+        {
+        "lineHeight": "1.2",
+        "fontWeight": "600"
+        }
+        ],
+        "accent-italic": [
+        "20px",
+        {
+        "lineHeight": "1.5",
+        "fontWeight": "400"
+        }
+        ],
+        "display-lg-mobile": [
+        "40px",
+        {
+        "lineHeight": "1.2",
+        "fontWeight": "700"
+        }
+        ],
+        "headline-lg": [
+        "40px",
+        {
+        "lineHeight": "1.2",
+        "fontWeight": "600"
+        }
+        ],
+        "display-lg": [
+        "64px",
+        {
+        "lineHeight": "1.1",
+        "letterSpacing": "-0.02em",
+        "fontWeight": "700"
+        }
+        ],
+        "headline-md": [
+        "32px",
+        {
+        "lineHeight": "1.3",
+        "fontWeight": "500"
+        }
+        ],
+        "body-md": [
+        "16px",
+        {
+        "lineHeight": "1.6",
+        "fontWeight": "400"
+        }
+        ],
+        "body-lg": [
+        "18px",
+        {
+        "lineHeight": "1.6",
+        "fontWeight": "400"
+        }
+        ]
+        }
+        },
+        },
+        }
+    </script>
+    <style>
+        body {
+        background-color: theme('colors.background');
+        color: theme('colors.on-background');
+        }
 
-<div class="space-y-6">
-    <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-        <div>
-            <nav class="mb-2 flex items-center gap-2 text-sm text-slate-500">
-                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="transition-colors hover:text-primary">Dashboard</a>
-                <span class="material-symbols-outlined text-sm">chevron_right</span>
-                <a asp-area="Admin" asp-controller="GiftBundles" asp-action="Index" class="transition-colors hover:text-primary">Gift Bundles</a>
-                <span class="material-symbols-outlined text-sm">chevron_right</span>
-                <span class="font-medium text-slate-900">@(isEdit ? "Edit Bundle" : "Create Bundle")</span>
-            </nav>
-            <h1 class="text-3xl font-black tracking-tight">@(isEdit ? "Edit Gift Bundle" : "Create Gift Bundle")</h1>
-            <p class="mt-1 text-slate-500">Choose multiple products, set one final price, and feature the bundle on the home page.</p>
-        </div>
-        <a asp-area="Admin" asp-controller="GiftBundles" asp-action="Index"
-           class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">
-            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-            Back to Bundles
-        </a>
-    </div>
+        .transition-standard {
+        transition-property: all;
+        transition-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1);
+        transition-duration: 250ms;
+        }
 
-    <div asp-validation-summary="All" class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"></div>
+        .shadow-level-1 {
+        box-shadow: 0px 10px 30px rgba(26, 16, 37, 0.05);
+        }
 
-    <div class="grid gap-4 md:grid-cols-4">
-        <div class="rounded-2xl border border-slate-200 bg-white p-4">
-            <p class="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Selected Products</p>
-            <p id="selected-count" class="mt-2 text-3xl font-black text-slate-900">@selectedCount</p>
-        </div>
-        <div class="rounded-2xl border border-slate-200 bg-white p-4">
-            <p class="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Original Total</p>
-            <p id="original-total" class="mt-2 text-3xl font-black text-slate-900">@Model.OriginalTotal.ToString("0.00") EGP</p>
-        </div>
-        <div class="rounded-2xl border border-slate-200 bg-white p-4">
-            <p class="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Offer Price</p>
-            <p id="offer-total" class="mt-2 text-3xl font-black text-primary">@Model.BundlePrice.ToString("0.00") EGP</p>
-        </div>
-        <div class="rounded-2xl border border-slate-200 bg-white p-4">
-            <p class="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Savings</p>
-            <p id="bundle-savings" class="mt-2 text-3xl font-black text-emerald-600">@Math.Max(0, Model.OriginalTotal - Model.BundlePrice).ToString("0.00") EGP</p>
-        </div>
-    </div>
+        .shadow-level-2 {
+        box-shadow: 0px 20px 50px rgba(26, 16, 37, 0.08);
+        }
 
-    <div class="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.35fr)]">
-        <section class="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <div class="space-y-5">
-                <div>
-                    <label asp-for="Name" class="mb-2 block text-sm font-semibold text-slate-800"></label>
-                    <input asp-for="Name" class="w-full rounded-xl border-slate-300 bg-white text-slate-900 shadow-sm focus:border-primary focus:ring-primary/20" placeholder="Bundle headline shown to the customer" />
-                    <span asp-validation-for="Name" class="mt-1 block text-sm text-rose-600"></span>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+        background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+        background: theme('colors.surface-variant');
+        border-radius: theme('borderRadius.full');
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+        background: theme('colors.outline');
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex">
+    <!-- SideNavBar -->
+    <nav class="fixed left-0 top-0 h-full w-[240px] bg-surface-container-low border-r border-outline-variant flex flex-col overflow-y-auto z-40 hidden md:flex">
+        <div class="px-gutter py-6">
+            <h1 class="font-headline-md text-headline-md font-bold text-primary">Liora Admin</h1>
+            <p class="font-body-md text-body-md text-on-surface-variant mt-1">Enterprise Portal</p>
+        </div>
+        <div class="flex-1 px-4 py-2 space-y-1">
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors rounded-lg" href="#">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="font-body-md text-body-md">Overview</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 border-l-2 border-primary bg-surface-container-high text-primary font-bold rounded-r-lg" href="#">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+                <span class="font-body-md text-body-md">Catalog</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors rounded-lg" href="#">
+                <span class="material-symbols-outlined">payments</span>
+                <span class="font-body-md text-body-md">Sales</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors rounded-lg" href="#">
+                <span class="material-symbols-outlined">group</span>
+                <span class="font-body-md text-body-md">Customers</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors rounded-lg" href="#">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="font-body-md text-body-md">Settings</span>
+            </a>
+        </div>
+        <div class="p-4 mt-auto">
+            <div class="flex items-center gap-3 p-3 bg-surface-container rounded-xl">
+                <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold">
+                    LA
                 </div>
-
                 <div>
-                    <label asp-for="Description" class="mb-2 block text-sm font-semibold text-slate-800"></label>
-                    <textarea asp-for="Description" rows="4" class="w-full rounded-xl border-slate-300 bg-white text-slate-900 shadow-sm focus:border-primary focus:ring-primary/20" placeholder="Short explanation for why these products work together"></textarea>
-                    <span asp-validation-for="Description" class="mt-1 block text-sm text-rose-600"></span>
-                </div>
-
-                <div>
-                    <label asp-for="BundlePrice" class="mb-2 block text-sm font-semibold text-slate-800"></label>
-                    <input asp-for="BundlePrice" type="number" step="0.01" min="0.01" class="w-full rounded-xl border-slate-300 bg-white text-slate-900 shadow-sm focus:border-primary focus:ring-primary/20" />
-                    <span asp-validation-for="BundlePrice" class="mt-1 block text-sm text-rose-600"></span>
-                    <p class="mt-2 text-xs text-slate-500">Use the final price customers should pay for the full grouped offer.</p>
-                </div>
-
-                <div class="grid gap-3 sm:grid-cols-2">
-                    <label class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700">
-                        <input asp-for="IsActive" class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
-                        <span>Bundle is active</span>
-                    </label>
-
-                    <label class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700">
-                        <input asp-for="IsFeatured" class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
-                        <span>Show this bundle on Home</span>
-                    </label>
+                    <div class="font-label-caps text-label-caps text-on-surface">Liora Admin</div>
+                    <div class="text-xs text-on-surface-variant">admin@liora.com</div>
                 </div>
             </div>
-        </section>
-
-        <section class="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        </div>
+    </nav>
+    <!-- TopNavBar -->
+    <header class="fixed top-0 right-0 h-[60px] w-full md:w-[calc(100%-240px)] bg-surface-container border-b border-outline-variant flex items-center justify-between px-gutter z-50">
+        <div class="flex items-center gap-4">
+            <button class="md:hidden p-2 text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+            <h2 class="font-headline-md text-headline-md font-extrabold text-primary md:hidden">Liora</h2>
+        </div>
+        <div class="flex items-center gap-4">
+            <button class="p-2 text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors cursor-pointer active:scale-95">
+                <span class="material-symbols-outlined">notifications</span>
+            </button>
+            <button class="p-2 text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors cursor-pointer active:scale-95">
+                <span class="material-symbols-outlined">account_circle</span>
+            </button>
+        </div>
+    </header>
+    <!-- Main Canvas -->
+    <main class="w-full md:ml-[240px] pt-[60px] min-h-screen bg-background">
+        <div class="max-w-[1280px] mx-auto px-container-padding-mobile md:px-container-padding-desktop py-stack-lg">
+            <!-- Page Header -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
                 <div>
-                    <h2 class="text-xl font-bold text-slate-900">Choose Products</h2>
-                    <p class="mt-1 text-sm text-slate-500">Pick at least 2 products. Only products with active in-stock variants can join the bundle.</p>
+                    <a class="inline-flex items-center text-sm text-on-surface-variant hover:text-primary transition-colors mb-2" href="#">
+                        <span class="material-symbols-outlined text-[16px] mr-1">arrow_back</span>
+                        Back to Catalog
+                    </a>
+                    <h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-background">Create Gift Bundle</h1>
+                    <p class="font-body-lg text-body-lg text-on-surface-variant mt-2">Configure a dynamic bundle with tiered discounts to increase AOV.</p>
                 </div>
-                <span class="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-primary">@Model.ProductCards.Count available</span>
+                <div class="flex gap-3">
+                    <button class="px-6 py-3 border-2 border-primary text-primary rounded-xl font-label-caps text-label-caps hover:bg-surface-container transition-standard active:scale-[0.98]">
+                        Save Draft
+                    </button>
+                    <button class="px-6 py-3 bg-primary-container text-on-primary-container rounded-xl font-label-caps text-label-caps hover:bg-primary hover:text-on-primary transition-standard active:scale-[0.98]">
+                        Publish Bundle
+                    </button>
+                </div>
             </div>
-
-            <span asp-validation-for="SelectedProductIds" class="mb-4 block text-sm text-rose-600"></span>
-
-            <div class="grid gap-4 md:grid-cols-2">
-                @foreach (var product in Model.ProductCards)
-                {
-                    var checkboxId = $"bundle-product-{product.ProductId}";
-                    <label for="@checkboxId"
-                           class="group block rounded-[1.5rem] border p-4 transition @(product.Selected ? "border-primary bg-primary/5 shadow-[0_12px_30px_rgba(70,72,212,0.10)]" : "border-slate-200 bg-slate-50/70 hover:border-primary/25 hover:bg-white") @(product.HasAvailableVariant ? string.Empty : "cursor-not-allowed opacity-60")">
-                        <div class="flex items-start gap-4">
-                            <input id="@checkboxId"
-                                   type="checkbox"
-                                   name="SelectedProductIds"
-                                   value="@product.ProductId"
-                                   @(product.Selected ? "checked" : null)
-                                   @(product.HasAvailableVariant ? null : "disabled")
-                                   data-bundle-picker
-                                   data-price="@product.Price.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)"
-                                   class="mt-1 h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
-
-                            <div class="size-20 overflow-hidden rounded-2xl bg-white shadow-sm">
-                                @if (!string.IsNullOrWhiteSpace(product.ImageUrl))
-                                {
-                                    <img src="@product.ImageUrl" alt="@product.ProductName" class="h-full w-full object-cover" />
-                                }
-                                else
-                                {
-                                    <div class="flex h-full w-full items-center justify-center bg-slate-100 text-slate-300">
-                                        <span class="material-symbols-outlined">image</span>
-                                    </div>
-                                }
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+                <!-- Left Column: Configuration Forms -->
+                <div class="lg:col-span-8 space-y-stack-lg">
+                    <!-- Basic Info Card -->
+                    <section class="bg-surface rounded-xl shadow-level-1 p-8">
+                        <h2 class="font-headline-md text-headline-md mb-6 border-b border-surface-variant pb-4">Bundle Details</h2>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block font-label-caps text-label-caps text-on-surface mb-2">Internal Name</label>
+                                <input class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:outline-none focus:border-primary-container focus:ring-4 focus:ring-primary-container/20 transition-standard font-body-md" placeholder="e.g. Summer Essentials Bundle" type="text" value="Holiday Silk Collection 2024" />
                             </div>
-
-                            <div class="min-w-0 flex-1">
-                                <div class="flex flex-wrap items-center gap-2">
-                                    <h3 class="truncate text-base font-bold text-slate-900">@product.ProductName</h3>
-                                    <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">@product.CategoryName</span>
-                                </div>
-                                <p class="mt-2 text-lg font-black text-primary">@product.Price.ToString("0.00") EGP</p>
-                                @if (product.HasAvailableVariant)
-                                {
-                                    <p class="mt-2 text-xs font-medium text-emerald-600">Ready for bundle checkout</p>
-                                }
-                                else
-                                {
-                                    <p class="mt-2 text-xs font-medium text-rose-600">No active in-stock variant</p>
-                                }
+                            <div>
+                                <label class="block font-label-caps text-label-caps text-on-surface mb-2">Customer Facing Title</label>
+                                <input class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:outline-none focus:border-primary-container focus:ring-4 focus:ring-primary-container/20 transition-standard font-body-md" placeholder="Displayed on storefront" type="text" value="Curate Your Silk Collection" />
+                            </div>
+                            <div>
+                                <label class="block font-label-caps text-label-caps text-on-surface mb-2">Description</label>
+                                <textarea class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:outline-none focus:border-primary-container focus:ring-4 focus:ring-primary-container/20 transition-standard font-body-md" rows="3">Select your favorite pieces and save. The more you add, the more you save on our premium silk collections.</textarea>
                             </div>
                         </div>
-                    </label>
-                }
+                    </section>
+                    <!-- Discount Tiers -->
+                    <section class="bg-surface rounded-xl shadow-level-1 p-8">
+                        <div class="flex justify-between items-center mb-6 border-b border-surface-variant pb-4">
+                            <h2 class="font-headline-md text-headline-md">Discount Tiers</h2>
+                            <button class="text-primary flex items-center gap-1 hover:text-on-primary-fixed-variant transition-colors font-label-caps text-label-caps">
+                                <span class="material-symbols-outlined text-[18px]">add</span>
+                                Add Tier
+                            </button>
+                        </div>
+                        <p class="text-sm text-on-surface-variant mb-6">Define rules based on quantity. Tiers are applied automatically when conditions are met.</p>
+                        <div class="space-y-4">
+                            <!-- Tier 1 -->
+                            <div class="flex items-center gap-4 bg-surface-container-low p-4 rounded-lg border border-outline-variant">
+                                <div class="flex-1 grid grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-xs text-on-surface-variant mb-1">Min Items</label>
+                                        <input class="w-full bg-surface border border-outline-variant rounded-md px-3 py-2 text-sm focus:border-primary-container" type="number" value="2" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-on-surface-variant mb-1">Discount Type</label>
+                                        <select class="w-full bg-surface border border-outline-variant rounded-md px-3 py-2 text-sm focus:border-primary-container">
+                                            <option>Percentage (%)</option>
+                                            <option>Fixed Amount ($)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-on-surface-variant mb-1">Value</label>
+                                        <input class="w-full bg-surface border border-outline-variant rounded-md px-3 py-2 text-sm focus:border-primary-container" type="number" value="10" />
+                                    </div>
+                                </div>
+                                <button class="mt-5 text-error hover:text-on-error-container p-2 rounded-md hover:bg-error-container/20 transition-colors">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
+                            <!-- Tier 2 -->
+                            <div class="flex items-center gap-4 bg-surface-container-low p-4 rounded-lg border border-outline-variant">
+                                <div class="flex-1 grid grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-xs text-on-surface-variant mb-1">Min Items</label>
+                                        <input class="w-full bg-surface border border-outline-variant rounded-md px-3 py-2 text-sm focus:border-primary-container" type="number" value="4" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-on-surface-variant mb-1">Discount Type</label>
+                                        <select class="w-full bg-surface border border-outline-variant rounded-md px-3 py-2 text-sm focus:border-primary-container">
+                                            <option>Percentage (%)</option>
+                                            <option>Fixed Amount ($)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-on-surface-variant mb-1">Value</label>
+                                        <input class="w-full bg-surface border border-outline-variant rounded-md px-3 py-2 text-sm focus:border-primary-container" type="number" value="20" />
+                                    </div>
+                                </div>
+                                <button class="mt-5 text-error hover:text-on-error-container p-2 rounded-md hover:bg-error-container/20 transition-colors">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Eligible Products -->
+                    <section class="bg-surface rounded-xl shadow-level-1 p-8">
+                        <h2 class="font-headline-md text-headline-md mb-6 border-b border-surface-variant pb-4">Eligible Products</h2>
+                        <!-- Search & Filter -->
+                        <div class="flex gap-4 mb-6">
+                            <div class="relative flex-1">
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                                <input class="w-full bg-surface-container-low border border-outline-variant rounded-lg pl-10 pr-4 py-3 text-on-surface focus:outline-none focus:border-primary-container focus:ring-4 focus:ring-primary-container/20 transition-standard font-body-md" placeholder="Search products by name or SKU..." type="text" />
+                            </div>
+                            <button class="px-4 py-3 border border-outline-variant rounded-lg flex items-center gap-2 hover:bg-surface-container transition-colors">
+                                <span class="material-symbols-outlined">filter_list</span>
+                                Filter
+                            </button>
+                        </div>
+                        <!-- Product List -->
+                        <div class="border border-outline-variant rounded-lg overflow-hidden">
+                            <div class="bg-surface-container-low px-4 py-3 flex items-center gap-4 border-b border-outline-variant">
+                                <input class="rounded text-primary focus:ring-primary bg-surface border-outline-variant" type="checkbox" />
+                                <span class="text-sm font-medium">Select All (12 items)</span>
+                            </div>
+                            <div class="max-h-[300px] overflow-y-auto divide-y divide-outline-variant">
+                                <!-- Product Item -->
+                                <div class="px-4 py-3 flex items-center gap-4 hover:bg-surface-container-lowest transition-colors">
+                                    <input checked="" class="rounded text-primary focus:ring-primary bg-surface border-outline-variant" type="checkbox" />
+                                    <div class="w-12 h-12 bg-surface-variant rounded-md flex-shrink-0 bg-cover bg-center" data-alt="A close up shot of luxurious, shimmering champagne-colored silk fabric elegantly draped to highlight its smooth texture and subtle sheen. The soft, warm lighting emphasizes the premium quality and delicate folds of the material, evoking a sense of high-end fashion and refined elegance typical of luxury apparel." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB5p9u9hCg_PdS62oCX6vi0u9kiVfEWIWAk1E7OizlhztjSTMdivaddckZDoz-m38UQFtBIkVmcBs4ZJ9rgVPL8CIcYsXRFEh4Kr6zT9ugoG70SLtc95tLWk2Np6krfZ3XFeLRrLfVUMcLtCbLkV6cmVHuRpInEygxpFzhoPXkWZmlUV3zZMWsQViULVOcVZyDTVwtLBfmrZusefQ4IuXpv9q11xCpqKEv6fT7yCpA6-poAk_JNN7bjpe2B6JJi7awDeC5gXDmRMkvx');"></div>
+                                    <div class="flex-1">
+                                        <div class="font-medium text-on-surface">Champagne Silk Camisole</div>
+                                        <div class="text-xs text-on-surface-variant">SKU: SLK-CAM-CHP | Stock: 45</div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-medium">$120.00</div>
+                                    </div>
+                                </div>
+                                <!-- Product Item -->
+                                <div class="px-4 py-3 flex items-center gap-4 hover:bg-surface-container-lowest transition-colors">
+                                    <input checked="" class="rounded text-primary focus:ring-primary bg-surface border-outline-variant" type="checkbox" />
+                                    <div class="w-12 h-12 bg-surface-variant rounded-md flex-shrink-0 bg-cover bg-center" data-alt="A beautifully styled flat lay of a dark plum silk robe neatly folded on a clean, light-colored surface. The rich, deep color of the robe contrasts elegantly with the background, and the smooth, reflective surface of the silk is clearly visible, suggesting comfort, luxury, and meticulous craftsmanship." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuChjU-3ylEsKA_DXSoKo9Bz_yDAc3uY3bkFwj11quJIKIS-sMCCnqddzfkhwjmLLr62MG8J1Ppo01STz4J_dUEzA-F-A1tHkR5hgVYhnk1ioVnWpJIZXZZUxX2I4ijPaCvsyIHHf4essetUwTQJc1oqtRptDr8eJR5rXHHo1dHLB7ewM6E13iKBVZtpMlpfHJh3SHeP1jeemm-iXCJwey3mPpR-0T1HCV78id_ztBD7Jl2lK5pIN_J7gMSSpWwwF-gVABa7-UlmdIBC');"></div>
+                                    <div class="flex-1">
+                                        <div class="font-medium text-on-surface">Midnight Plum Silk Robe</div>
+                                        <div class="text-xs text-on-surface-variant">SKU: SLK-ROB-PLM | Stock: 12</div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-medium">$250.00</div>
+                                    </div>
+                                </div>
+                                <!-- Product Item -->
+                                <div class="px-4 py-3 flex items-center gap-4 hover:bg-surface-container-lowest transition-colors">
+                                    <input class="rounded text-primary focus:ring-primary bg-surface border-outline-variant" type="checkbox" />
+                                    <div class="w-12 h-12 bg-surface-variant rounded-md flex-shrink-0 bg-cover bg-center" data-alt="A delicate pair of rose gold satin sleep shorts displayed on a neutral, soft-toned background. The lighting highlights the lustrous finish of the fabric and the neat, tailored seams, conveying a modern, minimalist aesthetic suitable for premium loungewear collections." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDmOFoquEZbxh_Pnt12_vmMCpnMmzBznG6uEkIp05-gF-2wkrUOISn5z6DNju6Gnk362RWe6QmdvS0tWoZwZ734slY2s1dlWXiVQGeKleO4T6bhvsdRxpn27eB-IJEECf-iknUQ0Z3dwGbIZSPqllkRCA66fvbAYfHxsWKBpCq2yBLsVDW_YRiUdB7DpXkaDN80hteyhSVNwrReNmwzETfs2z8TBRvFO6xSnOWIQodJRmYmEoZsKp60uZptyyMGvIaYtOgW2rJ1LcwS');"></div>
+                                    <div class="flex-1">
+                                        <div class="font-medium text-on-surface">Rose Satin Sleep Shorts</div>
+                                        <div class="text-xs text-on-surface-variant">SKU: STN-SHT-RSE | Stock: 89</div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-medium">$85.00</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <!-- Right Column: Live Preview -->
+                <div class="lg:col-span-4">
+                    <div class="sticky top-[100px]">
+                        <h3 class="font-label-caps text-label-caps text-on-surface-variant mb-4 pl-2">Live Storefront Preview</h3>
+                        <div class="bg-surface rounded-xl shadow-level-2 overflow-hidden border border-outline-variant/30">
+                            <!-- Mock Header -->
+                            <div class="bg-surface-container-low p-4 text-center border-b border-outline-variant/50">
+                                <h4 class="font-headline-md text-xl">Curate Your Silk Collection</h4>
+                                <p class="text-xs text-on-surface-variant mt-1">Select your favorite pieces and save.</p>
+                            </div>
+                            <!-- Mock Progress Bar -->
+                            <div class="p-5 bg-surface">
+                                <div class="flex justify-between text-xs mb-2 font-medium">
+                                    <span>Add 1 more for 10% off</span>
+                                    <span class="text-primary-container">1/2 Items</span>
+                                </div>
+                                <div class="w-full bg-surface-variant rounded-full h-2 overflow-hidden">
+                                    <div class="bg-primary-container h-2 rounded-full w-1/2 transition-all duration-500"></div>
+                                </div>
+                                <div class="mt-4 flex gap-2">
+                                    <div class="flex-1 py-2 text-center border-2 border-primary-container rounded text-xs font-bold text-primary">
+                                        10% OFF<br /><span class="font-normal text-[10px]">2+ items</span>
+                                    </div>
+                                    <div class="flex-1 py-2 text-center border border-outline-variant rounded text-xs font-bold text-on-surface-variant opacity-50">
+                                        20% OFF<br /><span class="font-normal text-[10px]">4+ items</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Mock Selected Items -->
+                            <div class="p-5 bg-surface-container-lowest border-t border-outline-variant/50">
+                                <h5 class="text-sm font-bold mb-3">Your Bundle</h5>
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-surface-variant rounded bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBFa82xf-pyoRp6knajL6F1fzIUqxVh2Db-ruLiOj5Rs2REBTUTGVFiatXwuI2fk744Ums68tyrP5Dlc9Lh_U_4F3ipScOAvLVhW4sN-hFaNNfuSiJvip_rxrvt5mqqDFEzDLQHxARtTgrZmc_BNyjDmiQWOiXL16ykIDW07wKf2S9e80EqmHRE8RPeDB_UjTMNHH8c9rOga7WbdsYq1qAwGjOQCQ8M5ZX_cTH5Q2WUI_P8A7VTBeLYZAECSjoCc8-Ma7Bbb5dmZGo5');"></div>
+                                    <div class="flex-1">
+                                        <div class="text-xs font-medium">Champagne Silk Camisole</div>
+                                        <div class="text-[10px] text-on-surface-variant">Size: M</div>
+                                    </div>
+                                    <div class="text-sm font-medium">$120</div>
+                                </div>
+                                <div class="flex items-center gap-3 mb-4 opacity-40 border border-dashed border-outline-variant p-2 rounded">
+                                    <div class="w-10 h-10 bg-surface-variant rounded flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-sm">add</span>
+                                    </div>
+                                    <div class="text-xs">Add an item to unlock 10% off</div>
+                                </div>
+                                <div class="border-t border-outline-variant pt-3 space-y-1">
+                                    <div class="flex justify-between text-xs text-on-surface-variant">
+                                        <span>Subtotal</span>
+                                        <span>$120.00</span>
+                                    </div>
+                                    <div class="flex justify-between text-xs text-primary-container font-medium">
+                                        <span>Bundle Discount</span>
+                                        <span>-$0.00</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm font-bold pt-2">
+                                        <span>Total</span>
+                                        <span>$120.00</span>
+                                    </div>
+                                </div>
+                                <button class="w-full mt-5 py-3 bg-surface-variant text-on-surface rounded font-label-caps text-[10px] opacity-50 cursor-not-allowed">
+                                    Add Bundle to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </section>
-    </div>
-
-    <div class="flex flex-wrap items-center justify-end gap-3">
-        <a asp-area="Admin" asp-controller="GiftBundles" asp-action="Index"
-           class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">
-            <span class="material-symbols-outlined text-[18px]">close</span>
-            Cancel
-        </a>
-        <button type="submit"
-                class="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90">
-            <span class="material-symbols-outlined text-[18px]">check_circle</span>
-            @(isEdit ? "Save Bundle Changes" : "Create Gift Bundle")
-        </button>
-    </div>
-</div>
-
-<partial name="_ValidationScriptsPartial" />
-<script>
-    (function () {
-        const productInputs = Array.from(document.querySelectorAll('[data-bundle-picker]'));
-        const priceInput = document.getElementById('BundlePrice');
-        const selectedCountEl = document.getElementById('selected-count');
-        const originalTotalEl = document.getElementById('original-total');
-        const offerTotalEl = document.getElementById('offer-total');
-        const savingsEl = document.getElementById('bundle-savings');
-
-        const formatMoney = function (value) {
-            return `${value.toFixed(2)} EGP`;
-        };
-
-        const updateSummary = function () {
-            const selected = productInputs.filter(input => input.checked);
-            const originalTotal = selected.reduce((sum, input) => sum + parseFloat(input.dataset.price || '0'), 0);
-            const offerTotal = parseFloat(priceInput?.value || '0');
-            const savings = Math.max(0, originalTotal - offerTotal);
-
-            if (selectedCountEl) selectedCountEl.textContent = String(selected.length);
-            if (originalTotalEl) originalTotalEl.textContent = formatMoney(originalTotal);
-            if (offerTotalEl) offerTotalEl.textContent = formatMoney(offerTotal);
-            if (savingsEl) savingsEl.textContent = formatMoney(savings);
-        };
-
-        productInputs.forEach(input => input.addEventListener('change', updateSummary));
-        priceInput?.addEventListener('input', updateSummary);
-        updateSummary();
-    })();
-</script>
+        </div>
+    </main>
+</body></html>

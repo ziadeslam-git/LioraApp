@@ -1,0 +1,312 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>liora - Product Detail</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;600&amp;family=EB+Garamond:ital@0;1&amp;family=Playfair+Display:wght@400&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#d1c0de",
+                        "primary-fixed": "#ffdbd0",
+                        "primary": "#f2baa8",
+                        "on-tertiary-container": "#4b2d17",
+                        "on-primary-fixed-variant": "#643d30",
+                        "on-secondary-fixed-variant": "#4e425a",
+                        "primary-fixed-dim": "#f2baa8",
+                        "on-primary-fixed": "#311309",
+                        "on-error-container": "#ffdad6",
+                        "tertiary": "#edbd9e",
+                        "surface": "#17111c",
+                        "surface-bright": "#3d3743",
+                        "on-secondary-fixed": "#21172c",
+                        "inverse-on-surface": "#342e3a",
+                        "surface-variant": "#39323e",
+                        "surface-container-lowest": "#110c16",
+                        "on-tertiary-fixed-variant": "#613f28",
+                        "on-primary": "#4a271b",
+                        "on-surface": "#eadfee",
+                        "tertiary-fixed-dim": "#edbd9e",
+                        "surface-container-high": "#2e2833",
+                        "outline": "#9e8d88",
+                        "secondary-fixed-dim": "#d1c0de",
+                        "outline-variant": "#514440",
+                        "on-error": "#690005",
+                        "error": "#ffb4ab",
+                        "secondary-fixed": "#eedcfa",
+                        "primary-container": "#c49080",
+                        "surface-container-low": "#1f1924",
+                        "secondary-container": "#4e425a",
+                        "on-surface-variant": "#d5c2bd",
+                        "surface-tint": "#f2baa8",
+                        "on-background": "#eadfee",
+                        "on-tertiary": "#472914",
+                        "on-primary-container": "#4e2a1f",
+                        "error-container": "#93000a",
+                        "surface-container-highest": "#39323e",
+                        "on-secondary-container": "#bfafcc",
+                        "tertiary-fixed": "#ffdcc7",
+                        "tertiary-container": "#bf9377",
+                        "on-secondary": "#372c42",
+                        "surface-dim": "#17111c",
+                        "inverse-surface": "#eadfee",
+                        "background": "#17111c",
+                        "on-tertiary-fixed": "#2e1503",
+                        "surface-container": "#231d28",
+                        "inverse-primary": "#7f5446"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "stack-md": "16px",
+                        "section-padding-v": "80px",
+                        "stack-lg": "32px",
+                        "section-padding-h": "40px",
+                        "gutter": "24px",
+                        "stack-sm": "8px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["DM Sans"],
+                        "display-md": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "headline-lg": ["Playfair Display"],
+                        "accent-italic": ["EB Garamond"],
+                        "label-sm": ["DM Sans"],
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "body-lg": ["DM Sans"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "display-md": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                        "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.3", "fontWeight": "400"}],
+                        "accent-italic": ["20px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "300"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #0D0812; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .image-zoom:hover img { transform: scale(1.05); }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md font-body-md antialiased min-h-screen flex flex-col">
+<!-- TopAppBar Shared Component -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-primary/20 flat no shadows">
+<div class="flex justify-between items-center px-section-padding-h py-stack-md w-full max-w-7xl mx-auto">
+<nav class="hidden md:flex space-x-gutter">
+<a class="text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer tracking-widest uppercase font-label-sm text-label-sm hover:text-primary transition-all duration-300" href="#">new arrivals</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer tracking-widest uppercase font-label-sm text-label-sm hover:text-primary transition-all duration-300" href="#">lingerie</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer tracking-widest uppercase font-label-sm text-label-sm hover:text-primary transition-all duration-300" href="#">loungewear</a>
+<a class="text-primary border-b border-primary pb-1 cursor-pointer tracking-widest uppercase font-label-sm text-label-sm hover:text-primary transition-all duration-300" href="#">bridal</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer tracking-widest uppercase font-label-sm text-label-sm hover:text-primary transition-all duration-300" href="#">the collection</a>
+</nav>
+<div class="md:hidden flex items-center">
+<span class="material-symbols-outlined text-primary cursor-pointer">menu</span>
+</div>
+<a class="font-display-md text-headline-lg-mobile md:text-display-md italic lowercase text-on-surface absolute left-1/2 transform -translate-x-1/2" href="/">liora</a>
+<div class="flex items-center space-x-gutter">
+<span class="material-symbols-outlined text-primary cursor-pointer hover:text-primary transition-all duration-300">shopping_bag</span>
+</div>
+</div>
+</header>
+<main class="flex-grow pt-[120px] pb-section-padding-v px-margin-mobile md:px-section-padding-h max-w-7xl mx-auto w-full">
+<!-- Breadcrumbs -->
+<nav class="flex items-center space-x-2 text-on-surface-variant font-label-sm text-label-sm mb-stack-lg uppercase tracking-widest">
+<a class="hover:text-primary transition-colors" href="#">home</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">bridal</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface">midnight lace slip</span>
+</nav>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter lg:gap-[60px] items-start">
+<!-- Image Gallery (60%) -->
+<div class="lg:col-span-7 flex flex-col-reverse lg:flex-row gap-4 h-full">
+<!-- Thumbnail Strip -->
+<div class="flex lg:flex-col gap-4 overflow-x-auto lg:overflow-y-auto hide-scrollbar flex-shrink-0">
+<button class="w-[60px] h-[80px] bg-surface-container-high border-border-primary border border-primary relative overflow-hidden group">
+<img alt="Thumbnail 1" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A close-up studio shot of a luxurious black lace slip dress resting on a dark, reflective surface. The fabric features intricate, delicate floral patterns that catch subtle, moody lighting. The background is a deep, minimalist void of rich plum and black tones, highlighting the texture and high-end craftsmanship of the garment. The overall aesthetic is intimate, sophisticated, and distinctly editorial fashion." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNcMXTNx9zFN2jNiCcEU1z7sXg94ba_vF9pddzs0uVkd3Q55Fqh7bplrr5KWMp9M-I5ON6CMAy1cNUNoP1wHuK4ST1fUYhuNmsnBrQ6z1JWR-vsMJK3c4dArkk2c_t0Rbvpu8xjkr3CsBj3K51H0IsWG1CFewWm5jWn-N2r8bZ6fumKbMHjXD9gMvRbib5ZE0mTFJM7tJekj-s8SLzZp9XQPKsIcxS6VMAAq5X2XS_3Q74hHLbiAKmK2a-IUO1L_KVPYijmQWyjMT2">
+</button>
+<button class="w-[60px] h-[80px] bg-surface-container-high border border-transparent relative overflow-hidden group hover:border-outline transition-colors">
+<img alt="Thumbnail 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A detailed macro shot focusing on the delicate spaghetti straps and neckline of a black lace slip dress. The smooth silk-like material contrasts beautifully with the intricate lace detailing. Soft, directional light creates elegant shadows, emphasizing the garment's sensual curves against a stark, dark minimalist background. The mood is luxurious and quietly dramatic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDg8tY6yix7wRezVYjwYItndZmHjpH99AU8k9hsRqdchPHtZmppOJm7NdH-dY_PgVA3nlfm5X_iU13ZPIGhKa1YlofTGaVXmHoB9sGy7BebSj-XGHEZv4auw_toDsEkF8jDoI3_5jw_qfstOiKcpvtCGzLEYPu5APipQR2knsDry6-dGS5ARIi7XBqcfUtX4HXLKHEvgvkd56m5vGfjp98IV4LPCzwbwaUcrLd9exq1cPsAByKToZ81gBjGOCxgb28gnmIm9VXESjdL">
+</button>
+<button class="w-[60px] h-[80px] bg-surface-container-high border border-transparent relative overflow-hidden group hover:border-outline transition-colors">
+<img alt="Thumbnail 3" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A wide, full-length shot of a black lace slip dress draped elegantly over a modern, minimalist velvet chair in a dimly lit studio. The lighting is cinematic, casting long, dramatic shadows across the luxurious fabric. The deep, dark background features subtle tonal variations of plum, perfectly showcasing the garment's silhouette and high-fashion editorial appeal." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJK-NXN1hoJmlmXyLhQ-Et5bNmFPcByHlphzOfl-BY-qIPiQPYyfMv9h3q6pl3CqvXK20J2lpsysZkk65G2NMoAYJ0XhQiJQ_q_pqbI21ErBjIIKVu7lyGN77wRXx4J3qQes2myQOwrnwKj0gadcPBzkG9oR-csYxJ9JP4lG0YQsQ5zzkT34dp801Pk0RKV4r4_BEHcUomuaN_DKLFgjhwb2tflaRMjsJw1ZQDJE4I_Z96HLMS3auxLbej57RUmPRTPcJxgn-359m2">
+</button>
+</div>
+<!-- Main Image -->
+<div class="relative w-full aspect-[3/4] bg-surface-container cursor-zoom-in overflow-hidden image-zoom">
+<img alt="Midnight Lace Slip Main" class="w-full h-full object-cover transition-opacity duration-500" data-alt="A stunning, high-fashion editorial photograph of a black lace slip dress. The garment is center-aligned, seemingly floating in a deep, dark void of rich blacks and subtle plum tones. Masterful lighting highlights the delicate lace trim and the lustrous sheen of the fabric. The composition relies on expansive negative space to create a sense of intimacy and exclusive luxury." id="main-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuNKxw8Sy7uBxwsCSAarShLPsaLUlQGMrGyIIHnvFyD_WMAKQe44XkOPIEhUbxMm3X5kLBnOwpOoEo8j3Dp0lpDvwYMycHdDeYDieI8pXuAZYnuc2K_ebVGIGS0VcR2HxIy3T8LRtwI51PrIJye_5xJ41RVSCaTlpzg--qnwQAXUourMOPNhmsUBaR1Y-aLewn6Gb9vJ_ybzFqPcqr86d3wLyspD2AxUTb75UftKy7TbUac1m50dRRlRW0q2AOM3xz4V7vOP0yNj5h">
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="px-3 py-1 bg-surface/50 backdrop-blur-sm border border-primary text-primary font-label-sm text-label-sm uppercase tracking-widest">limited edition</span>
+</div>
+</div>
+</div>
+<!-- Product Info (40%) -->
+<div class="lg:col-span-5 flex flex-col pt-4 lg:pt-0">
+<div class="mb-stack-lg">
+<h1 class="font-display-md text-[40px] leading-tight mb-2 tracking-tight">midnight lace slip</h1>
+<div class="flex items-baseline space-x-4">
+<p class="font-body-md text-[24px] tracking-widest text-[#E8B89A]">$450.00</p>
+<p class="font-label-sm text-label-sm uppercase text-primary tracking-widest">low stock</p>
+</div>
+</div>
+<div class="space-y-stack-lg mb-stack-lg">
+<!-- Color -->
+<div>
+<p class="font-label-sm text-label-sm uppercase tracking-widest mb-3 text-on-surface-variant">color: <span class="text-on-surface">obsidian</span></p>
+<div class="flex space-x-3">
+<button class="w-8 h-8 rounded-full bg-black border border-primary ring-2 ring-transparent transition-all"></button>
+<button class="w-8 h-8 rounded-full bg-[#f5f5dc] border border-outline hover:border-primary transition-all"></button>
+<button class="w-8 h-8 rounded-full bg-[#800020] border border-outline hover:border-primary transition-all"></button>
+</div>
+</div>
+<!-- Size -->
+<div>
+<div class="flex justify-between items-center mb-3">
+<p class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">size</p>
+<button class="font-label-sm text-label-sm uppercase tracking-widest text-primary border-b border-primary/30 hover:border-primary transition-colors">size guide</button>
+</div>
+<div class="grid grid-cols-4 gap-3">
+<button class="py-3 px-2 border border-outline rounded-full font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant hover:border-primary hover:text-primary transition-all">xs</button>
+<button class="py-3 px-2 border border-primary rounded-full bg-surface-bright font-label-sm text-label-sm uppercase tracking-widest text-primary transition-all">s</button>
+<button class="py-3 px-2 border border-outline rounded-full font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant hover:border-primary hover:text-primary transition-all">m</button>
+<button class="py-3 px-2 border border-outline rounded-full font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant hover:border-primary hover:text-primary transition-all opacity-50 cursor-not-allowed">l</button>
+</div>
+</div>
+<!-- Quantity -->
+<div>
+<p class="font-label-sm text-label-sm uppercase tracking-widest mb-3 text-on-surface-variant">quantity</p>
+<div class="flex items-center border border-outline rounded-full w-fit">
+<button class="px-4 py-2 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[16px]">remove</span></button>
+<span class="font-body-md text-body-md px-4 w-12 text-center">1</span>
+<button class="px-4 py-2 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[16px]">add</span></button>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="space-y-4 mb-stack-lg">
+<button class="w-full bg-[#C49080] text-[#F5EEE8] font-label-sm text-label-sm uppercase tracking-[0.2em] py-4 hover:bg-primary transition-colors rounded-none">add to cart</button>
+<button class="w-full bg-transparent border border-[#E8DDD6] text-[#E8DDD6] font-label-sm text-label-sm uppercase tracking-[0.2em] py-4 hover:border-[#C49080] hover:text-[#C49080] transition-colors rounded-none">buy it now</button>
+</div>
+<div class="flex items-center space-x-2 text-on-surface-variant mb-stack-lg border-t border-primary/10 pt-stack-md">
+<span class="material-symbols-outlined text-[18px]">local_shipping</span>
+<p class="font-body-md text-[14px]">Complimentary standard shipping on all orders.</p>
+</div>
+<!-- Accordions -->
+<div class="border-t border-primary/10">
+<details class="group py-4 border-b border-primary/10" open="">
+<summary class="flex justify-between items-center font-label-sm text-label-sm uppercase tracking-widest cursor-pointer list-none">
+<span>the details</span>
+<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<div class="pt-4 font-body-md text-[14px] text-on-surface-variant space-y-4">
+<p>Crafted from the finest Italian silk, the Midnight Lace Slip embodies pure sophistication. Featuring intricate Chantilly lace detailing along the neckline and hem, this piece offers a delicate balance of romance and allure.</p>
+<ul class="list-disc pl-5 space-y-1">
+<li>100% Mulberry Silk</li>
+<li>French Chantilly Lace trim</li>
+<li>Adjustable spaghetti straps</li>
+<li>Bias cut for a flawless drape</li>
+</ul>
+</div>
+</details>
+<details class="group py-4 border-b border-primary/10">
+<summary class="flex justify-between items-center font-label-sm text-label-sm uppercase tracking-widest cursor-pointer list-none">
+<span>washing instructions</span>
+<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<div class="pt-4 font-body-md text-[14px] text-on-surface-variant">
+<p>Dry clean only. Do not bleach. Iron on low heat if necessary, avoiding lace trims. Store folded in a cool, dry place away from direct sunlight.</p>
+</div>
+</details>
+<details class="group py-4 border-b border-primary/10">
+<summary class="flex justify-between items-center font-label-sm text-label-sm uppercase tracking-widest cursor-pointer list-none">
+<span>shipping &amp; returns</span>
+<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<div class="pt-4 font-body-md text-[14px] text-on-surface-variant">
+<p>Orders are dispatched within 2 business days. Complimentary returns within 14 days of receipt, provided the garment is unworn with all tags attached.</p>
+</div>
+</details>
+</div>
+</div>
+</div>
+<!-- You May Also Like -->
+<section class="mt-section-padding-v pt-section-padding-v border-t border-primary/10">
+<h2 class="font-display-md text-headline-lg text-center italic mb-stack-lg">you may also like</h2>
+<div class="flex overflow-x-auto gap-gutter hide-scrollbar pb-4 snap-x">
+<div class="min-w-[280px] w-[280px] snap-start group cursor-pointer">
+<div class="aspect-[3/4] bg-surface-container mb-4 overflow-hidden relative">
+<img alt="Silk Robe" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A luxurious silk robe in deep obsidian black, elegantly styled on a mannequin against a dark, minimalist studio background. The lighting catches the subtle sheen of the silk, highlighting its premium quality and soft drape. The composition is sleek, editorial, and conveys a sense of intimate luxury." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBX1z9McKUr2PWaYMpG2AmWOtt57LQ1xGsaxlMdGw4DC1kXXkHCBd6s8aXizdfYr2SMIYzsUr3FHLdxjekUVJRfPv2x0hJePP3F3TBaeKvUsskS1wuq4afTHLeD9zQYlkuEL51HLPZpKmQFmu9tmIWJMo2mFcCD4aYFnk_SUv_QV_b7AqYrqdrC0sRY2VhTHr7nwTHy2LRAI1QpO6ndmEaQUs1vBQ97iuOzh1-1vZNeL2OvQnS-gyY_1h9j5rOcu7nomjAOnJ10z-W_">
+</div>
+<div class="text-center">
+<h3 class="font-body-md text-body-md mb-1 tracking-wide">obsidian silk robe</h3>
+<p class="font-body-md text-body-md text-[#E8B89A]">$550.00</p>
+</div>
+</div>
+<div class="min-w-[280px] w-[280px] snap-start group cursor-pointer">
+<div class="aspect-[3/4] bg-surface-container mb-4 overflow-hidden relative">
+<img alt="Lace Bralette" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A delicate black lace bralette displayed flat against a rich plum-colored velvet background. The intricate floral lace patterns are sharply defined by soft overhead studio lighting. The image relies heavily on dark tones and negative space, perfectly aligning with a high-fashion, sophisticated editorial aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUt8iJmvtTRdEHndVD42BpXTxAuHGeV_rqdVMt5sMK8diO8dgb-GmLDQh1UKy5VlU4ZONK19Rys5P4UG6xDnfgG6MYrQQgcTuojAlKHR_YpnNvC7e1ikWS1r5vzz27esoAn0FDdIGCKG3DOLOHJZoa7cG0OENnio1qMLdWIKivcXHMHoQfXt2v16S2DrN0CWkXwcH-88SE-rcFBBaRBxNyau92dWpsTMh3B55f6-xzTQuTsKHPAfbqTbmRhX2lztTV0GZ7LXQjuMlJ">
+</div>
+<div class="text-center">
+<h3 class="font-body-md text-body-md mb-1 tracking-wide">chantilly bralette</h3>
+<p class="font-body-md text-body-md text-[#E8B89A]">$185.00</p>
+</div>
+</div>
+<div class="min-w-[280px] w-[280px] snap-start group cursor-pointer">
+<div class="aspect-[3/4] bg-surface-container mb-4 overflow-hidden relative">
+<img alt="Silk Shorts" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A pair of elegant black silk lounge shorts with delicate lace trim at the hem, photographed against a stark black void. The soft, directional lighting emphasizes the lustrous texture of the silk and the fine details of the lace. The styling is minimalist and sophisticated, embodying modern luxury loungewear." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsqyv3dKyAknqWFDaKsbHhjr7FnwbeOjl-BgYcHUPBdS1-1OFS749xqRhGv3L8ztDjLiTf1UjQmI5ZJj1_k7JvR6TjIbLKr63TVRndiyjkc_Nc_PEe8EGr7JDcM2dxSUeOtc1_VnguUSjVZrDDX2TQlu_2UygYivD4VBtnPb4yh9TXwNX3KRV4rt_c4uwiJIgOr_7IXJoM8qmjPUPZFeKMUaUknMXnWZcZwJEbOArrrKWxmymj9lwr7JTlNCMXujbMRkIq678wIUWd">
+</div>
+<div class="text-center">
+<h3 class="font-body-md text-body-md mb-1 tracking-wide">midnight lounge shorts</h3>
+<p class="font-body-md text-body-md text-[#E8B89A]">$220.00</p>
+</div>
+</div>
+<div class="min-w-[280px] w-[280px] snap-start group cursor-pointer">
+<div class="aspect-[3/4] bg-surface-container mb-4 overflow-hidden relative">
+<img alt="Camisole" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A beautifully crafted black silk camisole featuring a V-neckline framed with exquisite lace detailing. The garment is captured in a moody, low-key lighting setup that enhances its sensual and intimate appeal. The dark background ensures the focus remains entirely on the luxurious texture and elegant silhouette of the piece." src="https://lh3.googleusercontent.com/aida-public/AB6AXuChvoUVCHCDpbF87kR64NT5Ei7mokeAaGWdIzcb8AHHsy0CrLm3dBDgEG5LVOJny8hE9jfr9rL8g3jw4MRGe85Ry8rpB5swx7UOYsK5GL6ntSNeFWqtUBd89JahO7eu5_BLvGEcSxwyDzXhniSkmdczmKiMEAfM6AQhyyImBM3LYwW_Ukgu9mqp9CRDBFtSSDUahuny0fj6OQUHLYQx60VZCkbisgc_ozCmzMgMQPAHB9-SsA8dyeisWJWnKVhcQQHuPIuzdTw8kddX">
+</div>
+<div class="text-center">
+<h3 class="font-body-md text-body-md mb-1 tracking-wide">signature camisole</h3>
+<p class="font-body-md text-body-md text-[#E8B89A]">$295.00</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Shared Component -->
+<footer class="bg-surface-container-lowest w-full py-section-padding-v border-t border-primary/10 flat no shadows text-primary">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-section-padding-h max-w-7xl mx-auto">
+<div class="col-span-1 md:col-span-1 flex flex-col">
+<span class="font-display-md text-display-md lowercase text-on-surface mb-stack-lg">liora</span>
+</div>
+<div class="col-span-1 md:col-span-3 flex flex-wrap gap-x-8 gap-y-4 md:justify-end font-body-md text-body-md tracking-tight">
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">privacy policy</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">terms of service</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">shipping &amp; returns</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">contact us</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">boutique locator</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">our story</a>
+</div>
+<div class="col-span-1 md:col-span-4 mt-stack-lg md:text-right font-body-md text-body-md text-on-surface-variant">
+                © liora. all rights reserved.
+            </div>
+</div>
+</footer>
+</body></html> 

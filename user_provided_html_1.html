@@ -1,0 +1,281 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>liora | Wear Your Confidence</title>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary": "#372c42",
+                    "on-tertiary": "#472914",
+                    "on-primary-container": "#4e2a1f",
+                    "on-primary-fixed-variant": "#643d30",
+                    "secondary": "#d1c0de",
+                    "tertiary": "#edbd9e",
+                    "on-tertiary-fixed-variant": "#613f28",
+                    "on-secondary-container": "#bfafcc",
+                    "primary-container": "#c49080",
+                    "primary": "#f2baa8",
+                    "tertiary-fixed": "#ffdcc7",
+                    "on-secondary-fixed-variant": "#4e425a",
+                    "surface-container": "#231d28",
+                    "surface-variant": "#39323e",
+                    "background": "#17111c",
+                    "on-background": "#eadfee",
+                    "outline-variant": "#514440",
+                    "secondary-fixed": "#eedcfa",
+                    "primary-fixed": "#ffdbd0",
+                    "surface-container-low": "#1f1924",
+                    "on-surface": "#eadfee",
+                    "tertiary-fixed-dim": "#edbd9e",
+                    "surface": "#17111c",
+                    "secondary-fixed-dim": "#d1c0de",
+                    "on-error-container": "#ffdad6",
+                    "error-container": "#93000a",
+                    "surface-container-high": "#2e2833",
+                    "primary-fixed-dim": "#f2baa8",
+                    "surface-bright": "#3d3743",
+                    "on-tertiary-container": "#4b2d17",
+                    "surface-tint": "#f2baa8",
+                    "on-secondary-fixed": "#21172c",
+                    "inverse-surface": "#eadfee",
+                    "inverse-on-surface": "#342e3a",
+                    "error": "#ffb4ab",
+                    "on-error": "#690005",
+                    "surface-dim": "#17111c",
+                    "on-surface-variant": "#d5c2bd",
+                    "on-tertiary-fixed": "#2e1503",
+                    "secondary-container": "#4e425a",
+                    "inverse-primary": "#7f5446",
+                    "on-primary-fixed": "#311309",
+                    "tertiary-container": "#bf9377",
+                    "on-primary": "#4a271b",
+                    "surface-container-lowest": "#110c16",
+                    "outline": "#9e8d88",
+                    "surface-container-highest": "#39323e"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "stack-lg": "32px",
+                    "stack-sm": "8px",
+                    "section-padding-v": "80px",
+                    "gutter": "24px",
+                    "stack-md": "16px",
+                    "section-padding-h": "40px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Playfair Display"],
+                    "label-sm": ["DM Sans"],
+                    "headline-lg": ["Playfair Display"],
+                    "body-lg": ["DM Sans"],
+                    "accent-italic": ["EB Garamond"],
+                    "headline-lg-mobile": ["Playfair Display"],
+                    "display-md": ["Playfair Display"],
+                    "body-md": ["DM Sans"]
+            },
+            "fontSize": {
+                    "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.3", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "300"}],
+                    "accent-italic": ["20px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "400"}],
+                    "display-md": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .ticker-track {
+            display: flex;
+            width: max-content;
+            animation: ticker 20s linear infinite;
+        }
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .reveal-element {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .reveal-element.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .image-parallax {
+            transition: transform 0.1s ease-out;
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased overflow-x-hidden">
+<div class="sticky top-0 z-[60] bg-primary-container text-on-primary-container text-center py-2 font-label-sm text-label-sm uppercase tracking-widest flex items-center justify-center">
+<span>FREE SHIPPING ON ORDERS OVER LE 999 — <a asp-action="Index" asp-controller="Shop" class="underline underline-offset-4 ml-2 hover:text-primary transition-colors duration-300">Shop Now →</a></span>
+</div>
+<header class="fixed top-[32px] w-full z-50 bg-background/80 backdrop-blur-xl border-b border-outline-variant flex flex-col w-full transition-all duration-300 group hover:opacity-100">
+<div class="max-w-7xl mx-auto w-full px-section-padding-h h-20 flex items-center justify-between">
+<nav class="hidden md:flex items-center gap-stack-lg">
+<a asp-action="All" asp-controller="Shop" class="text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors duration-300">Shop All</a>
+<a asp-action="Collections" asp-controller="Shop" class="text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors duration-300">Collections</a>
+<a asp-action="Index" asp-controller="About" class="text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors duration-300">About</a>
+<a asp-action="Index" asp-controller="Contact" class="text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors duration-300">Contact</a>
+</nav>
+<a asp-action="Index" asp-controller="Home" class="absolute left-1/2 -translate-x-1/2 font-display-md text-[32px] md:text-[40px] italic text-primary lowercase tracking-tight">liora</a>
+<div class="flex items-center gap-stack-md ml-auto md:ml-0">
+<button aria-label="shopping bag" class="text-on-surface-variant hover:text-primary transition-colors duration-300">
+<span class="material-symbols-outlined text-[24px]">shopping_bag</span>
+</button>
+<button aria-label="favorite" class="text-on-surface-variant hover:text-primary transition-colors duration-300">
+<span class="material-symbols-outlined text-[24px]">favorite</span>
+</button>
+</div>
+</div>
+</header>
+<main>
+<section class="relative h-screen w-full flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 w-full h-full bg-surface-container-low">
+<img alt="Hero Image" asp-append-version="true" class="w-full h-full object-cover object-top opacity-60 scale-105" data-alt="A striking editorial fashion photograph featuring a confident, elegant woman wearing sophisticated, luxury intimate apparel. She is posed dramatically against a minimalist, dark void-like studio background. The high-key soft lighting spotlights her, casting delicate shadows that emphasize the high-quality craftsmanship of the dark fabrics and rose gold hardware details. The mood is unapologetically feminine, intimate, and sophisticated, perfectly capturing a high-end luxury boutique aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAp3mUcqLsaNx6zFNvzmM7yFtv6i5RwXY3pzqvMbc_uF0HgEitoFDTdE8hwd2-HOQPWpTmV7ivD4uu3zwq_P1kh5qLg3CKvvxQOcwbZNX0DnQ532-4ZYsY3bzZubuPP66N7V8l49L-C3dbj6szrgBLChKvaVzsfs49MDzCFFcKZGnMtel6utX9ZrX5HYatBIPnlF-8oRBU9XbU0NyVtA60ebB_MKxdzUBYd3WhgAzBkM1uwQFgyMy4VPNbV8o9xBrJHT8AYtQQojISH">
+</div>
+<div class="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background/90"></div>
+<div class="relative z-10 text-center px-section-padding-h max-w-4xl mx-auto flex flex-col items-center mt-20 reveal-element">
+<h1 class="font-display-lg text-display-lg text-primary italic mb-stack-md md:text-[96px] leading-[0.9] tracking-tight">Wear Your Confidence.</h1>
+<p class="font-accent-italic text-accent-italic text-on-surface-variant max-w-2xl mb-stack-lg mx-auto text-[24px]">Intimate wear crafted for the woman who owns every room she enters.</p>
+<div class="flex flex-col sm:flex-row items-center gap-stack-md">
+<a asp-action="Explore" asp-controller="Shop" class="bg-primary-container text-on-primary-container px-8 py-4 font-label-sm text-label-sm uppercase tracking-[0.15em] border border-primary-container hover:bg-transparent hover:text-primary-container transition-all duration-500 w-full sm:w-auto text-center rounded-none">Explore Collection</a>
+<a asp-action="Story" asp-controller="About" class="border border-surface-variant text-inverse-surface px-8 py-4 font-label-sm text-label-sm uppercase tracking-[0.15em] hover:border-primary-container hover:text-primary-container transition-all duration-500 w-full sm:w-auto text-center rounded-none">Our Story</a>
+</div>
+</div>
+</section>
+<div class="w-full overflow-hidden bg-primary-container text-on-primary-container py-3 border-y border-outline-variant/30 flex z-20 relative">
+<div class="ticker-track font-label-sm text-label-sm uppercase tracking-widest flex items-center gap-8">
+<span>WEAR YOUR CONFIDENCE</span><span class="text-[10px]">⬦</span>
+<span>CRAFTED FOR YOU</span><span class="text-[10px]">⬦</span>
+<span>EGYPTIAN DESIGN</span><span class="text-[10px]">⬦</span>
+<span>PREMIUM QUALITY</span><span class="text-[10px]">⬦</span>
+<span>WEAR YOUR CONFIDENCE</span><span class="text-[10px]">⬦</span>
+<span>CRAFTED FOR YOU</span><span class="text-[10px]">⬦</span>
+<span>EGYPTIAN DESIGN</span><span class="text-[10px]">⬦</span>
+<span>PREMIUM QUALITY</span><span class="text-[10px]">⬦</span>
+</div>
+</div>
+<section class="py-[120px] px-section-padding-h max-w-[1600px] mx-auto">
+<div class="flex flex-col items-center mb-stack-lg reveal-element">
+<span class="font-label-sm text-label-sm text-tertiary uppercase tracking-[0.2em] mb-4">Curated For You</span>
+<h2 class="font-headline-lg text-headline-lg text-primary italic text-center">Discover Your Signature</h2>
+<div class="w-px h-16 bg-primary-container/50 mt-8"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mt-stack-lg">
+<a asp-action="Category" asp-controller="Shop" asp-route-id="essential" class="group block relative aspect-[3/4] overflow-hidden reveal-element">
+<img alt="Essential Collection" asp-append-version="true" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" data-alt="A luxurious close-up lifestyle shot of a woman adjusting a delicate, minimalist silk bra piece from the essential collection. The lighting is moody and cinematic, highlighting the smooth texture of the fabric against the skin. The background is completely dark, creating a profound sense of depth and ensuring the focus remains entirely on the high-end garment and its refined rose gold clasps." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAe8obysjTxjqHDQKs7A89UykxlTTr6WrXwxjmPu7lCOV5zGC_oVcx8R4gUwVdkMWOi1uHO9f-eAPe6luSs2_e_JoqZI1xfAcL6Txexs7n8nN6ABTZwMONSyiPGUBtyxOs5AQvUq1Yn-D4255zgR7Mn2Cm-IE4BB3macecHlnVvmuc4Ru8U6YQAB2e-YgHCc9gkRlEMytlOpQUDPJuMm2Zpaer3G9trJjbJzNeeDoZD9MisTc_6n55tr8BY7DnSHswOmhsSuDJCssxm">
+<div class="absolute inset-0 border border-transparent group-hover:border-primary-container/80 transition-colors duration-500 m-4"></div>
+<div class="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-background/90 to-transparent flex flex-col items-center text-center translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+<h3 class="font-display-md text-[28px] italic text-primary mb-2">The Essentials</h3>
+<span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant group-hover:text-tertiary transition-colors">Shop Now</span>
+</div>
+</a>
+<a asp-action="Category" asp-controller="Shop" asp-route-id="lounge" class="group block relative aspect-[3/4] overflow-hidden reveal-element md:translate-y-12">
+<img alt="Lounge Collection" asp-append-version="true" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" data-alt="An elegant editorial photograph of a model resting on a dark velvet chaise lounge, wearing flowing, premium loungewear. The scene is illuminated by dramatic, slatted shadow lighting that adds texture and a sense of intimate privacy. The overall color palette is constrained to deep blacks, rich plums, and subtle hints of gold bright, conveying a relaxed yet highly sophisticated aesthetic suitable for a luxury fashion brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDz3fp_Bzt5AgY7mmRGl4lzJmZD2NgZLklGleCzcCm4AOKrdq7kIAAUQCwH9dzT9CI9Wi3PH9cihiC-bY0IyqRXgnE65CI6IePTMIRudAZdlQ4TuEmVUVe2DB2tV4_W2jgAJJ-0NxrUSBKOgNqBJYxlqOh2LSQzeqR26eUqUAk6yDXSqitM_xoTvbltH0ib8atpc-S2RrVdwVRs9A9Cyk_9WLu4IjoIZovjNT92cjiriH2nziFKB6bTiHFXWCoKRKHqlp4os3cPunlv">
+<div class="absolute inset-0 border border-transparent group-hover:border-primary-container/80 transition-colors duration-500 m-4"></div>
+<div class="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-background/90 to-transparent flex flex-col items-center text-center translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+<h3 class="font-display-md text-[28px] italic text-primary mb-2">Loungewear</h3>
+<span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant group-hover:text-tertiary transition-colors">Shop Now</span>
+</div>
+</a>
+<a asp-action="Category" asp-controller="Shop" asp-route-id="noire" class="group block relative aspect-[3/4] overflow-hidden reveal-element">
+<img alt="Noire Collection" asp-append-version="true" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" data-alt="A highly stylized, dark minimal photograph showcasing intricate lace intimate wear against a stark, pitch-black backdrop. A single, focused beam of soft warm light hits the fabric, revealing the complex, artisanal craftsmanship of the dark lace patterns. The overall mood is deeply mysterious, exclusive, and editorial, perfectly aligned with a high-fashion, high-contrast dark mode luxury design system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuByOb-RMqL-6QUXgIPJ71nUnUd_Rn4jx--7sxtltG7RsJsINexpaP8lwvGErrBcX8plYug5DjOjEhJX4YU4p_lXwVb9kwEgCp8qLpV6t2M4AoNh2Fsc6jWsfqB-N8zDjrlBf-2dd3VEIG5b2dO43GHkYZAFGkdS9LU3hn0oINMvfGug_B7QYDltXrHkeHTE_IwqYNadYmcY4tkTmx1meihxKNDPHjuSdKTsHZdJstZqSfP3lZaz9QuORAuJATvU6qksFK2BL0aK3ZTW">
+<div class="absolute inset-0 border border-transparent group-hover:border-primary-container/80 transition-colors duration-500 m-4"></div>
+<div class="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-background/90 to-transparent flex flex-col items-center text-center translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+<h3 class="font-display-md text-[28px] italic text-primary mb-2">Collection Noire</h3>
+<span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant group-hover:text-tertiary transition-colors">Shop Now</span>
+</div>
+</a>
+</div>
+</section>
+<section class="w-full bg-surface-container-low py-[160px] px-section-padding-h relative border-y border-outline-variant/20 overflow-hidden">
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-20 bg-primary-container/30"></div>
+<div class="max-w-4xl mx-auto text-center reveal-element flex flex-col items-center">
+<span class="material-symbols-outlined text-[32px] text-tertiary mb-8 opacity-50 font-light">format_quote</span>
+<blockquote class="font-display-lg text-[40px] md:text-[64px] text-primary italic leading-tight mb-8">
+                    "Every piece tells the story of a woman who chose herself."
+                </blockquote>
+<p class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-on-surface-variant">— The Liora Philosophy</p>
+</div>
+<div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1px] h-20 bg-primary-container/30"></div>
+</section>
+</main>
+<footer class="bg-surface-container-lowest w-full py-[100px] border-t border-outline-variant/30">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter px-section-padding-h max-w-7xl mx-auto items-start">
+<div class="flex flex-col gap-6 md:col-span-1">
+<a asp-action="Index" asp-controller="Home" class="font-display-md text-display-md text-primary lowercase mb-4">liora</a>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xs">Refined intimate wear designed in Egypt. Crafted for the modern muse.</p>
+<div class="flex gap-4 mt-2">
+<a class="text-on-surface-variant hover:text-tertiary transition-colors" href="#">Instagram</a>
+<a class="text-on-surface-variant hover:text-tertiary transition-colors" href="#">Pinterest</a>
+</div>
+</div>
+<div class="flex flex-col gap-4 md:col-span-1 md:pl-12">
+<h4 class="font-label-sm text-label-sm uppercase tracking-widest text-primary-container mb-2">Explore</h4>
+<a class="font-body-md text-on-surface-variant hover:text-tertiary transition-colors duration-500 ease-in-out" href="#">Shop All</a>
+<a class="font-body-md text-on-surface-variant hover:text-tertiary transition-colors duration-500 ease-in-out" href="#">Collections</a>
+<a class="font-body-md text-on-surface-variant hover:text-tertiary transition-colors duration-500 ease-in-out" href="#">Journal</a>
+<a class="font-body-md text-on-surface-variant hover:text-tertiary transition-colors duration-500 ease-in-out" href="#">Stockists</a>
+</div>
+<div class="flex flex-col gap-4 md:col-span-1">
+<h4 class="font-label-sm text-label-sm uppercase tracking-widest text-primary-container mb-2">Assistance</h4>
+<a class="font-body-md text-on-surface-variant hover:text-tertiary transition-colors duration-500 ease-in-out" href="#">Shipping &amp; Returns</a>
+<a class="font-body-md text-on-surface-variant hover:text-tertiary transition-colors duration-500 ease-in-out" href="#">Privacy Policy</a>
+<a class="font-body-md text-on-surface-variant hover:text-tertiary transition-colors duration-500 ease-in-out" href="#">Sustainability</a>
+<a class="font-body-md text-on-surface-variant hover:text-tertiary transition-colors duration-500 ease-in-out" href="#">Size Guide</a>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-section-padding-h mt-24 flex flex-col md:flex-row justify-between items-center pt-8 border-t border-outline-variant/20">
+<p class="font-label-sm text-[10px] uppercase tracking-widest text-tertiary-fixed-dim">© 2024 liora. refined in egypt.</p>
+<div class="flex items-center gap-4 mt-4 md:mt-0 opacity-50">
+<span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Secure Checkout</span>
+</div>
+</div>
+</footer>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.reveal-element').forEach((el) => {
+                observer.observe(el);
+            });
+        });
+    </script>
+</body></html>  

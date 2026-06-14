@@ -1,221 +1,347 @@
-@using LioraApp.ViewModels.Admin
-@model ProductDetailsVM
+<!DOCTYPE html>
 
-@{
-    ViewData["Title"] = Model.Name;
-}
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Product Details - Liora Admin</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+        darkMode: "class",
+        theme: {
+        extend: {
+        "colors": {
+        "on-tertiary-fixed-variant": "#4b4450",
+        "on-surface-variant": "#514440",
+        "on-error": "#ffffff",
+        "surface-container-low": "#f9f2ec",
+        "on-secondary": "#ffffff",
+        "secondary-fixed-dim": "#d1c0de",
+        "on-secondary-container": "#6c5f79",
+        "surface-variant": "#e8e1db",
+        "primary-container": "#c49080",
+        "error-container": "#ffdad6",
+        "surface-tint": "#7f5446",
+        "on-secondary-fixed": "#21172c",
+        "on-primary-fixed-variant": "#643d30",
+        "surface-container-high": "#eee7e1",
+        "secondary-container": "#eedcfa",
+        "surface-container-lowest": "#ffffff",
+        "secondary-fixed": "#eedcfa",
+        "tertiary-fixed": "#eadfee",
+        "outline": "#83746f",
+        "on-primary-container": "#4e2a1f",
+        "inverse-surface": "#33302c",
+        "on-primary": "#ffffff",
+        "on-error-container": "#93000a",
+        "tertiary-fixed-dim": "#cec3d2",
+        "primary-fixed-dim": "#f2baa8",
+        "on-tertiary-fixed": "#1f1924",
+        "on-tertiary": "#ffffff",
+        "on-secondary-fixed-variant": "#4e425a",
+        "tertiary": "#635b68",
+        "surface-dim": "#dfd9d3",
+        "on-background": "#1e1b18",
+        "surface-container-highest": "#e8e1db",
+        "surface-bright": "#fff8f3",
+        "on-tertiary-container": "#38313d",
+        "background": "#fff8f3",
+        "primary": "#7f5446",
+        "inverse-on-surface": "#f7efe9",
+        "error": "#ba1a1a",
+        "primary-fixed": "#ffdbd0",
+        "surface-container": "#f4ede7",
+        "surface": "#fff8f3",
+        "secondary": "#665972",
+        "on-primary-fixed": "#311309",
+        "outline-variant": "#d5c2bd",
+        "tertiary-container": "#a299a7",
+        "inverse-primary": "#f2baa8",
+        "on-surface": "#1e1b18"
+        },
+        "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+        },
+        "spacing": {
+        "stack-md": "16px",
+        "container-padding-desktop": "64px",
+        "stack-lg": "32px",
+        "container-padding-mobile": "20px",
+        "gutter": "24px",
+        "stack-sm": "8px",
+        "section-gap": "120px",
+        "unit": "8px"
+        },
+        "fontFamily": {
+        "body-lg": ["DM Sans"],
+        "accent-italic": ["EB Garamond"],
+        "body-md": ["DM Sans"],
+        "display-lg": ["Playfair Display"],
+        "label-caps": ["DM Sans"],
+        "headline-lg-mobile": ["Playfair Display"],
+        "display-lg-mobile": ["Playfair Display"],
+        "headline-lg": ["Playfair Display"],
+        "headline-md": ["Playfair Display"]
+        },
+        "fontSize": {
+        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+        "accent-italic": ["20px", {"lineHeight": "1.5", "fontWeight": "400"}],
+        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+        "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+        "label-caps": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "700"}],
+        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+        "display-lg-mobile": ["40px", {"lineHeight": "1.2", "fontWeight": "700"}],
+        "headline-lg": ["40px", {"lineHeight": "1.2", "fontWeight": "600"}],
+        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "500"}]
+        }
+        }
+        }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
 
-<div class="space-y-6">
+        .shadow-ambient-lvl1 {
+        box-shadow: 0px 10px 30px rgba(26, 16, 37, 0.05);
+        }
 
-    <!-- Breadcrumbs -->
-    <nav class="flex flex-wrap items-center gap-2 text-sm text-slate-500">
-        <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"
-           class="hover:text-primary transition-colors">Dashboard</a>
-        <span class="material-symbols-outlined text-sm">chevron_right</span>
-        <a asp-area="Admin" asp-controller="Product" asp-action="Index"
-           class="hover:text-primary transition-colors">Products</a>
-        <span class="material-symbols-outlined text-sm">chevron_right</span>
-        <span class="font-medium text-slate-900">@Model.Name</span>
+        .shadow-ambient-lvl2 {
+        box-shadow: 0px 20px 50px rgba(26, 16, 37, 0.08);
+        }
+
+        .rose-tinted-overlay {
+        background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(196,144,128,0.05) 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen font-body-md text-body-md">
+    <!-- Persistent Side Navigation -->
+    <nav class="fixed left-0 top-0 h-full w-[240px] bg-surface-container-low border-r border-outline-variant flex flex-col z-40 hidden md:flex">
+        <div class="p-6">
+            <h1 class="font-headline-md text-headline-md font-bold text-primary">Liora</h1>
+        </div>
+        <div class="px-4 py-2">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-lg">
+                    L
+                </div>
+                <div>
+                    <p class="font-body-md text-body-md font-bold">Liora Admin</p>
+                    <p class="font-label-caps text-label-caps text-on-surface-variant">Enterprise Portal</p>
+                </div>
+            </div>
+        </div>
+        <ul class="flex flex-col h-full overflow-y-auto space-y-1 py-4">
+            <li>
+                <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200 ease-in-out" href="#">
+                    <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                    <span>Overview</span>
+                </a>
+            </li>
+            <li>
+                <!-- Active State Logic: Semantic Mapping -> "Catalog" -> "Product Details" implies Catalog/Inventory -->
+                <a class="flex items-center gap-3 px-4 py-3 border-l-2 border-primary bg-surface-container-high text-primary font-bold transition-all duration-200 ease-in-out" href="#">
+                    <span class="material-symbols-outlined" data-icon="inventory_2" data-weight="fill" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+                    <span>Catalog</span>
+                </a>
+            </li>
+            <li>
+                <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200 ease-in-out" href="#">
+                    <span class="material-symbols-outlined" data-icon="payments">payments</span>
+                    <span>Sales</span>
+                </a>
+            </li>
+            <li>
+                <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200 ease-in-out" href="#">
+                    <span class="material-symbols-outlined" data-icon="group">group</span>
+                    <span>Customers</span>
+                </a>
+            </li>
+            <li>
+                <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200 ease-in-out" href="#">
+                    <span class="material-symbols-outlined" data-icon="settings">settings</span>
+                    <span>Settings</span>
+                </a>
+            </li>
+        </ul>
     </nav>
-
-    <!-- Product Header Card (matches mockup style) -->
-    <div class="rounded-[18px] border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-5">
-            <div class="h-16 w-16 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0">
-                @{
-                    var mainImg = Model.Images.FirstOrDefault(i => i.IsMain)
-                               ?? Model.Images.FirstOrDefault();
-                }
-                @if (mainImg is not null)
-                {
-                    <a href="@mainImg.ImageUrl" data-fancybox="gallery">
-                        <img src="@mainImg.ImageUrl" alt="@Model.Name" class="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity" />
-                    </a>
-                }
-                else
-                {
-                    <div class="w-full h-full flex items-center justify-center">
-                        <span class="material-symbols-outlined text-slate-300 text-3xl">image</span>
-                    </div>
-                }
-            </div>
-            <div class="min-w-0 flex-1">
-                <div class="mb-2 flex flex-wrap items-center gap-2 sm:gap-3">
-                    <h1 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">@Model.Name</h1>
-                    @if (Model.IsActive)
-                    {
-                        <span class="bg-emerald-50 text-emerald-700 px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">Active</span>
-                    }
-                    else
-                    {
-                        <span class="bg-slate-100 text-slate-500 px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">Inactive</span>
-                    }
-                </div>
-                <div class="mt-1 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-                    <span class="bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded text-xs font-semibold">
-                        @Model.CategoryName
-                    </span>
-                    <span class="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Base Price:</span>
-                    <span class="font-semibold text-slate-900">$@Model.BasePrice.ToString("0.00")</span>
-                </div>
-                <div class="mt-4 grid grid-cols-2 gap-3 text-sm sm:max-w-[360px]">
-                    <div class="rounded-xl bg-slate-50 px-3 py-2">
-                        <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Created</p>
-                        <p class="mt-1 text-xs font-semibold text-slate-700">@Model.CreatedAt.ToString("MMM d, yyyy")</p>
-                    </div>
-                    <div class="rounded-xl bg-slate-50 px-3 py-2">
-                        <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Updated</p>
-                        <p class="mt-1 text-xs font-semibold text-slate-700">@Model.UpdatedAt.ToString("MMM d, yyyy")</p>
-                    </div>
-                </div>
+    <!-- Top Navigation Bar -->
+    <header class="fixed top-0 right-0 h-[60px] w-[calc(100%-240px)] bg-surface-container border-b border-outline-variant flex items-center justify-between px-gutter z-50 hidden md:flex">
+        <div class="flex items-center gap-4">
+            <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                <input class="pl-10 pr-4 py-2 bg-surface-lowest border border-outline-variant/20 rounded-full focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all duration-250 w-64 text-sm bg-white" placeholder="Search catalog..." type="text" />
             </div>
         </div>
-        <div class="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
-            <a asp-area="Admin" asp-controller="Product" asp-action="Edit" asp-route-id="@Model.Id"
-               class="flex items-center justify-center gap-2 rounded-lg border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100">
-                <span class="material-symbols-outlined text-lg">edit</span>
-                Edit
-            </a>
-            <a asp-area="Admin" asp-controller="Product" asp-action="Delete" asp-route-id="@Model.Id"
-               class="flex items-center justify-center gap-2 rounded-lg border border-red-200 px-5 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50">
-                <span class="material-symbols-outlined text-lg">delete</span>
-                Deactivate
-            </a>
+        <div class="flex items-center gap-4">
+            <button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors cursor-pointer active:scale-95 duration-200">
+                <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+            </button>
+            <button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors cursor-pointer active:scale-95 duration-200">
+                <span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+            </button>
         </div>
-        </div>
-    </div>
-
-    <!-- Section Navigation -->
-    <div class="overflow-x-auto border-b border-slate-200">
-        <div class="flex min-w-max gap-6">
-        <button class="pb-4 font-semibold text-primary border-b-2 border-primary flex items-center gap-2 transition-all">
-            <span class="material-symbols-outlined text-xl">dashboard</span>
-            Overview
-        </button>
-        <a asp-area="Admin" asp-controller="ProductVariants" asp-action="Index"
-           asp-route-productId="@Model.Id"
-           class="pb-4 font-medium text-slate-500 hover:text-slate-900 flex items-center gap-2 transition-all">
-            <span class="material-symbols-outlined text-xl">style</span>
-            Variants
-            <span class="ml-1 bg-slate-100 text-slate-500 text-[10px] font-black px-2 py-0.5 rounded-full">
-                @Model.Variants.Count
-            </span>
-        </a>
-        <a asp-area="Admin" asp-controller="ProductImages" asp-action="Index"
-           asp-route-productId="@Model.Id"
-           class="pb-4 font-medium text-slate-500 hover:text-slate-900 flex items-center gap-2 transition-all">
-            <span class="material-symbols-outlined text-xl">image</span>
-            Media Gallery
-            <span class="ml-1 bg-slate-100 text-slate-500 text-[10px] font-black px-2 py-0.5 rounded-full">
-                @Model.Images.Count
-            </span>
-        </a>
-        </div>
-    </div>
-
-    <!-- Description -->
-    @if (!string.IsNullOrWhiteSpace(Model.Description))
-    {
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 pt-5">
-            <h3 class="text-sm font-bold text-slate-900 mb-2">Description</h3>
-            <p class="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">@Model.Description</p>
-        </div>
-    }
-
-    <!-- Inventory Summary Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div class="bg-white rounded-xl border border-slate-200 p-5 flex flex-col gap-3">
-            <div class="flex items-center justify-between">
-                <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Stock</span>
-                <span class="material-symbols-outlined text-primary">inventory</span>
-            </div>
+    </header>
+    <!-- Main Content Canvas -->
+    <main class="md:ml-[240px] pt-[60px] min-h-screen p-container-padding-desktop">
+        <!-- Page Header -->
+        <div class="flex justify-between items-end mb-stack-lg border-b border-outline-variant pb-4">
             <div>
-                <h3 class="text-3xl font-black text-slate-900">@Model.TotalStock.ToString("N0")</h3>
-                <p class="text-xs text-slate-400 mt-1">Across @Model.Variants.Count(v => v.IsActive) active variants</p>
+                <nav class="flex text-sm text-on-surface-variant mb-2">
+                    <a class="hover:text-primary transition-colors" href="#">Catalog</a>
+                    <span class="mx-2">/</span>
+                    <a class="hover:text-primary transition-colors" href="#">Dresses</a>
+                    <span class="mx-2">/</span>
+                    <span class="text-on-surface">Midnight Silk Slip</span>
+                </nav>
+                <h2 class="font-headline-lg text-headline-lg text-on-surface">Product Details</h2>
+            </div>
+            <button class="bg-primary-container text-on-primary-container px-6 py-3 rounded-full font-label-caps text-label-caps hover:shadow-ambient-lvl2 active:scale-95 transition-all duration-250 flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+                Edit Product
+            </button>
+        </div>
+        <!-- 2-Column Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+            <!-- Left Column: Info (60% -> 7 cols) -->
+            <div class="lg:col-span-7 space-y-stack-lg">
+                <!-- Basic Info Card -->
+                <div class="bg-surface-container-lowest rounded-2xl p-8 shadow-ambient-lvl1">
+                    <h3 class="font-headline-md text-headline-md mb-6 border-b border-outline-variant/30 pb-4">Basic Information</h3>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Product Name</p>
+                            <p class="font-body-lg text-body-lg text-on-surface">Midnight Silk Slip Dress</p>
+                        </div>
+                        <div>
+                            <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Status</p>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full bg-surface-container-highest text-primary font-label-caps text-label-caps">
+                                <span class="w-2 h-2 rounded-full bg-primary mr-2"></span> Active
+                            </span>
+                        </div>
+                        <div class="col-span-2">
+                            <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Description</p>
+                            <p class="text-on-surface-variant leading-relaxed">Crafted from 100% pure mulberry silk, this bias-cut slip dress drapes effortlessly over the silhouette. Featuring delicate adjustable straps, a subtle V-neckline, and French seams throughout for a flawless finish. The 'Midnight' hue is a deep, rich navy that borders on black, perfect for evening elegance.</p>
+                        </div>
+                        <div>
+                            <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Base Price</p>
+                            <p class="font-body-lg text-body-lg text-on-surface">$450.00</p>
+                        </div>
+                        <div>
+                            <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Category</p>
+                            <p class="text-on-surface">Eveningwear / Dresses</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Variants List Card -->
+                <div class="bg-surface-container-lowest rounded-2xl p-8 shadow-ambient-lvl1">
+                    <div class="flex justify-between items-center mb-6 border-b border-outline-variant/30 pb-4">
+                        <h3 class="font-headline-md text-headline-md">Variants &amp; Inventory</h3>
+                        <span class="text-sm text-on-surface-variant">Total Stock: 42</span>
+                    </div>
+                    <div class="space-y-3">
+                        <!-- Variant Row 1 -->
+                        <div class="flex items-center justify-between p-4 bg-surface-container rounded-xl border border-transparent hover:border-outline-variant/30 transition-all duration-250">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-lg bg-inverse-surface flex items-center justify-center text-on-primary font-bold text-sm">
+                                    XS
+                                </div>
+                                <div>
+                                    <p class="font-bold">Midnight / Extra Small</p>
+                                    <p class="text-sm text-on-surface-variant">SKU: MSLIP-MID-XS</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-6">
+                                <div class="text-right">
+                                    <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Stock</p>
+                                    <p class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-primary-container"></span> 8 units</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Price</p>
+                                    <p>$450.00</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Variant Row 2 -->
+                        <div class="flex items-center justify-between p-4 bg-surface-container rounded-xl border border-transparent hover:border-outline-variant/30 transition-all duration-250">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-lg bg-inverse-surface flex items-center justify-center text-on-primary font-bold text-sm">
+                                    S
+                                </div>
+                                <div>
+                                    <p class="font-bold">Midnight / Small</p>
+                                    <p class="text-sm text-on-surface-variant">SKU: MSLIP-MID-S</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-6">
+                                <div class="text-right">
+                                    <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Stock</p>
+                                    <p class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-primary-container"></span> 15 units</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Price</p>
+                                    <p>$450.00</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Variant Row 3 (Low Stock) -->
+                        <div class="flex items-center justify-between p-4 bg-surface-container rounded-xl border border-error-container hover:border-error transition-all duration-250">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-lg bg-inverse-surface flex items-center justify-center text-on-primary font-bold text-sm">
+                                    M
+                                </div>
+                                <div>
+                                    <p class="font-bold">Midnight / Medium</p>
+                                    <p class="text-sm text-on-surface-variant">SKU: MSLIP-MID-M</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-6">
+                                <div class="text-right">
+                                    <p class="font-label-caps text-label-caps text-error mb-1">Low Stock</p>
+                                    <p class="flex items-center gap-2 text-error"><span class="w-2 h-2 rounded-full bg-error"></span> 2 units</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Price</p>
+                                    <p>$450.00</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Right Column: Media (40% -> 5 cols) -->
+            <div class="lg:col-span-5">
+                <div class="bg-surface-container-lowest rounded-2xl p-6 shadow-ambient-lvl1 sticky top-[100px]">
+                    <h3 class="font-headline-md text-headline-md mb-4">Media Gallery</h3>
+                    <!-- Main Hero Image -->
+                    <div class="relative w-full aspect-[4/5] rounded-2xl overflow-hidden mb-4 group cursor-zoom-in">
+                        <img alt="Silk Dress Front" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A luxurious, high-fashion editorial shot of a deep navy blue silk slip dress displayed on a minimalist ivory mannequin. The dress drapes elegantly, showing off the smooth texture and bias cut. The background is a soft, pristine white studio setting with gentle, diffused natural lighting casting subtle shadows that emphasize the high-end modern aesthetic and premium craftsmanship." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAW_ouu4XJbcFzs9ebCNQXT8wtD4ao6kFG8pNMhW0zebKinZWyDCqjTRkKo54N0usX374XDfVzY02KXZmSPcYU085kvcc9uXhiHFcNvqcIzqy00CvO68WSbmHqK1hlWUF6CChDEltqvGgVa3mvCYcuKjJkOplFhqiiu8VjJF7ERWAOZnSgie7e2KQICyW1tLI8Rr-ev0PxbqAZO4lHnAWbcSJeJGkgx8VLFx7IX6YElByTunoonaBaZP6Ox0Ca0dF9FjvHFaK926vZR" />
+                        <div class="absolute inset-0 rose-tinted-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <span class="absolute top-4 right-4 bg-surface/80 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold shadow-ambient-lvl1">Cover Image</span>
+                    </div>
+                    <!-- Gallery Grid -->
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="relative aspect-square rounded-xl overflow-hidden cursor-pointer group">
+                            <img alt="Silk Dress Detail" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A close-up macro photography shot focusing on the delicate French seams and fine stitching of a deep navy blue silk garment. The lighting is soft and directional, highlighting the lustrous sheen and smooth weave of the pure mulberry silk fabric. The mood is intimate and luxurious, set against a clean, out-of-focus light background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuChT83oHOpTu2vDdyh4Nl0phXCmbtHjAsdT-xUVGh5P7RpuMDs8guQMxcm3kyKYU2hk3PR0E5PS80QwVZ7I7EThDh5_l9l20l4tjKyyqSQmCMWT0dh0LKRdfgKPDxw2IPMKuPYIZBlqWpReVR2ZxMChrOzk_puHhepVSLI72HsEZEJygRT7rv2nu3sNvPj7MMCCiQ-5SDMGEjYcEljcjT0_mbrhEnnFKyaKgaIRW2qQCX6xBTqhYm4Y9zd7ZxLngo46ZDjDvs3X5SZg" />
+                        </div>
+                        <div class="relative aspect-square rounded-xl overflow-hidden cursor-pointer group">
+                            <img alt="Silk Dress Back" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A rear-view fashion editorial photograph of a navy silk slip dress showing the elegant drop back and delicate adjustable spaghetti straps. The dress is styled on a minimal form in a bright, modern gallery-like space. The lighting is high-key and pristine, creating a sense of effortless grace and quiet luxury." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjxuxr1QI67udOAGCbwc86abfGpkZPHSweQI_YWDBT76uHJokXzGQouGrCzBPy_d4MQCdH3tN7kunnWHZAu8AB-Bgiej20JxIpQbJeX4QMjaEPdvULKChsuENkKVs2NQdDpCzUWiDPCF9SYMGQI0w1IElo5BqDV55kesx-MBDwSJWQoj9tnIFHTAIlrz3a4cD-Rl8FfT9NU6Usv6dey8c3oCb_phHnSC4_g02Ea_Fc9fHkEiHX-34pjALYoV69_P4UUo4GPtzET47l" />
+                        </div>
+                        <div class="relative aspect-square rounded-xl overflow-hidden bg-surface-container flex items-center justify-center cursor-pointer hover:bg-surface-container-highest transition-colors">
+                            <span class="material-symbols-outlined text-primary-container text-3xl" data-icon="add_photo_alternate">add_photo_alternate</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="bg-white rounded-xl border border-slate-200 p-5 flex flex-col gap-3">
-            <div class="flex items-center justify-between">
-                <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Inventory Value</span>
-                <span class="material-symbols-outlined text-primary">payments</span>
-            </div>
-            <div>
-                <h3 class="text-3xl font-black text-slate-900">$@Model.InventoryValue.ToString("N2")</h3>
-                <p class="text-xs text-slate-400 mt-1">At variant prices</p>
-            </div>
-        </div>
-        <div class="@(Model.LowStockCount > 0 ? "bg-red-50 border-red-200" : "bg-white border-slate-200") rounded-xl border p-5 flex flex-col gap-3">
-            <div class="flex items-center justify-between">
-                <span class="text-[10px] font-black uppercase tracking-widest @(Model.LowStockCount > 0 ? "text-red-400" : "text-slate-400")">
-                    Low Stock Alerts
-                </span>
-                <span class="material-symbols-outlined @(Model.LowStockCount > 0 ? "text-red-500" : "text-slate-300")">warning</span>
-            </div>
-            <div>
-                <h3 class="text-3xl font-black @(Model.LowStockCount > 0 ? "text-red-700" : "text-slate-900")">
-                    @Model.LowStockCount
-                </h3>
-                <p class="text-xs @(Model.LowStockCount > 0 ? "text-red-400" : "text-slate-400") mt-1">
-                    @(Model.LowStockCount > 0 ? "Variants need restocking (< 10 units)" : "All variants well stocked")
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Management Sections -->
-    <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
-        <a asp-area="Admin" asp-controller="ProductVariants" asp-action="Index"
-           asp-route-productId="@Model.Id"
-           class="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md">
-            <div class="flex items-start justify-between gap-4">
-                <div>
-                    <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Section 01</p>
-                    <h3 class="mt-2 text-xl font-black text-slate-900">Variants</h3>
-                    <p class="mt-2 text-sm leading-relaxed text-slate-500">
-                        Manage sizes, numeric shoe sizing, colors, stock, SKU, and each variant's main image.
-                    </p>
-                </div>
-                <div class="rounded-2xl bg-primary/10 p-3 text-primary">
-                    <span class="material-symbols-outlined text-2xl">style</span>
-                </div>
-            </div>
-            <div class="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
-                <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
-                    @Model.Variants.Count variant(s)
-                </span>
-                <span class="inline-flex items-center gap-1 text-sm font-semibold text-primary">
-                    Open Variants
-                    <span class="material-symbols-outlined text-base transition-transform group-hover:translate-x-0.5">arrow_forward</span>
-                </span>
-            </div>
-        </a>
-
-        <a asp-area="Admin" asp-controller="ProductImages" asp-action="Index"
-           asp-route-productId="@Model.Id"
-           class="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md">
-            <div class="flex items-start justify-between gap-4">
-                <div>
-                    <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Section 02</p>
-                    <h3 class="mt-2 text-xl font-black text-slate-900">Media Gallery</h3>
-                    <p class="mt-2 text-sm leading-relaxed text-slate-500">
-                        Manage product-level images, cover photo, gallery order, and visual presentation.
-                    </p>
-                </div>
-                <div class="rounded-2xl bg-primary/10 p-3 text-primary">
-                    <span class="material-symbols-outlined text-2xl">image</span>
-                </div>
-            </div>
-            <div class="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
-                <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
-                    @Model.Images.Count image(s)
-                </span>
-                <span class="inline-flex items-center gap-1 text-sm font-semibold text-primary">
-                    Open Gallery
-                    <span class="material-symbols-outlined text-base transition-transform group-hover:translate-x-0.5">arrow_forward</span>
-                </span>
-            </div>
-        </a>
-    </div>
-
-</div>
+    </main>
+</body></html>

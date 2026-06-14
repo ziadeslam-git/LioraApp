@@ -1,136 +1,341 @@
-﻿@model PaymentVM
-@{
-    ViewData["Title"] = "Payment Details";
-}
+﻿<!DOCTYPE html>
 
-@section Styles {
-    }
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Payment Details - Liora Admin</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+        darkMode: "class",
+        theme: {
+        extend: {
+        "colors": {
+        "surface-container": "#f4ede7",
+        "tertiary-fixed-dim": "#cec3d2",
+        "inverse-primary": "#f2baa8",
+        "error": "#ba1a1a",
+        "surface-container-high": "#eee7e1",
+        "on-secondary-fixed": "#21172c",
+        "surface-tint": "#7f5446",
+        "surface-dim": "#dfd9d3",
+        "secondary-fixed-dim": "#d1c0de",
+        "on-tertiary-fixed-variant": "#4b4450",
+        "surface-container-low": "#f9f2ec",
+        "on-secondary": "#ffffff",
+        "on-background": "#1e1b18",
+        "on-surface": "#1e1b18",
+        "surface-container-lowest": "#ffffff",
+        "primary-fixed": "#ffdbd0",
+        "on-error-container": "#93000a",
+        "on-error": "#ffffff",
+        "on-surface-variant": "#514440",
+        "background": "#fff8f3",
+        "inverse-surface": "#33302c",
+        "surface-container-highest": "#e8e1db",
+        "on-tertiary": "#ffffff",
+        "primary-container": "#c49080",
+        "on-primary": "#ffffff",
+        "primary-fixed-dim": "#f2baa8",
+        "on-tertiary-container": "#38313d",
+        "on-primary-fixed": "#311309",
+        "surface-bright": "#fff8f3",
+        "tertiary": "#635b68",
+        "secondary-container": "#eedcfa",
+        "tertiary-fixed": "#eadfee",
+        "on-primary-fixed-variant": "#643d30",
+        "on-secondary-container": "#6c5f79",
+        "on-tertiary-fixed": "#1f1924",
+        "error-container": "#ffdad6",
+        "outline": "#83746f",
+        "inverse-on-surface": "#f7efe9",
+        "secondary": "#665972",
+        "surface": "#fff8f3",
+        "secondary-fixed": "#eedcfa",
+        "on-secondary-fixed-variant": "#4e425a",
+        "surface-variant": "#e8e1db",
+        "outline-variant": "#d5c2bd",
+        "primary": "#7f5446",
+        "on-primary-container": "#4e2a1f",
+        "tertiary-container": "#a299a7"
+        },
+        "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px",
+        "2xl": "1rem"
+        },
+        "spacing": {
+        "gutter": "24px",
+        "container-padding-desktop": "64px",
+        "stack-sm": "8px",
+        "stack-lg": "32px",
+        "unit": "8px",
+        "section-gap": "120px",
+        "stack-md": "16px",
+        "container-padding-mobile": "20px"
+        },
+        "fontFamily": {
+        "accent-italic": ["EB Garamond", "serif"],
+        "headline-md": ["Playfair Display", "serif"],
+        "label-caps": ["DM Sans", "sans-serif"],
+        "display-lg": ["Playfair Display", "serif"],
+        "body-md": ["DM Sans", "sans-serif"],
+        "headline-lg-mobile": ["Playfair Display", "serif"],
+        "body-lg": ["DM Sans", "sans-serif"],
+        "display-lg-mobile": ["Playfair Display", "serif"],
+        "headline-lg": ["Playfair Display", "serif"],
+        "mono": ["DM Mono", "monospace"]
+        },
+        "fontSize": {
+        "accent-italic": ["20px", { "lineHeight": "1.5", "fontWeight": "400" }],
+        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "500" }],
+        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "700" }],
+        "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+        "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+        "display-lg-mobile": ["40px", { "lineHeight": "1.2", "fontWeight": "700" }],
+        "headline-lg": ["40px", { "lineHeight": "1.2", "fontWeight": "600" }]
+        },
+        "boxShadow": {
+        "level-1": "0px 10px 30px rgba(26, 16, 37, 0.05)",
+        "level-2": "0px 20px 50px rgba(26, 16, 37, 0.08)"
+        }
+        }
+        }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
 
-<div class="max-w-3xl mx-auto space-y-8 font-inter">
-    <!-- Breadcrumb & Header -->
-    <div class="flex items-center justify-between">
+        .material-symbols-outlined.fill {
+        font-variation-settings: 'FILL' 1;
+        }
+
+        .btn-hover-scale {
+        transition: transform 250ms ease-out, background-color 250ms ease-out, box-shadow 250ms ease-out;
+        }
+
+        .btn-hover-scale:active {
+        transform: scale(0.98);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased overflow-x-hidden">
+    <!-- TopNavBar -->
+    <nav class="fixed top-0 right-0 h-[60px] w-[calc(100%-240px)] bg-surface-container dark:bg-surface-container border-b border-outline-variant flex items-center justify-between px-gutter w-full z-50">
         <div class="flex items-center gap-4">
-            <a asp-action="Index" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-200 transition-colors text-slate-500 bg-slate-100 shadow-sm">
-                <span class="material-symbols-outlined text-[20px]">arrow_back</span>
-            </a>
-            <div>
-                <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Payment #@Model.Id</h2>
-                <p class="text-xs text-slate-500 font-medium">Read-only transaction record</p>
+            <!-- Search on left -->
+            <div class="relative hidden md:flex items-center">
+                <span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-sm">search</span>
+                <input class="bg-surface-container-high border-outline-variant border rounded-full py-1.5 pl-9 pr-4 text-sm text-on-surface focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all" placeholder="Search..." type="text" />
             </div>
         </div>
-        <div>
-            @if (Model.Status == "Paid")
-            {
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-700 border border-emerald-200 uppercase tracking-widest shadow-sm">
-                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span> @Model.Status
-                </span>
-            }
-            else if (Model.Status == "Pending")
-            {
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-amber-100 text-amber-700 border border-amber-200 uppercase tracking-widest shadow-sm">
-                    <span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span> @Model.Status
-                </span>
-            }
-            else
-            {
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-red-100 text-error border border-red-200 uppercase tracking-widest shadow-sm">
-                    <span class="w-1.5 h-1.5 bg-red-500 rounded-full"></span> @Model.Status
-                </span>
-            }
+        <div class="flex items-center gap-4">
+            <span class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors cursor-pointer active:scale-95 p-2">notifications</span>
+            <span class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors cursor-pointer active:scale-95 p-2">account_circle</span>
         </div>
-    </div>
-
-    <!-- Quick Overview Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-5 relative overflow-hidden">
-            <div class="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center border border-indigo-100/50 shadow-inner z-10">
-                <span class="material-symbols-outlined text-3xl text-primary font-light">receipt_long</span>
-            </div>
-            <div class="z-10">
-                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Associated Order</p>
-                <p class="text-2xl font-black text-slate-800">#@Model.OrderId</p>
-            </div>
-            <!-- Decorative circle -->
-            <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-primary/5 rounded-full blur-2xl"></div>
-        </div>
-        
-        <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-5 relative overflow-hidden">
-            <div class="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100/50 shadow-inner z-10">
-                <span class="material-symbols-outlined text-3xl text-emerald-600 font-light">attach_money</span>
-            </div>
-            <div class="z-10">
-                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Amount</p>
-                <p class="text-2xl font-black text-slate-800 font-mono">$@Model.Amount.ToString("N2")</p>
-            </div>
-            <!-- Decorative circle -->
-            <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl"></div>
-        </div>
-    </div>
-
-    <!-- Details Box -->
-    <div class="bg-surface-container-lowest rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <!-- Header -->
-        <div class="px-8 py-5 border-b border-slate-100 bg-surface-container-low flex items-center gap-3">
-            <span class="material-symbols-outlined text-primary">data_info_alert</span>
-            <h3 class="font-bold text-slate-800">Transaction Details</h3>
-        </div>
-
-        <!-- Body Grid -->
-        <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
-            <div>
-                <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Payment ID</span>
-                <span class="font-mono text-sm font-semibold text-slate-700 bg-slate-50 px-2 py-1 rounded border border-slate-200">@Model.Id</span>
-            </div>
-            
-            <div>
-                <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Transaction Ref / External ID</span>
-                @if (string.IsNullOrEmpty(Model.TransactionId))
-                {
-                    <span class="text-sm italic text-slate-400">Not Available</span>
-                }
-                else
-                {
-                    <span class="font-mono text-[13px] text-slate-600 truncate max-w-[280px] block" title="@Model.TransactionId">@Model.TransactionId</span>
-                }
-            </div>
-
-            <div class="md:col-span-2 border-t border-slate-100 pt-6 mt-2"></div>
-
-            <div>
-                <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Customer Name</span>
-                <span class="text-sm font-semibold text-slate-800">@Model.CustomerName</span>
-            </div>
-
-            <div>
-                <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Customer Email</span>
-                <span class="text-sm font-medium text-primary">@Model.CustomerEmail</span>
-            </div>
-
-            <div class="md:col-span-2 border-t border-slate-100 pt-6 mt-2"></div>
-
-            <div>
-                <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Payment Provider</span>
-                <div class="inline-flex items-center gap-2 mt-1">
-                    <span class="w-8 h-8 rounded bg-slate-100 border border-slate-200 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-[16px] text-slate-600">credit_card</span>
-                    </span>
-                    <span class="text-sm font-bold text-slate-700">@Model.Provider</span>
+    </nav>
+    <!-- SideNavBar -->
+    <aside class="fixed left-0 top-0 h-full w-[240px] bg-surface-container-low dark:bg-surface-container-low border-r border-outline-variant flex flex-col h-full overflow-y-auto z-50">
+        <div class="px-6 py-8">
+            <div class="font-headline-md text-headline-md font-bold text-primary mb-2">Liora</div>
+            <div class="flex items-center gap-3 mt-6 mb-8">
+                <div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden">
+                    <img alt="Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of an administrator in a well-lit, modern office setting. The aesthetic is clean, minimalist, and high-fashion editorial. The lighting is soft and flattering, highlighting the subject's confident expression. The color palette emphasizes warm neutrals and subtle rose-gold accents, fitting a luxury brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4XAfnA6TnI0TvKByjv0-P9Doc9T67qa2oBOcGWqQQqyEb6lRVUp18oOokf1oXkfnwRPfPHqjhdoWwfQlfQyB928ojBu5HVkiD-SFfNH33bhCvzaWClmHEt5-iucR_bU_5dbzM_g3FND2zo2CDe-Ddvi1xZvgslLHlgu-tRkyqIZC3-KmsnnlMSyPTkPiphmvxCtSEp2oCR0wUljFgCMJnjYLYR83XLA132JT-Gy7rgL42HK6DQRBCnv0PI17F_wwkRpUHTLilhgj1" />
+                </div>
+                <div>
+                    <div class="text-sm font-semibold text-on-surface">Liora Admin</div>
+                    <div class="text-xs text-on-surface-variant">Enterprise Portal</div>
                 </div>
             </div>
-
-            <div>
-                <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Timestamp</span>
-                <span class="text-sm text-slate-700 font-medium">@Model.CreatedAt.ToString("f")</span>
+        </div>
+        <nav class="flex-1 px-2 space-y-1">
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200 ease-in-out rounded-xl" href="#">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span>Overview</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200 ease-in-out rounded-xl" href="#">
+                <span class="material-symbols-outlined">inventory_2</span>
+                <span>Catalog</span>
+            </a>
+            <!-- Active State -->
+            <a class="flex items-center gap-3 px-4 py-3 border-l-2 border-primary bg-surface-container-high text-primary font-bold duration-200 ease-in-out rounded-r-xl" href="#">
+                <span class="material-symbols-outlined fill">payments</span>
+                <span>Sales</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200 ease-in-out rounded-xl" href="#">
+                <span class="material-symbols-outlined">group</span>
+                <span>Customers</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200 ease-in-out rounded-xl" href="#">
+                <span class="material-symbols-outlined">settings</span>
+                <span>Settings</span>
+            </a>
+        </nav>
+    </aside>
+    <!-- Main Content Canvas -->
+    <main class="ml-[240px] mt-[60px] min-h-[calc(100vh-60px)] p-container-padding-desktop">
+        <!-- Header & Breadcrumbs -->
+        <div class="mb-stack-lg">
+            <div class="flex items-center gap-2 text-on-surface-variant font-label-caps text-label-caps mb-2 tracking-wider">
+                <a class="hover:text-primary transition-colors" href="#">SALES</a>
+                <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                <a class="hover:text-primary transition-colors" href="#">PAYMENTS</a>
+                <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                <span class="text-primary">DETAILS</span>
+            </div>
+            <h1 class="font-headline-md text-headline-md text-on-surface">Payment Details</h1>
+        </div>
+        <!-- 65 / 35 Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+            <!-- Left Column (65%) -->
+            <div class="lg:col-span-8 flex flex-col gap-gutter">
+                <!-- Transaction Info Card -->
+                <div class="bg-surface-container-lowest rounded-2xl p-8 shadow-level-1 flex flex-col gap-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-primary-container opacity-5 rounded-bl-full pointer-events-none"></div>
+                    <h2 class="font-headline-md text-xl text-on-surface mb-2 border-b border-surface-variant pb-4">Transaction Information</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <div class="text-sm text-on-surface-variant mb-1">Payment ID</div>
+                            <div class="font-mono text-lg text-on-surface tracking-tight">PAY-8924-XQ91</div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-on-surface-variant mb-1">Order Reference</div>
+                            <a class="text-primary font-medium hover:underline flex items-center gap-1" href="#">
+                                ORD-2023-1194
+                                <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+                            </a>
+                        </div>
+                        <div>
+                            <div class="text-sm text-on-surface-variant mb-1">Method</div>
+                            <div class="flex items-center gap-2 text-on-surface">
+                                <span class="material-symbols-outlined text-tertiary">account_balance</span>
+                                <span>Bank Transfer (InstaPay)</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-on-surface-variant mb-1">Date / Time</div>
+                            <div class="text-on-surface">Oct 24, 2023 • 14:32 EET</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Proof of Payment Section -->
+                <div class="bg-surface-container-lowest rounded-2xl p-8 shadow-level-1 flex flex-col gap-6">
+                    <div class="flex items-center justify-between border-b border-surface-variant pb-4">
+                        <h2 class="font-headline-md text-xl text-on-surface">Proof of Payment</h2>
+                        <div class="flex gap-3">
+                            <button class="btn-hover-scale px-4 py-2 rounded-full border border-outline text-on-surface text-sm font-medium hover:bg-surface-variant transition-colors flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[18px]">download</span>
+                                Download
+                            </button>
+                            <button class="btn-hover-scale px-4 py-2 rounded-full border border-outline text-on-surface text-sm font-medium hover:bg-surface-variant transition-colors flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[18px]">fullscreen</span>
+                                View Full Size
+                            </button>
+                        </div>
+                    </div>
+                    <div class="w-full bg-surface-container rounded-xl overflow-hidden flex items-center justify-center p-4 relative group cursor-pointer">
+                        <div class="absolute inset-0 bg-inverse-surface opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"></div>
+                        <img alt="Receipt Preview" class="max-h-[400px] w-auto object-contain rounded-lg shadow-sm" data-alt="A stylized, high-quality photograph of a printed transaction receipt or bank transfer confirmation slip resting on a clean, light marble surface. The lighting is soft and natural, casting delicate shadows that emphasize the texture of the paper. The overall aesthetic is minimal, luxurious, and highly professional, fitting a high-end fashion brand's administrative context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMBPZh-s_8ojNCVxkpPFBNmkdREgF90SwmeYCK2z8gcK9j5INMwuNwLfnf-tW8e6amZT7x4K6V6_06L8zitwwGKB-X5YZ19OuON2HsRtwqtn0YFcDN1PmdG-Yz1L_NiF9U_t7tp8r5jnAhins9-0KMU3VAg8zrP75stejGE76gHcIw7ziwtX-pJouyKTWXOsx87TNYoF5yGTnHauaTn9rVxnuAbMJkbMZqa71m7IFvRmaAiAffebJUr942-Uh0Cq2qWEEh7untV4_N" />
+                    </div>
+                </div>
+            </div>
+            <!-- Right Column (35%) -->
+            <div class="lg:col-span-4 flex flex-col gap-gutter">
+                <!-- Status Card -->
+                <div class="bg-surface-container-lowest rounded-2xl p-8 shadow-level-1 flex flex-col gap-6 text-center">
+                    <div class="text-sm text-on-surface-variant font-label-caps mb-2 tracking-widest">CURRENT STATUS</div>
+                    <div class="inline-flex items-center justify-center gap-2 bg-[#fff4e6] text-[#b06100] px-6 py-3 rounded-full font-bold text-lg mb-4 mx-auto self-center shadow-sm">
+                        <span class="material-symbols-outlined fill">pending_actions</span>
+                        Pending Review
+                    </div>
+                    <p class="text-on-surface-variant text-sm mb-4">Awaiting manual verification of the uploaded transfer receipt against bank records.</p>
+                    <div class="flex flex-col gap-3 mt-2">
+                        <button class="btn-hover-scale w-full py-3 rounded-full bg-primary-container text-on-primary-container font-bold text-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-[18px]">check_circle</span>
+                            Verify Payment
+                        </button>
+                        <button class="btn-hover-scale w-full py-3 rounded-full border border-error text-error font-medium text-sm hover:bg-error-container transition-colors flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-[18px]">cancel</span>
+                            Reject
+                        </button>
+                    </div>
+                </div>
+                <!-- Customer Overview -->
+                <div class="bg-surface-container-lowest rounded-2xl p-6 shadow-level-1">
+                    <h3 class="font-label-caps text-label-caps text-on-surface-variant tracking-widest mb-4">CUSTOMER</h3>
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-full overflow-hidden bg-surface-variant shrink-0">
+                            <img alt="Customer Avatar" class="w-full h-full object-cover" data-alt="A refined portrait of a stylish female customer against a neutral studio background. The aesthetic matches high-fashion editorial standards, with soft, diffused lighting and a modern, minimalist vibe. The color palette emphasizes sophisticated ivories, soft plums, and muted warm tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_xxZCXbeDX0nvORhyUmJyNsTLUuH-LHAwx91a-1oc91q6TQVaL6F-0dIz_NmuliUC4r-MHRCfegwkpd7ijgD3Xv7ZuCgvA1-43_MBX91z_qVr-p6yr_PH9gDJ2fnleRtQ1RVzPIf75F4zaXkvlcQl4bwIy57GaRRuSfet2XQw9-Gp6lrOwg_quSHhc0IIb_tguA-CeI6FsjYhwD-agBnZyeDIJbsAjIcWDgJAqhDZd6rXh5--D3MBM5yzyoLnOdbPGwf_Lh-IdEMX" />
+                        </div>
+                        <div>
+                            <div class="font-medium text-on-surface">Amira Hassan</div>
+                            <div class="text-sm text-on-surface-variant">amira.h@example.com</div>
+                        </div>
+                    </div>
+                    <a class="text-sm text-primary font-medium hover:underline flex items-center gap-1" href="#">
+                        View Profile <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                    </a>
+                </div>
+                <!-- Amount Summary -->
+                <div class="bg-surface-container-lowest rounded-2xl p-6 shadow-level-1">
+                    <h3 class="font-label-caps text-label-caps text-on-surface-variant tracking-widest mb-4">AMOUNT</h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between text-on-surface-variant">
+                            <span>Subtotal (2 items)</span>
+                            <span class="font-mono">EGP 12,450.00</span>
+                        </div>
+                        <div class="flex justify-between text-on-surface-variant">
+                            <span>Shipping (Cairo)</span>
+                            <span class="font-mono">EGP 150.00</span>
+                        </div>
+                        <div class="flex justify-between text-on-surface-variant">
+                            <span>Taxes</span>
+                            <span class="font-mono">EGP 0.00</span>
+                        </div>
+                        <div class="border-t border-surface-variant pt-3 mt-3 flex justify-between items-center">
+                            <span class="font-medium text-on-surface">Total</span>
+                            <span class="font-mono text-xl font-bold text-primary">EGP 12,600.00</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        
-        <!-- Footer Note -->
-        <div class="bg-slate-50 px-8 py-4 border-t border-slate-100 flex items-start gap-3">
-            <span class="material-symbols-outlined text-amber-500 text-[20px] shrink-0 mt-0.5" style="font-variation-settings: 'FILL' 1;">lock</span>
-            <p class="text-xs text-slate-500 leading-relaxed font-medium">
-                This record is read-only and automatically managed via webhooks from @Model.Provider. Manual modifications to transaction schemas are restricted for compliance and security purposes.
-            </p>
+        <!-- Timeline / Audit Log Bottom Section -->
+        <div class="mt-gutter bg-surface-container-lowest rounded-2xl p-8 shadow-level-1 mb-section-gap">
+            <h2 class="font-headline-md text-xl text-on-surface mb-6 border-b border-surface-variant pb-4">Activity Timeline</h2>
+            <div class="relative pl-4 space-y-8 before:absolute before:inset-y-0 before:left-5 before:w-px before:bg-outline-variant">
+                <!-- Event 1 -->
+                <div class="relative flex gap-4">
+                    <div class="absolute -left-6 bg-surface-container-lowest rounded-full p-1 z-10">
+                        <div class="w-3 h-3 rounded-full bg-primary-container border-2 border-surface-container-lowest"></div>
+                    </div>
+                    <div>
+                        <div class="text-sm font-medium text-on-surface mb-1">Payment Proof Uploaded</div>
+                        <div class="text-xs text-on-surface-variant mb-2">Oct 24, 2023 • 14:35 EET</div>
+                        <p class="text-sm text-on-surface-variant bg-surface-container-low p-3 rounded-lg border border-outline-variant">Customer uploaded receipt via checkout flow.</p>
+                    </div>
+                </div>
+                <!-- Event 2 -->
+                <div class="relative flex gap-4">
+                    <div class="absolute -left-6 bg-surface-container-lowest rounded-full p-1 z-10">
+                        <div class="w-3 h-3 rounded-full bg-surface-variant border-2 border-surface-container-lowest"></div>
+                    </div>
+                    <div>
+                        <div class="text-sm font-medium text-on-surface mb-1">Order Created</div>
+                        <div class="text-xs text-on-surface-variant">Oct 24, 2023 • 14:32 EET</div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-
+    </main>
+</body></html>

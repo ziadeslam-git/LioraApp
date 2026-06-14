@@ -1,310 +1,307 @@
-@model IEnumerable<DiscountVM>
-@{
-    ViewData["Title"] = "Discounts & Coupons";
-}
+<!DOCTYPE html>
 
-@section Styles {
-    <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f465c; border-radius: 10px; }
-    </style>
-}
-
-<div class="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-    <div class="max-w-xl space-y-2">
-        <h2 class="text-2xl font-bold tracking-tight leading-tight text-slate-900 md:text-3xl">Discounts &amp; Coupons</h2>
-        <p class="text-sm text-slate-500 md:text-base">Manage promotional offers and seasonal discounts</p>
-    </div>
-    <div class="flex w-full flex-wrap items-center justify-center gap-3 md:w-auto md:justify-end">
-        <a asp-action="ExportWord" class="inline-flex min-w-[150px] items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all active:scale-95 hover:bg-slate-50">
-            <span class="material-symbols-outlined text-[20px]">download</span>
-            Export Word
-        </a>
-        <a asp-action="Create" class="inline-flex min-w-[170px] items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all active:scale-95 hover:opacity-90" style="background: linear-gradient(135deg, #4648d4, #6063ee)">
-            <span class="material-symbols-outlined text-[20px]">add</span>
-            Create Coupon
-        </a>
-    </div>
-</div>
-
-<div class="space-y-6">
-    <!-- Stats Row: Bento Style -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-surface-container-lowest p-5 rounded-xl flex items-center gap-4 transition-transform hover:scale-[1.02] duration-200">
-            <div class="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
-                <span class="material-symbols-outlined">confirmation_number</span>
-            </div>
-            <div>
-                <p class="text-xs font-medium text-on-surface-variant uppercase tracking-wider">Total Coupons</p>
-                <h3 class="text-2xl font-extrabold text-on-surface font-mono">@Model.Count()</h3>
-            </div>
-        </div>
-        <div class="bg-surface-container-lowest p-5 rounded-xl flex items-center gap-4 transition-transform hover:scale-[1.02] duration-200">
-            <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
-                <span class="material-symbols-outlined">check_circle</span>
-            </div>
-            <div>
-                <p class="text-xs font-medium text-on-surface-variant uppercase tracking-wider">Active Now</p>
-                <h3 class="text-2xl font-extrabold text-on-surface font-mono">@Model.Count(d => d.IsActive && d.EndDate > DateTime.UtcNow)</h3>
-            </div>
-        </div>
-        <div class="bg-surface-container-lowest p-5 rounded-xl flex items-center gap-4 transition-transform hover:scale-[1.02] duration-200">
-            <div class="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center text-amber-600">
-                <span class="material-symbols-outlined">timer_off</span>
-            </div>
-            <div>
-                <p class="text-xs font-medium text-on-surface-variant uppercase tracking-wider">Expired</p>
-                <h3 class="text-2xl font-extrabold text-on-surface font-mono">@Model.Count(d => d.EndDate <= DateTime.UtcNow)</h3>
-            </div>
-        </div>
-        <div class="bg-surface-container-lowest p-5 rounded-xl flex items-center gap-4 transition-transform hover:scale-[1.02] duration-200">
-            <div class="w-12 h-12 rounded-full bg-rose-50 flex items-center justify-center text-rose-600">
-                <span class="material-symbols-outlined">local_fire_department</span>
-            </div>
-            <div>
-                <p class="text-xs font-medium text-on-surface-variant uppercase tracking-wider">Total Uses</p>
-                <h3 class="text-2xl font-extrabold text-on-surface font-mono">@Model.Sum(d => d.UsageCount)</h3>
-            </div>
-        </div>
-    </div>
-
-    <!-- Filter Bar -->
-    <div class="bg-surface-container-lowest p-4 rounded-xl flex flex-wrap items-center gap-4 shadow-sm">
-        <form asp-action="Index" method="get" class="flex-1 flex flex-wrap items-center gap-4 w-full">
-            <div class="relative flex-1 min-w-[240px]">
-                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
-                <input type="text" name="searchQuery" value="@ViewBag.SearchQuery" class="w-full pl-10 pr-4 py-2 bg-surface text-sm rounded-lg border-none focus:ring-1 focus:ring-primary/40 focus:bg-white transition-all" placeholder="Search by coupon code..." />
-            </div>
-            <select name="typeFilter" class="bg-surface border-none text-sm rounded-lg py-2 pl-3 pr-8 focus:ring-1 focus:ring-primary/40 min-w-[140px]" onchange="this.form.submit()">
-                <option value="">Type: All</option>
-                <option value="Percentage" selected="@(ViewBag.TypeFilter == "Percentage")">Percentage</option>
-                <option value="FixedAmount" selected="@(ViewBag.TypeFilter == "FixedAmount")">Fixed Amount</option>
-            </select>
-            <a asp-action="Index" class="text-sm font-medium text-primary hover:underline px-2">Clear filters</a>
-        </form>
-    </div>
-
-    <!-- Table Container -->
-    <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm relative border border-slate-100 dark:border-slate-800">
-        <div class="space-y-3 p-4 md:hidden">
-            @foreach (var item in Model)
-            {
-                var isExpired = item.EndDate.HasValue && item.EndDate.Value < DateTime.UtcNow;
-                var isLimitReached = item.UsageLimit.HasValue && item.UsageCount >= item.UsageLimit.Value;
-                <article class="rounded-[18px] border border-slate-200 bg-slate-50/80 p-4 shadow-sm @(isExpired ? "opacity-70" : "")">
-                    <div class="flex items-start justify-between gap-3">
-                        <div>
-                            <span class="inline-flex rounded-md bg-indigo-50 px-3 py-1 font-mono text-sm font-semibold text-indigo-700">@item.CouponCode</span>
-                            <p class="mt-2 text-xs text-slate-500">@(item.Type == "Percentage" ? "Percentage discount" : "Fixed amount coupon")</p>
-                        </div>
-                        <span class="rounded-full px-3 py-1 text-[10px] font-bold @(item.IsActive ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600")">
-                            @(item.IsActive ? "Active" : "Inactive")
-                        </span>
-                    </div>
-
-                    <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
-                        <div>
-                            <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Value</p>
-                            <p class="mt-1 font-bold text-slate-900">@(item.Type == "Percentage" ? $"{item.DiscountValue:F0}%" : $"${item.DiscountValue:F2} off")</p>
-                        </div>
-                        <div>
-                            <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Min Order</p>
-                            <p class="mt-1 font-semibold text-slate-600">@(item.MinOrderValue.HasValue ? $"${item.MinOrderValue.Value:F2}" : "$0.00")</p>
-                        </div>
-                        <div>
-                            <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Usage</p>
-                            <p class="mt-1 font-semibold text-slate-600">@item.UsageCount / @(item.UsageLimit?.ToString() ?? "∞")</p>
-                        </div>
-                        <div>
-                            <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Expires</p>
-                            <p class="mt-1 font-semibold @(isExpired ? "text-error" : "text-slate-600")">@(item.EndDate.HasValue ? item.EndDate.Value.ToString("MMM dd, yyyy") : "No Expiry")</p>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 flex items-center justify-end gap-2">
-                        <a asp-action="Details" asp-route-id="@item.Id" class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-600 shadow-sm transition hover:bg-slate-100">
-                            <span class="material-symbols-outlined text-[18px]">analytics</span>
-                        </a>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white text-primary shadow-sm transition hover:bg-slate-100">
-                            <span class="material-symbols-outlined text-[18px]">edit</span>
-                        </a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="inline-flex items-center rounded-xl bg-rose-50 px-4 py-2.5 text-sm font-semibold text-rose-600 transition hover:bg-rose-100">
-                            Delete
-                        </a>
-                    </div>
-                </article>
-            }
-            @if (!Model.Any())
-            {
-                <div class="rounded-[18px] border border-dashed border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-500">
-                    No coupons available.
-                </div>
-            }
-        </div>
-
-        <div class="hidden overflow-x-auto md:block">
-            <table class="w-full text-left border-collapse">
-                <thead class="bg-surface-container-low border-b border-outline-variant/10">
-                    <tr>
-                        <th class="py-4 px-6 w-12 text-center">
-                            <input type="checkbox" class="rounded border-slate-300 text-primary focus:ring-primary" />
-                        </th>
-                        <th class="py-4 px-4 text-xs font-bold text-on-surface-variant uppercase tracking-widest">Coupon Code</th>
-                        <th class="py-4 px-4 text-xs font-bold text-on-surface-variant uppercase tracking-widest">Type</th>
-                        <th class="py-4 px-4 text-xs font-bold text-on-surface-variant uppercase tracking-widest">Value</th>
-                        <th class="py-4 px-4 text-xs font-bold text-on-surface-variant uppercase tracking-widest">Min Order</th>
-                        <th class="py-4 px-4 text-xs font-bold text-on-surface-variant uppercase tracking-widest">Usage</th>
-                        <th class="py-4 px-4 text-xs font-bold text-on-surface-variant uppercase tracking-widest">Expires</th>
-                        <th class="py-4 px-4 text-xs font-bold text-on-surface-variant uppercase tracking-widest text-center">Active</th>
-                        <th class="py-4 px-4 text-xs font-bold text-on-surface-variant uppercase tracking-widest text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-outline-variant/10">
-                    @foreach (var item in Model)
-                    {
-                        var isExpired = item.EndDate.HasValue && item.EndDate.Value < DateTime.UtcNow;
-                        var isLimitReached = item.UsageLimit.HasValue && item.UsageCount >= item.UsageLimit.Value;
-                        var progressWidth = item.UsageLimit.HasValue && item.UsageLimit.Value > 0 
-                            ? Math.Min(100, (double)item.UsageCount / item.UsageLimit.Value * 100) 
-                            : 0;
-
-                        var rowClass = "hover:bg-surface-container-low/30 transition-colors bg-blue-50/20";
-                        if (isExpired) rowClass = "hover:bg-surface-container-low/30 transition-colors opacity-70 bg-surface-container-low/10";
-                        else if (isLimitReached) rowClass = "hover:bg-surface-container-low/30 transition-colors";
-
-                        <tr class="@rowClass">
-                            <td class="py-4 px-6 text-center">
-                                <input type="checkbox" class="rounded border-slate-300 text-primary focus:ring-primary" />
-                            </td>
-                            <td class="py-4 px-4">
-                                @if (isExpired)
-                                {
-                                    <span class="font-mono line-through text-slate-500 text-sm font-semibold">@item.CouponCode</span>
-                                }
-                                else
-                                {
-                                    <span class="font-mono bg-indigo-50 text-indigo-700 px-3 py-1 rounded-md text-sm font-semibold">@item.CouponCode</span>
-                                }
-                            </td>
-                            <td class="py-4 px-4">
-                                @if (item.Type == "Percentage")
-                                {
-                                    <span class="bg-violet-100 text-violet-700 text-[11px] font-bold px-2 py-0.5 rounded uppercase">Percentage</span>
-                                }
-                                else
-                                {
-                                    <span class="bg-blue-100 text-blue-700 text-[11px] font-bold px-2 py-0.5 rounded uppercase">Fixed Amount</span>
-                                }
-                            </td>
-                            <td class="py-4 px-4 font-mono font-bold text-on-surface">
-                                @(item.Type == "Percentage" ? $"{item.DiscountValue.ToString("F0")}%" : $"${item.DiscountValue.ToString("F2")} off")
-                            </td>
-                            <td class="py-4 px-4 font-mono text-on-surface-variant">@(item.MinOrderValue.HasValue ? $"${item.MinOrderValue.Value.ToString("F2")}" : "$0.00")</td>
-                            <td class="py-4 px-4 min-w-[140px]">
-                                @if (isLimitReached)
-                                {
-                                    <div class="flex flex-col gap-1">
-                                        <div class="flex items-center gap-3">
-                                            <div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                                <div class="h-full bg-amber-500" style="width: 100%"></div>
-                                            </div>
-                                            <span class="text-xs font-mono font-medium">@item.UsageCount/@item.UsageLimit</span>
-                                        </div>
-                                        <span class="text-[10px] bg-amber-50 text-amber-700 font-bold px-1.5 rounded w-fit">Limit Reached</span>
-                                    </div>
-                                }
-                                else if (isExpired)
-                                {
-                                    <div class="flex items-center gap-3">
-                                        <div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                            <div class="h-full bg-error" style="width: @progressWidth%"></div>
-                                        </div>
-                                        <span class="text-xs font-mono font-medium text-error">@item.UsageCount/@(item.UsageLimit?.ToString() ?? "∞")</span>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div class="flex items-center gap-3">
-                                        <div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                            <div class="h-full bg-primary" style="width: @progressWidth%"></div>
-                                        </div>
-                                        <span class="text-xs font-mono font-medium">@item.UsageCount / @(item.UsageLimit?.ToString() ?? "∞")</span>
-                                    </div>
-                                }
-                            </td>
-                            <td class="py-4 px-4 text-sm text-on-surface-variant">
-                                @if (isExpired)
-                                {
-                                    <div class="flex flex-col">
-                                        <span class="text-sm font-bold text-error">@item.EndDate?.ToString("MMM dd, yyyy")</span>
-                                        <span class="text-[10px] bg-red-50 text-error inline-block px-1.5 rounded w-fit mt-0.5">Expired</span>
-                                    </div>
-                                }
-                                else
-                                {
-                                    @(item.EndDate.HasValue ? item.EndDate.Value.ToString("MMM dd, yyyy") : "No Expiry")
-                                }
-                            </td>
-                            <td class="py-4 px-4 align-middle">
-                                <form asp-action="ToggleActive" method="post" class="flex justify-center items-center">
-                                    <input type="hidden" name="id" value="@item.Id" />
-                                    <button type="submit" title="@(item.IsActive ? "Deactivate" : "Activate")"
-                                            class="relative inline-flex items-center w-10 h-5 rounded-full transition-colors duration-200
-                                                   @(item.IsActive ? "bg-emerald-500" : "bg-slate-300 dark:bg-slate-600")">
-                                        <span class="absolute left-0.5 top-0.5 size-4 bg-white rounded-full shadow-sm transition-transform duration-200
-                                                     @(item.IsActive ? "translate-x-5" : "translate-x-0")">
-                                        </span>
-                                    </button>
-                                </form>
-                            </td>
-                            <td class="py-4 px-4 text-right">
-                                <a asp-action="Details" asp-route-id="@item.Id" class="inline-block p-1 text-slate-400 hover:text-indigo-500 transition-colors" title="View details/analytics">
-                                    <span class="material-symbols-outlined text-xl">analytics</span>
-                                </a>
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="inline-block p-1 text-slate-400 hover:text-primary transition-colors">
-                                    <span class="material-symbols-outlined text-xl">edit</span>
-                                </a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="inline-block p-1 text-slate-400 hover:text-error transition-colors">
-                                    <span class="material-symbols-outlined text-xl">delete</span>
-                                </a>
-                            </td>
-                        </tr>
-                    }
-                    @if (!Model.Any())
-                    {
-                        <tr>
-                            <td colspan="9" class="py-8 text-center text-on-surface-variant">
-                                <span class="material-symbols-outlined text-4xl mb-2 opacity-50 block">sell</span>
-                                No coupons available.
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Footer Pagination -->
-        @if (ViewBag.TotalPages > 1)
-        {
-            <div class="p-4 border-t border-outline-variant/10 flex items-center justify-between">
-                <p class="text-sm text-on-surface-variant">Page <span class="font-semibold text-on-surface">@ViewBag.CurrentPage</span> of <span class="font-semibold text-on-surface">@ViewBag.TotalPages</span></p>
-                <div class="flex items-center gap-1">
-                    @for (int i = 1; i <= ViewBag.TotalPages; i++)
-                    {
-                        if (i == ViewBag.CurrentPage)
-                        {
-                            <button class="w-8 h-8 rounded-lg bg-primary text-white text-sm font-bold">@i</button>
-                        }
-                        else
-                        {
-                            <a asp-action="Index" asp-route-page="@i" asp-route-searchQuery="@ViewBag.SearchQuery" asp-route-typeFilter="@ViewBag.TypeFilter" class="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-high text-sm font-medium transition-colors">@i</a>
-                        }
-                    }
-                </div>
-            </div>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Liora Admin - Discounts</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&amp;family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+        darkMode: "class",
+        theme: {
+        extend: {
+        colors: {
+        "outline-variant": "#d5c2bd", "surface": "#fff8f3", "tertiary": "#635b68", "on-error": "#ffffff", "on-tertiary-fixed-variant": "#4b4450", "on-surface": "#1e1b18", "on-secondary-fixed": "#21172c", "tertiary-container": "#a299a7", "tertiary-fixed-dim": "#cec3d2", "on-primary-fixed-variant": "#643d30", "on-background": "#1e1b18", "secondary-fixed-dim": "#d1c0de", "secondary": "#665972", "background": "#fff8f3", "error": "#ba1a1a", "primary-fixed-dim": "#f2baa8", "surface-container-highest": "#e8e1db", "on-secondary-container": "#6c5f79", "on-primary": "#ffffff", "inverse-surface": "#33302c", "on-tertiary-container": "#38313d", "tertiary-fixed": "#eadfee", "primary-container": "#c49080", "on-secondary": "#ffffff", "surface-container-high": "#eee7e1", "error-container": "#ffdad6", "on-surface-variant": "#514440", "outline": "#83746f", "surface-container": "#f4ede7", "on-primary-fixed": "#311309", "surface-bright": "#fff8f3", "on-tertiary-fixed": "#1f1924", "surface-container-lowest": "#ffffff", "secondary-fixed": "#eedcfa", "surface-container-low": "#f9f2ec", "on-primary-container": "#4e2a1f", "on-error-container": "#93000a", "inverse-primary": "#f2baa8", "surface-variant": "#e8e1db", "surface-tint": "#7f5446", "surface-dim": "#dfd9d3", "on-secondary-fixed-variant": "#4e425a", "primary-fixed": "#ffdbd0", "primary": "#7f5446", "on-tertiary": "#ffffff", "inverse-on-surface": "#f7efe9", "secondary-container": "#eedcfa"
+        },
+        borderRadius: {
+        "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"
+        },
+        spacing: {
+        "stack-sm": "8px", "gutter": "24px", "container-padding-mobile": "20px", "stack-md": "16px", "section-gap": "120px", "container-padding-desktop": "64px", "unit": "8px", "stack-lg": "32px"
+        },
+        fontFamily: {
+        "headline-lg-mobile": ["Playfair Display"], "accent-italic": ["EB Garamond"], "display-lg-mobile": ["Playfair Display"], "body-md": ["DM Sans"], "headline-md": ["Playfair Display"], "label-caps": ["DM Sans"], "headline-lg": ["Playfair Display"], "body-lg": ["DM Sans"], "display-lg": ["Playfair Display"]
+        },
+        fontSize: {
+        "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }], "accent-italic": ["20px", { "lineHeight": "1.5", "fontWeight": "400" }], "display-lg-mobile": ["40px", { "lineHeight": "1.2", "fontWeight": "700" }], "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }], "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "500" }], "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "700" }], "headline-lg": ["40px", { "lineHeight": "1.2", "fontWeight": "600" }], "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }], "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }]
         }
-    </div>
-
-
-</div>
-
+        }
+        }
+        }
+    </script>
+    <style>
+        body {
+        font-family: 'DM Sans', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased">
+    <!-- SideNavBar -->
+    <nav class="hidden md:flex flex-col h-full w-64 fixed left-0 top-0 bg-surface shadow-[0px_10px_30px_rgba(26,16,37,0.05)] z-20 pt-6 pb-6 gap-stack-md">
+        <div class="px-6 mb-8">
+            <h1 class="font-headline-md text-headline-md font-semibold text-primary">Liora</h1>
+            <p class="font-body-md text-body-md text-on-surface-variant text-sm">Admin Dashboard</p>
+        </div>
+        <div class="flex-1 overflow-y-auto">
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors duration-250 mx-2 rounded-lg" href="#">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="font-label-caps text-label-caps">Overview</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors duration-250 mx-2 rounded-lg" href="#">
+                <span class="material-symbols-outlined">inventory_2</span>
+                <span class="font-label-caps text-label-caps">Catalog</span>
+            </a>
+            <!-- Active State: Sales/Discounts -->
+            <a class="flex items-center gap-3 px-4 py-3 text-on-primary bg-primary rounded-lg mx-2 shadow-sm" href="#">
+                <span class="material-symbols-outlined">payments</span>
+                <span class="font-label-caps text-label-caps">Sales</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors duration-250 mx-2 rounded-lg" href="#">
+                <span class="material-symbols-outlined">group</span>
+                <span class="font-label-caps text-label-caps">Customers</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors duration-250 mx-2 rounded-lg" href="#">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="font-label-caps text-label-caps">Settings</span>
+            </a>
+        </div>
+        <div class="px-6 mt-auto">
+            <button class="w-full py-3 rounded-full border border-primary text-primary font-label-caps text-label-caps hover:bg-surface-container-high transition-all duration-250 ease-out scale-98 active:scale-95">
+                View Boutique
+            </button>
+        </div>
+    </nav>
+    <!-- TopNavBar -->
+    <header class="hidden md:flex fixed top-0 right-0 w-[calc(100%-16rem)] h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/20 z-10 justify-between items-center px-container-desktop transition-all">
+        <div class="flex items-center gap-4">
+            <h2 class="font-headline-md text-headline-md font-bold text-primary text-xl">Liora Admin</h2>
+        </div>
+        <div class="flex items-center gap-4">
+            <button class="text-on-surface-variant hover:text-primary transition-colors duration-250 ease-out opacity-90 hover:opacity-100">
+                <span class="material-symbols-outlined">notifications</span>
+            </button>
+            <button class="text-on-surface-variant hover:text-primary transition-colors duration-250 ease-out opacity-90 hover:opacity-100">
+                <span class="material-symbols-outlined">help_outline</span>
+            </button>
+            <div class="w-8 h-8 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant shadow-sm ml-2">
+                <img alt="Administrator Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a sophisticated administrator in a high-end luxury fashion brand setting. Soft, natural light illuminates their face, creating a clean, modern aesthetic. Background is a warm ivory minimalist wall." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqWKOa2JbTvjBFTUX1YV76yRciEHhMWXB1XfG5KgNfQVUUYPaXoGcBfMcFbCYPyX8oTymtZS-yoNAqerTNr4r8n37fTBn4H3eV_mzzT-iHCxYH7OsAva4uUFSdQQDeNqzvXhULptFM2gyYKCsYGKdpqpiagY5l9f5GBE1PV9_xH3XexWneom2f5ePr71IqurstHfWPMXpLDbSA0_dUlSLXM39BlJ0CgKQsg3p5jgNPh0PIGV632QgBSzlwW_YbVT4ir0JWl_BLPF1-" />
+            </div>
+        </div>
+    </header>
+    <!-- Main Content -->
+    <main class="md:ml-64 pt-24 pb-20 px-container-mobile md:px-container-desktop min-h-screen">
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-stack-lg gap-6">
+            <div>
+                <div class="flex items-center gap-4 mb-2">
+                    <h2 class="font-headline-lg text-headline-lg text-on-surface">Discounts</h2>
+                    <span class="bg-surface-variant text-on-surface-variant font-label-caps text-label-caps px-3 py-1 rounded-full border border-outline-variant/50">24 Active</span>
+                </div>
+                <p class="font-body-md text-body-md text-on-surface-variant">Manage promotional codes, automatic discounts, and sales events.</p>
+            </div>
+            <div>
+                <button class="flex items-center gap-2 bg-primary-container text-on-primary-container px-6 py-3 rounded-full font-label-caps text-label-caps shadow-[0px_10px_30px_rgba(26,16,37,0.05)] hover:shadow-[0px_20px_50px_rgba(26,16,37,0.08)] transition-all duration-250 scale-98 active:scale-95 ease-out">
+                    <span class="material-symbols-outlined text-sm">add</span>
+                    Create New Discount
+                </button>
+            </div>
+        </div>
+        <!-- Table Container -->
+        <div class="bg-surface-container-lowest rounded-[16px] shadow-[0px_10px_30px_rgba(26,16,37,0.05)] border border-outline-variant/20 overflow-hidden">
+            <!-- Table Filters (Simplified) -->
+            <div class="p-6 border-b border-outline-variant/20 flex gap-4 items-center bg-surface-container-low/50">
+                <div class="relative w-64">
+                    <span class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-xl">search</span>
+                    <input class="w-full pl-10 pr-4 py-2 bg-surface border border-outline-variant/30 rounded-lg font-body-md text-body-md focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all" placeholder="Search discounts..." type="text" />
+                </div>
+                <button class="flex items-center gap-2 px-4 py-2 bg-surface border border-outline-variant/30 rounded-lg text-on-surface-variant font-body-md text-body-md hover:bg-surface-variant transition-colors">
+                    <span class="material-symbols-outlined text-sm">filter_list</span>
+                    Filter
+                </button>
+            </div>
+            <!-- Data Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-outline-variant/20 bg-surface-container-low/30">
+                            <th class="py-4 px-6 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Code / Name</th>
+                            <th class="py-4 px-6 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Type &amp; Value</th>
+                            <th class="py-4 px-6 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Applies To</th>
+                            <th class="py-4 px-6 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Usage</th>
+                            <th class="py-4 px-6 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Active Period</th>
+                            <th class="py-4 px-6 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Status</th>
+                            <th class="py-4 px-6 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-outline-variant/10">
+                        <!-- Row 1 -->
+                        <tr class="hover:bg-surface-container-low/50 transition-colors duration-250 group">
+                            <td class="py-4 px-6">
+                                <div class="font-body-md text-body-md font-bold text-primary-container tracking-wide">SUMMER25</div>
+                                <div class="font-body-md text-body-md text-sm text-on-surface-variant mt-1">Summer Collection Launch</div>
+                            </td>
+                            <td class="py-4 px-6">
+                                <div class="flex items-center gap-2">
+                                    <span class="bg-surface-variant text-on-surface-variant text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">Percentage</span>
+                                    <span class="bg-primary-container/20 text-primary-container font-label-caps text-label-caps px-3 py-1 rounded-full">25% OFF</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6">
+                                <div class="flex gap-2">
+                                    <span class="bg-tertiary-container/20 text-tertiary-container font-body-md text-xs px-2 py-1 rounded-md">Category: Summer</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6">
+                                <div class="font-body-md text-sm text-on-surface mb-1">45 / 100</div>
+                                <div class="w-24 h-1.5 bg-surface-variant rounded-full overflow-hidden">
+                                    <div class="h-full bg-primary-container w-[45%]"></div>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6 font-body-md text-sm text-on-surface">
+                                Jun 1 - Aug 31
+                            </td>
+                            <td class="py-4 px-6">
+                                <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-full border border-emerald-200">Active</span>
+                            </td>
+                            <td class="py-4 px-6 text-right">
+                                <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-250">
+                                    <button class="p-2 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">visibility</span></button>
+                                    <button class="p-2 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">edit</span></button>
+                                    <button class="p-2 text-error hover:text-error/80 transition-colors"><span class="material-symbols-outlined text-sm">delete</span></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- Row 2 -->
+                        <tr class="hover:bg-surface-container-low/50 transition-colors duration-250 group">
+                            <td class="py-4 px-6">
+                                <div class="font-body-md text-body-md font-bold text-primary-container tracking-wide">WELCOME10</div>
+                                <div class="font-body-md text-body-md text-sm text-on-surface-variant mt-1">New Subscriber Bonus</div>
+                            </td>
+                            <td class="py-4 px-6">
+                                <div class="flex items-center gap-2">
+                                    <span class="bg-surface-variant text-on-surface-variant text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">Fixed Amount</span>
+                                    <span class="bg-primary-container/20 text-primary-container font-label-caps text-label-caps px-3 py-1 rounded-full">LE 500</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6">
+                                <div class="flex gap-2">
+                                    <span class="bg-tertiary-container/20 text-tertiary-container font-body-md text-xs px-2 py-1 rounded-md border border-tertiary-container/20">All Products</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6">
+                                <div class="font-body-md text-sm text-on-surface mb-1">892 / ∞</div>
+                                <div class="w-24 h-1.5 bg-surface-variant rounded-full overflow-hidden">
+                                    <div class="h-full bg-primary-container w-[100%]"></div>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6 font-body-md text-sm text-on-surface-variant italic">
+                                No end date
+                            </td>
+                            <td class="py-4 px-6">
+                                <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-full border border-emerald-200">Active</span>
+                            </td>
+                            <td class="py-4 px-6 text-right">
+                                <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-250">
+                                    <button class="p-2 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">visibility</span></button>
+                                    <button class="p-2 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">edit</span></button>
+                                    <button class="p-2 text-error hover:text-error/80 transition-colors"><span class="material-symbols-outlined text-sm">delete</span></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- Row 3 -->
+                        <tr class="hover:bg-surface-container-low/50 transition-colors duration-250 group">
+                            <td class="py-4 px-6">
+                                <div class="font-body-md text-body-md font-bold text-outline tracking-wide line-through">WINTERFLASH</div>
+                                <div class="font-body-md text-body-md text-sm text-on-surface-variant mt-1">48h Winter Clearance</div>
+                            </td>
+                            <td class="py-4 px-6">
+                                <div class="flex items-center gap-2 opacity-70">
+                                    <span class="bg-surface-variant text-on-surface-variant text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">Percentage</span>
+                                    <span class="bg-outline-variant/30 text-outline font-label-caps text-label-caps px-3 py-1 rounded-full">40% OFF</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6 opacity-70">
+                                <div class="flex gap-2">
+                                    <span class="bg-tertiary-container/20 text-tertiary-container font-body-md text-xs px-2 py-1 rounded-md">Category: Outerwear</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6 opacity-70">
+                                <div class="font-body-md text-sm text-on-surface mb-1">200 / 200</div>
+                                <div class="w-24 h-1.5 bg-surface-variant rounded-full overflow-hidden">
+                                    <div class="h-full bg-outline w-[100%]"></div>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6 font-body-md text-sm text-on-surface opacity-70">
+                                Jan 15 - Jan 17
+                            </td>
+                            <td class="py-4 px-6">
+                                <span class="bg-surface-variant text-on-surface-variant text-xs font-bold px-2.5 py-1 rounded-full border border-outline-variant/50">Expired</span>
+                            </td>
+                            <td class="py-4 px-6 text-right">
+                                <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-250">
+                                    <button class="p-2 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">visibility</span></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- Row 4 -->
+                        <tr class="hover:bg-surface-container-low/50 transition-colors duration-250 group">
+                            <td class="py-4 px-6">
+                                <div class="font-body-md text-body-md font-bold text-primary-container tracking-wide">EIDMUBARAK</div>
+                                <div class="font-body-md text-body-md text-sm text-on-surface-variant mt-1">Eid Special Collection</div>
+                            </td>
+                            <td class="py-4 px-6">
+                                <div class="flex items-center gap-2">
+                                    <span class="bg-surface-variant text-on-surface-variant text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">Percentage</span>
+                                    <span class="bg-primary-container/20 text-primary-container font-label-caps text-label-caps px-3 py-1 rounded-full">15% OFF</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6">
+                                <div class="flex gap-2">
+                                    <span class="bg-tertiary-container/20 text-tertiary-container font-body-md text-xs px-2 py-1 rounded-md">Tag: Eid</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6">
+                                <div class="font-body-md text-sm text-on-surface mb-1">0 / 500</div>
+                                <div class="w-24 h-1.5 bg-surface-variant rounded-full overflow-hidden">
+                                    <div class="h-full bg-primary-container w-[0%]"></div>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6 font-body-md text-sm text-on-surface">
+                                Starts Apr 5
+                            </td>
+                            <td class="py-4 px-6">
+                                <span class="bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-1 rounded-full border border-amber-200">Scheduled</span>
+                            </td>
+                            <td class="py-4 px-6 text-right">
+                                <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-250">
+                                    <button class="p-2 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">visibility</span></button>
+                                    <button class="p-2 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">edit</span></button>
+                                    <button class="p-2 text-error hover:text-error/80 transition-colors"><span class="material-symbols-outlined text-sm">delete</span></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination -->
+            <div class="p-4 border-t border-outline-variant/20 flex items-center justify-between bg-surface-container-low/30">
+                <span class="font-body-md text-sm text-on-surface-variant">Showing 1 to 4 of 24 entries</span>
+                <div class="flex gap-1">
+                    <button class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors disabled:opacity-50" disabled="">
+                        <span class="material-symbols-outlined text-sm">chevron_left</span>
+                    </button>
+                    <button class="w-8 h-8 rounded-full flex items-center justify-center bg-primary text-on-primary shadow-sm font-label-caps">1</button>
+                    <button class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors font-label-caps">2</button>
+                    <button class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors font-label-caps">3</button>
+                    <button class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors">
+                        <span class="material-symbols-outlined text-sm">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+</body></html>

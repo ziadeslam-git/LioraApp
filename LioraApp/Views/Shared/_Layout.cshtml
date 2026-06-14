@@ -1,113 +1,267 @@
-<!DOCTYPE html>
-<html lang="en">
+﻿<!DOCTYPE html>
+<html class="dark" lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Liora</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>@ViewData["Title"] - liora | Wear Your Confidence</title>
+    
     <link rel="icon" type="image/png" href="~/images/site-logo.png" asp-append-version="true" />
     <link rel="shortcut icon" href="~/images/site-logo.png" asp-append-version="true" />
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/LioraApp.styles.css" asp-append-version="true" />
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#372c42",
+                        "on-tertiary": "#472914",
+                        "on-primary-container": "#4e2a1f",
+                        "on-primary-fixed-variant": "#643d30",
+                        "secondary": "#d1c0de",
+                        "tertiary": "#edbd9e",
+                        "on-tertiary-fixed-variant": "#613f28",
+                        "on-secondary-container": "#bfafcc",
+                        "primary-container": "#c49080",
+                        "primary": "#f2baa8",
+                        "tertiary-fixed": "#ffdcc7",
+                        "on-secondary-fixed-variant": "#4e425a",
+                        "surface-container": "#231d28",
+                        "surface-variant": "#39323e",
+                        "background": "#17111c",
+                        "on-background": "#eadfee",
+                        "outline-variant": "#514440",
+                        "secondary-fixed": "#eedcfa",
+                        "primary-fixed": "#ffdbd0",
+                        "surface-container-low": "#1f1924",
+                        "on-surface": "#eadfee",
+                        "tertiary-fixed-dim": "#edbd9e",
+                        "surface": "#17111c",
+                        "secondary-fixed-dim": "#d1c0de",
+                        "on-error-container": "#ffdad6",
+                        "error-container": "#93000a",
+                        "surface-container-high": "#2e2833",
+                        "primary-fixed-dim": "#f2baa8",
+                        "surface-bright": "#3d3743",
+                        "on-tertiary-container": "#4b2d17",
+                        "surface-tint": "#f2baa8",
+                        "on-secondary-fixed": "#21172c",
+                        "inverse-surface": "#eadfee",
+                        "inverse-on-surface": "#342e3a",
+                        "error": "#ffb4ab",
+                        "on-error": "#690005",
+                        "surface-dim": "#17111c",
+                        "on-surface-variant": "#d5c2bd",
+                        "on-tertiary-fixed": "#2e1503",
+                        "secondary-container": "#4e425a",
+                        "inverse-primary": "#7f5446",
+                        "on-primary-fixed": "#311309",
+                        "tertiary-container": "#bf9377",
+                        "on-primary": "#4a271b",
+                        "surface-container-lowest": "#110c16",
+                        "outline": "#9e8d88",
+                        "surface-container-highest": "#39323e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "stack-lg": "32px",
+                        "stack-sm": "8px",
+                        "section-padding-v": "80px",
+                        "gutter": "24px",
+                        "stack-md": "16px",
+                        "section-padding-h": "40px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Playfair Display"],
+                        "label-sm": ["DM Sans"],
+                        "headline-lg": ["Playfair Display"],
+                        "body-lg": ["DM Sans"],
+                        "accent-italic": ["EB Garamond"],
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "display-md": ["Playfair Display"],
+                        "body-md": ["DM Sans"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.3", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "300"}],
+                        "accent-italic": ["20px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "400"}],
+                        "display-md": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .ticker-track {
+            display: flex;
+            width: max-content;
+            animation: ticker 20s linear infinite;
+        }
+        @@keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .reveal-element {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .reveal-element.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .image-parallax {
+            transition: transform 0.1s ease-out;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Overrides to prevent Bootstrap from breaking Tailwind if loaded */
+        a { text-decoration: none; }
+    </style>
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand d-inline-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="~/images/site-logo.png" asp-append-version="true" alt="Liora logo" style="width:32px;height:32px;object-fit:contain;" />
-                    <span>Liora</span>
+<body class="bg-background text-on-background font-body-md antialiased overflow-x-hidden">
+    <div class="sticky top-0 z-[60] bg-primary-container text-on-primary-container text-center py-2 font-label-sm text-label-sm uppercase tracking-widest flex items-center justify-center">
+        <span>FREE SHIPPING ON ORDERS OVER LE 999 — <a asp-action="Index" asp-controller="Home" asp-area="Customer" class="underline underline-offset-4 ml-2 hover:text-primary transition-colors duration-300">Shop Now →</a></span>
+    </div>
+    
+    <header class="fixed top-[32px] w-full z-50 bg-background/80 backdrop-blur-xl border-b border-outline-variant flex flex-col transition-all duration-300 group hover:opacity-100">
+        <div class="max-w-7xl mx-auto w-full px-section-padding-h h-20 flex items-center justify-between">
+            <nav class="hidden md:flex items-center gap-stack-lg">
+                <a asp-action="Index" asp-controller="Products" asp-area="Customer" class="text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors duration-300">Shop All</a>
+                <a asp-action="Index" asp-controller="Home" asp-area="Customer" class="text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors duration-300">Home</a>
+                <a href="#" class="text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors duration-300">About</a>
+                <a href="#" class="text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors duration-300">Contact</a>
+            </nav>
+            
+            <a asp-action="Index" asp-controller="Home" asp-area="Customer" class="absolute left-1/2 -translate-x-1/2 font-display-md text-[32px] md:text-[40px] italic text-primary lowercase tracking-tight">liora</a>
+            
+            <div class="flex items-center gap-stack-md ml-auto md:ml-0">
+                @if (User.Identity!.IsAuthenticated)
+                {
+                    <a asp-area="Identity" asp-controller="Profile" asp-action="Index" aria-label="profile" class="text-on-surface-variant hover:text-primary transition-colors duration-300">
+                        <span class="material-symbols-outlined text-[24px]">person</span>
+                    </a>
+                    @if (User.IsInRole(LioraApp.Utilities.SD.Role_Admin))
+                    {
+                        <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" aria-label="dashboard" class="text-on-surface-variant hover:text-primary transition-colors duration-300" title="Dashboard">
+                            <span class="material-symbols-outlined text-[24px]">dashboard</span>
+                        </a>
+                    }
+                    <form asp-area="Identity" asp-controller="Account" asp-action="Logout" method="post" class="inline m-0 p-0">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" aria-label="logout" class="text-on-surface-variant hover:text-primary transition-colors duration-300 pt-1" title="Logout">
+                            <span class="material-symbols-outlined text-[24px]">logout</span>
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-area="Identity" asp-controller="Account" asp-action="Login" aria-label="login" class="text-on-surface-variant hover:text-primary transition-colors duration-300">
+                        <span class="material-symbols-outlined text-[24px]">login</span>
+                    </a>
+                }
+                
+                <a asp-area="Customer" asp-controller="Cart" asp-action="Index" aria-label="shopping bag" class="text-on-surface-variant hover:text-primary transition-colors duration-300 relative">
+                    <span class="material-symbols-outlined text-[24px]">shopping_bag</span>
+                    <!-- You can inject a cart count component here later -->
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+                <button aria-label="favorite" class="text-on-surface-variant hover:text-primary transition-colors duration-300">
+                    <span class="material-symbols-outlined text-[24px]">favorite</span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                    
-                    <div class="d-flex align-items-center gap-2">
-                        @* Cart Icon — placeholder for now, keep if exists *@
-                        @if (User.Identity!.IsAuthenticated)
-                        {
-                            @* Profile Button *@
-                            <a asp-area="Identity" asp-controller="Profile" asp-action="Index"
-                               class="btn btn-light btn-sm rounded-circle p-2"
-                               title="My Profile">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                                     viewBox="0 0 16 16">
-                                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4z"/>
-                                </svg>
-                            </a>
-                            
-                            @* Logout Button *@
-                            <form asp-area="Identity" asp-controller="Account" asp-action="Logout"
-                                  method="post" class="d-inline">
-                                @Html.AntiForgeryToken()
-                                <button type="submit"
-                                        class="btn btn-light btn-sm rounded-circle p-2"
-                                        title="Logout">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                                         viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
-                                        <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
-                                    </svg>
-                                </button>
-                            </form>
-                        }
-                        else
-                        {
-                            @* Login Button *@
-                            <a asp-area="Identity" asp-controller="Account" asp-action="Login"
-                               class="btn btn-outline-primary btn-sm px-3"
-                               title="Login">
-                                Login
-                            </a>
-                        }
-                    </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="min-h-screen">
+        @RenderBody()
+    </main>
+
+    <footer class="bg-surface-container-lowest w-full py-[100px] border-t border-outline-variant/30">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter px-section-padding-h max-w-7xl mx-auto items-start">
+            <div class="flex flex-col gap-6 md:col-span-1">
+                <a asp-action="Index" asp-controller="Home" asp-area="Customer" class="font-display-md text-display-md text-primary lowercase mb-4">liora</a>
+                <p class="font-body-md text-body-md text-on-surface-variant max-w-xs">Refined intimate wear designed in Egypt. Crafted for the modern muse.</p>
+                <div class="flex gap-4 mt-2">
+                    <a class="text-on-surface-variant hover:text-tertiary transition-colors" href="#">Instagram</a>
+                    <a class="text-on-surface-variant hover:text-tertiary transition-colors" href="#">Pinterest</a>
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Liora - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="flex flex-col gap-4 md:col-span-1 md:pl-12">
+                <h4 class="font-label-sm text-label-sm uppercase tracking-widest text-primary-container mb-2">Explore</h4>
+                <a asp-action="Index" asp-controller="Products" asp-area="Customer" class="font-body-md text-on-surface-variant hover:text-tertiary transition-colors duration-500 ease-in-out">Shop All</a>
+                <a href="#" class="font-body-md text-on-surface-variant hover:text-tertiary transition-colors duration-500 ease-in-out">Collections</a>
+                <a href="#" class="font-body-md text-on-surface-variant hover:text-tertiary transition-colors duration-500 ease-in-out">Journal</a>
+                <a href="#" class="font-body-md text-on-surface-variant hover:text-tertiary transition-colors duration-500 ease-in-out">Stockists</a>
+            </div>
+            <div class="flex flex-col gap-4 md:col-span-1">
+                <h4 class="font-label-sm text-label-sm uppercase tracking-widest text-primary-container mb-2">Assistance</h4>
+                <a href="#" class="font-body-md text-on-surface-variant hover:text-tertiary transition-colors duration-500 ease-in-out">Shipping &amp; Returns</a>
+                <a href="#" class="font-body-md text-on-surface-variant hover:text-tertiary transition-colors duration-500 ease-in-out">Privacy Policy</a>
+                <a href="#" class="font-body-md text-on-surface-variant hover:text-tertiary transition-colors duration-500 ease-in-out">Sustainability</a>
+                <a href="#" class="font-body-md text-on-surface-variant hover:text-tertiary transition-colors duration-500 ease-in-out">Size Guide</a>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-section-padding-h mt-24 flex flex-col md:flex-row justify-between items-center pt-8 border-t border-outline-variant/20">
+            <p class="font-label-sm text-[10px] uppercase tracking-widest text-tertiary-fixed-dim">© 2026 liora. refined in egypt.</p>
+            <div class="flex items-center gap-4 mt-4 md:mt-0 opacity-50">
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Secure Checkout</span>
+            </div>
         </div>
     </footer>
+
+    <!-- Core Scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-    
-    <div id="page-loader" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-         background:rgba(255,255,255,0.7); z-index:9999; align-items:center; justify-content:center;">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-    </div>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+
     <script>
-        // Show loader on form submit
-        document.addEventListener('DOMContentLoaded', function () {
-            const loader = document.getElementById('page-loader');
-            document.querySelectorAll('form').forEach(function (form) {
-                form.addEventListener('submit', function () {
-                    loader.style.display = 'flex';
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
                 });
+            }, observerOptions);
+
+            document.querySelectorAll('.reveal-element').forEach((el) => {
+                observer.observe(el);
             });
         });
     </script>
-    <script type="importmap"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+

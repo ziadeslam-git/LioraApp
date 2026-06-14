@@ -1,537 +1,309 @@
-@model CheckoutVM
-@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResource> SR
+@model LioraApp.ViewModels.Customer.CheckoutVM
 @{
-    ViewData["Title"] = SR["Checkout"];
-    var items = Model?.Items ?? [];
-    var addresses = Model?.Addresses ?? [];
-    var subtotal = Model?.Subtotal ?? 0m;
-    var total = Model?.Total ?? subtotal;
-    var selectedAddressId = Model?.AddressId ?? Model?.DefaultAddressId;
-    var couponCode = Model?.CouponCode ?? string.Empty;
-    var paymentMethod = Model?.PaymentMethod ?? "CashOnDelivery";
-    var showNewAddressForm = Model?.ShowNewAddressForm == true || !addresses.Any();
+    Layout = "_CustomerLayout";
+    ViewData["Title"] = "Checkout";
 }
 
-<section class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-    <div class="mb-6 flex items-center justify-between gap-4">
-        <div>
-            <h1 class="text-3xl font-bold tracking-tight text-slate-900">@SR["Checkout"]</h1>
-            <p class="mt-2 text-sm text-slate-500">@SR["CheckoutDescription"]</p>
-        </div>
-        <a asp-area="Customer"
-           asp-controller="Cart"
-           asp-action="Index"
-           class="inline-flex items-center gap-1 text-sm font-medium text-primary transition hover:underline">
-            <span class="material-symbols-outlined text-base">arrow_back</span>
-            @SR["BackToCart"]
-        </a>
+<main class="min-h-screen pt-12 pb-section-gap px-container-padding-mobile md:px-container-padding-desktop max-w-7xl mx-auto">
+<!-- Top: Progress Indicator -->
+<div class="flex justify-center space-x-2 md:space-x-6 mb-stack-lg md:mb-section-gap">
+<div class="px-6 py-2 rounded-full border border-outline-variant text-on-surface-variant bg-surface-container-lowest font-label-caps text-label-caps transition-all duration-250">Cart</div>
+<div class="px-6 py-2 rounded-full bg-primary-container text-on-primary-container font-label-caps text-label-caps shadow-[0_10px_30px_rgba(26,16,37,0.05)] transition-all duration-250">Checkout</div>
+<div class="px-6 py-2 rounded-full border border-outline-variant text-on-surface-variant bg-surface-container-lowest font-label-caps text-label-caps transition-all duration-250 opacity-50">Confirm</div>
+</div>
+
+@if (TempData["error"] != null)
+{
+    <div class="mb-4 p-4 text-error-container bg-error rounded-xl font-body-md text-center">
+        @TempData["error"]
     </div>
+}
+@if (TempData["success"] != null)
+{
+    <div class="mb-4 p-4 text-on-primary bg-primary rounded-xl font-body-md text-center">
+        @TempData["success"]
+    </div>
+}
 
-    <form id="place-order-form"
-          asp-area="Customer"
-          asp-controller="Orders"
-          asp-action="PlaceOrder"
-          method="post"
-          class="flex flex-col gap-8 lg:flex-row lg:items-start">
-        @Html.AntiForgeryToken()
+<form method="post" asp-controller="Orders" asp-action="PlaceOrder" id="checkout-form">
+    @Html.AntiForgeryToken()
 
-        <input type="hidden" asp-for="ShowNewAddressForm" value="@(showNewAddressForm ? "true" : "false")" />
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter lg:gap-[64px]">
+<!-- Left Column: Forms -->
+<div class="lg:col-span-7 xl:col-span-8 flex flex-col space-y-section-gap">
 
-        <div class="flex-1 space-y-8">
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div asp-validation-summary="All" class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"></div>
-            }
+<!-- Shipping Details -->
+<section>
+<div class="flex items-baseline justify-between mb-stack-md">
+<h2 class="font-headline-md text-headline-md text-on-surface">Shipping Details</h2>
+@if (Model.Addresses.Any() && Model.ShowNewAddressForm)
+{
+    <button type="button" onclick="document.getElementById('show-saved-addresses').submit();" class="font-body-sm text-body-md text-on-surface-variant hover:text-primary transition-colors duration-250 underline">Use Saved Address</button>
+}
+else if (!Model.ShowNewAddressForm)
+{
+    <button type="button" onclick="document.getElementById('show-new-address').submit();" class="font-body-sm text-body-md text-on-surface-variant hover:text-primary transition-colors duration-250 underline">+ Add New Address</button>
+}
+</div>
 
-            <section class="rounded-[1.75rem] bg-slate-100/80 p-5 sm:p-6 lg:p-8">
-                <div class="mb-6 flex items-center gap-3">
-                    <div class="flex h-8 w-8 items-center justify-center rounded-full bg-primary font-bold text-white">1</div>
-                    <h2 class="text-xl font-semibold text-slate-900">@SR["ShippingAddress"]</h2>
-                </div>
-
-                @if (addresses.Any())
-                {
-                    <div class="space-y-4">
-                        @foreach (var address in addresses)
-                        {
-                            <div class="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_20px_40px_rgba(15,23,42,0.04)] transition hover:border-primary/30 @(address.Id == selectedAddressId ? "border-primary/30 ring-2 ring-primary/10" : "")"
-                                 data-address-card>
-                                <input type="radio"
-                                       asp-for="AddressId"
-                                       value="@address.Id"
-                                       class="sr-only"
-                                       data-saved-address-radio />
-
-                                <div class="block cursor-pointer" data-select-address>
-                                    <div class="flex items-start justify-between gap-4">
-                                        <div>
-                                            <div class="flex items-center gap-2">
-                                                <p class="font-semibold text-slate-900">@address.FullName</p>
-                                                @if (address.IsDefault)
-                                                {
-                                                    <span class="rounded-full bg-primary/10 px-2 py-1 text-[11px] font-semibold text-primary" data-default-badge>@SR["Default"]</span>
-                                                }
-                                            </div>
-                                            <p class="mt-2 text-sm leading-6 text-slate-500">
-                                                @address.PhoneNumber<br />
-                                                @address.DisplayLine
-                                            </p>
-                                        </div>
-
-                                        <div class="mt-1 flex h-5 w-5 items-center justify-center rounded-full border-2 @(address.Id == selectedAddressId ? "border-primary" : "border-slate-300")" data-address-indicator>
-                                            <div class="h-2.5 w-2.5 rounded-full bg-primary @(address.Id == selectedAddressId ? "" : "hidden")" data-address-indicator-dot></div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="mt-4 flex justify-end">
-                                    <button type="submit"
-                                            formaction="@Url.Action("DeleteAddress", "Orders", new { area = "Customer" })"
-                                            formmethod="post"
-                                            name="deleteAddressId"
-                                            value="@address.Id"
-                                            data-delete-address-button
-                                            class="inline-flex items-center gap-2 rounded-xl bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-100"
-                                            title="@SR["DeleteAddress"]">
-                                        <span class="material-symbols-outlined text-[16px]">delete</span>
-                                        @SR["Delete"]
-                                    </button>
-                                </div>
-                            </div>
-                        }
-
-                        <span asp-validation-for="AddressId" class="block text-sm text-rose-600"></span>
-                    </div>
-
-                    <button type="submit"
-                            id="select-saved-address-submit"
-                            formaction="@Url.Action("SelectSavedAddress", "Orders", new { area = "Customer" })"
-                            formmethod="post"
-                            class="hidden">
-                    </button>
-
-                    <div class="mt-4">
-                        <button type="button"
-                                id="toggle-new-address"
-                                class="inline-flex items-center gap-2 rounded-2xl border border-primary/15 bg-primary/5 px-4 py-2.5 text-sm font-semibold text-primary transition hover:bg-primary/10">
-                            <span class="material-symbols-outlined text-[18px]">add_circle</span>
-                            @SR["AddNewAddress"]
-                        </button>
-                    </div>
-                }
-                <div id="new-address-panel" class="@(showNewAddressForm ? "mt-5" : "hidden mt-5")">
-                    <div class="space-y-5 rounded-[1.5rem] border border-primary/20 bg-white p-5 shadow-[0_20px_40px_rgba(15,23,42,0.06)]">
-                        <div class="flex items-center gap-2">
-                            <div class="flex items-center gap-2">
-                                <div class="flex h-5 w-5 items-center justify-center rounded-full border-2 border-primary">
-                                    <div class="h-2.5 w-2.5 rounded-full bg-primary"></div>
-                                </div>
-                                <h3 class="font-semibold text-primary">@SR["AddNewAddress"]</h3>
-                            </div>
-                        </div>
-
-                        @if (addresses.Any())
-                        {
-                            <p class="text-sm leading-6 text-slate-500">@SR["AddNewAddressHelp"]</p>
-                        }
-
-                        <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-                            <div class="space-y-1.5">
-                                <label asp-for="NewAddressFullName" class="text-sm font-medium text-slate-800">@SR["FullName"]</label>
-                                <input asp-for="NewAddressFullName" class="w-full rounded-xl border-slate-300 bg-white px-3 py-2.5 text-slate-900 shadow-sm focus:border-primary focus:ring-primary/20" placeholder="@SR["FullNamePlaceholder"]" />
-                                <span asp-validation-for="NewAddressFullName" class="text-sm text-rose-600"></span>
-                            </div>
-
-                            <div class="space-y-1.5">
-                                <label asp-for="NewAddressPhoneNumber" class="text-sm font-medium text-slate-800">@SR["PhoneNumber"]</label>
-                                <input asp-for="NewAddressPhoneNumber" class="w-full rounded-xl border-slate-300 bg-white px-3 py-2.5 text-slate-900 shadow-sm focus:border-primary focus:ring-primary/20" placeholder="@SR["PhoneNumberPlaceholder"]" />
-                                <span asp-validation-for="NewAddressPhoneNumber" class="text-sm text-rose-600"></span>
-                            </div>
-                        </div>
-
-                        <div class="space-y-1.5">
-                            <label asp-for="NewAddressStreet" class="text-sm font-medium text-slate-800">@SR["StreetAddress"]</label>
-                            <input asp-for="NewAddressStreet" class="w-full rounded-xl border-slate-300 bg-white px-3 py-2.5 text-slate-900 shadow-sm focus:border-primary focus:ring-primary/20" placeholder="@SR["StreetAddressPlaceholder"]" />
-                            <span asp-validation-for="NewAddressStreet" class="text-sm text-rose-600"></span>
-                        </div>
-
-                        <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
-                            <div class="space-y-1.5">
-                                <label asp-for="NewAddressCity" class="text-sm font-medium text-slate-800">@SR["City"]</label>
-                                <input asp-for="NewAddressCity" class="w-full rounded-xl border-slate-300 bg-white px-3 py-2.5 text-slate-900 shadow-sm focus:border-primary focus:ring-primary/20" placeholder="@SR["CityPlaceholder"]" />
-                                <span asp-validation-for="NewAddressCity" class="text-sm text-rose-600"></span>
-                            </div>
-
-                            <div class="space-y-1.5">
-                                <label asp-for="NewAddressState" class="text-sm font-medium text-slate-800">@SR["StateProvince"]</label>
-                                <input asp-for="NewAddressState" class="w-full rounded-xl border-slate-300 bg-white px-3 py-2.5 text-slate-900 shadow-sm focus:border-primary focus:ring-primary/20" placeholder="@SR["StateProvincePlaceholder"]" />
-                                <span asp-validation-for="NewAddressState" class="text-sm text-rose-600"></span>
-                            </div>
-
-                            <div class="space-y-1.5">
-                                <label asp-for="NewAddressPostalCode" class="text-sm font-medium text-slate-800">@SR["PostalCode"]</label>
-                                <input asp-for="NewAddressPostalCode" class="w-full rounded-xl border-slate-300 bg-white px-3 py-2.5 text-slate-900 shadow-sm focus:border-primary focus:ring-primary/20" placeholder="@SR["PostalCodePlaceholder"]" />
-                                <span asp-validation-for="NewAddressPostalCode" class="text-sm text-rose-600"></span>
-                            </div>
-                        </div>
-
-                        <div class="space-y-1.5">
-                            <label asp-for="NewAddressCountry" class="text-sm font-medium text-slate-800">@SR["Country"]</label>
-                            <input asp-for="NewAddressCountry" class="w-full rounded-xl border-slate-300 bg-white px-3 py-2.5 text-slate-900 shadow-sm focus:border-primary focus:ring-primary/20" placeholder="@SR["CountryPlaceholder"]" />
-                            <span asp-validation-for="NewAddressCountry" class="text-sm text-rose-600"></span>
-                        </div>
-
-                        <label class="flex items-center gap-3 rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
-                            <input asp-for="SaveNewAddress" class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
-                            <span>@SR["SaveAsDefaultAddressForFutureOrders"]</span>
-                        </label>
-
-                        <div class="flex flex-wrap items-center justify-end gap-3 border-t border-slate-100 pt-2">
-                            @if (addresses.Any())
-                            {
-                                <button type="button"
-                                        id="cancel-new-address"
-                                        class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
-                                    <span class="material-symbols-outlined text-[18px]">close</span>
-                                    @SR["Cancel"]
-                                </button>
-                            }
-                            <button type="submit"
-                                    formaction="@Url.Action("UseNewAddress", "Orders", new { area = "Customer" })"
-                                    formmethod="post"
-                                    class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-primary to-primary px-4 py-2.5 text-sm font-semibold text-white shadow-[0_10px_20px_rgba(70,72,212,0.16)] transition hover:opacity-95">
-                                <span class="material-symbols-outlined text-[18px]">check_circle</span>
-                                @SR["SaveAddress"]
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="rounded-[1.75rem] bg-slate-100/80 p-5 sm:p-6 lg:p-8">
-                <div class="mb-6 flex items-center gap-3">
-                    <div class="flex h-8 w-8 items-center justify-center rounded-full bg-primary font-bold text-white">2</div>
-                    <h2 class="text-xl font-semibold text-slate-900">@SR["PaymentMethod"]</h2>
-                </div>
-
-                <div class="space-y-4">
-                    <label class="cursor-pointer">
-                        <input asp-for="PaymentMethod" type="radio" value="CashOnDelivery" class="sr-only peer" />
-                        <span class="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-5 py-5 shadow-[0_20px_40px_rgba(15,23,42,0.04)] transition peer-checked:border-primary peer-checked:bg-white peer-checked:ring-2 peer-checked:ring-primary/10 peer-checked:[&_[data-payment-indicator]]:border-primary peer-checked:[&_[data-payment-indicator]]:bg-primary/5 peer-checked:[&_[data-payment-indicator-dot]]:scale-100 peer-checked:[&_[data-payment-indicator-dot]]:opacity-100">
-                            <span class="flex items-center gap-4">
-                                <span class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-white shadow-md shadow-primary/20">
-                                    <span class="material-symbols-outlined text-[22px]">local_shipping</span>
-                                </span>
-                                <span class="space-y-1">
-                                    <span class="block text-xl font-semibold text-slate-900">@SR["CashOnDelivery"]</span>
-                                    <span class="block text-sm leading-6 text-slate-500">@SR["PayWithCashOnDelivery"]</span>
-                                </span>
-                            </span>
-                            <span data-payment-indicator class="flex h-7 w-7 items-center justify-center rounded-full border-2 border-slate-300 transition">
-                                <span data-payment-indicator-dot class="h-3.5 w-3.5 scale-50 rounded-full bg-primary opacity-0 transition duration-200"></span>
-                            </span>
-                        </span>
-                    </label>
-
-                    <label class="cursor-pointer">
-                        <input asp-for="PaymentMethod" type="radio" value="VodafoneCash" class="sr-only peer" />
-                        <span class="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-5 py-5 shadow-[0_20px_40px_rgba(15,23,42,0.04)] transition peer-checked:border-primary peer-checked:bg-white peer-checked:ring-2 peer-checked:ring-primary/10 peer-checked:[&_[data-payment-indicator]]:border-primary peer-checked:[&_[data-payment-indicator]]:bg-primary/5 peer-checked:[&_[data-payment-indicator-dot]]:scale-100 peer-checked:[&_[data-payment-indicator-dot]]:opacity-100">
-                            <span class="flex items-center gap-4">
-                                <span class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-md shadow-emerald-600/20">
-                                    <span class="material-symbols-outlined text-[22px]">phone_iphone</span>
-                                </span>
-                                <span class="space-y-1">
-                                    <span class="block text-xl font-semibold text-slate-900">Vodafone Cash</span>
-                                    <span class="block text-sm leading-6 text-slate-500">Pay manually and upload/send the transfer proof.</span>
-                                </span>
-                            </span>
-                            <span data-payment-indicator class="flex h-7 w-7 items-center justify-center rounded-full border-2 border-slate-300 transition">
-                                <span data-payment-indicator-dot class="h-3.5 w-3.5 scale-50 rounded-full bg-primary opacity-0 transition duration-200"></span>
-                            </span>
-                        </span>
-                    </label>
-
-                    <label class="cursor-pointer">
-                        <input asp-for="PaymentMethod" type="radio" value="InstaPay" class="sr-only peer" />
-                        <span class="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-5 py-5 shadow-[0_20px_40px_rgba(15,23,42,0.04)] transition peer-checked:border-primary peer-checked:bg-white peer-checked:ring-2 peer-checked:ring-primary/10 peer-checked:[&_[data-payment-indicator]]:border-primary peer-checked:[&_[data-payment-indicator]]:bg-primary/5 peer-checked:[&_[data-payment-indicator-dot]]:scale-100 peer-checked:[&_[data-payment-indicator-dot]]:opacity-100">
-                            <span class="flex items-center gap-4">
-                                <span class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-600 text-white shadow-md shadow-violet-600/20">
-                                    <span class="material-symbols-outlined text-[22px]">account_balance_wallet</span>
-                                </span>
-                                <span class="space-y-1">
-                                    <span class="block text-xl font-semibold text-slate-900">InstaPay</span>
-                                    <span class="block text-sm leading-6 text-slate-500">Transfer manually, then wait for admin confirmation.</span>
-                                </span>
-                            </span>
-                            <span data-payment-indicator class="flex h-7 w-7 items-center justify-center rounded-full border-2 border-slate-300 transition">
-                                <span data-payment-indicator-dot class="h-3.5 w-3.5 scale-50 rounded-full bg-primary opacity-0 transition duration-200"></span>
-                            </span>
-                        </span>
-                    </label>
-                </div>
-
-                @if (paymentMethod == "VodafoneCash" || paymentMethod == "InstaPay")
-                {
-                    <p class="mt-4 text-sm text-slate-500">Manual payments stay pending until the admin confirms the transfer.</p>
-                }
-            </section>
+@if (Model.ShowNewAddressForm)
+{
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+        <div class="flex flex-col">
+            <label class="font-label-caps text-label-caps text-on-surface-variant mb-2 ml-2">Full Name</label>
+            <input asp-for="NewAddressFullName" class="w-full bg-surface-container-lowest border border-on-surface/20 rounded-xl px-4 py-3 font-body-md text-body-md text-on-surface focus:border-primary-container focus:ring-4 focus:ring-primary-container/20 transition-all duration-250 outline-none" placeholder="e.g. Laila Hassan" type="text"/>
+            <span asp-validation-for="NewAddressFullName" class="text-error text-sm mt-1"></span>
         </div>
-
-        <aside class="w-full lg:w-96 lg:flex-shrink-0">
-            <div class="sticky top-24 rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-[0_20px_40px_rgba(15,23,42,0.05)]">
-                <h2 class="mb-6 text-lg font-semibold text-slate-900">@SR["OrderSummary"]</h2>
-
-                <div class="mb-6 space-y-4">
-                    @foreach (var item in items)
+        <div class="flex flex-col">
+            <label class="font-label-caps text-label-caps text-on-surface-variant mb-2 ml-2">Phone Number</label>
+            <input asp-for="NewAddressPhoneNumber" class="w-full bg-surface-container-lowest border border-on-surface/20 rounded-xl px-4 py-3 font-body-md text-body-md text-on-surface focus:border-primary-container focus:ring-4 focus:ring-primary-container/20 transition-all duration-250 outline-none" placeholder="+20 100 123 4567" type="tel"/>
+            <span asp-validation-for="NewAddressPhoneNumber" class="text-error text-sm mt-1"></span>
+        </div>
+        <div class="flex flex-col md:col-span-2">
+            <label class="font-label-caps text-label-caps text-on-surface-variant mb-2 ml-2">Street Address</label>
+            <input asp-for="NewAddressStreet" class="w-full bg-surface-container-lowest border border-on-surface/20 rounded-xl px-4 py-3 font-body-md text-body-md text-on-surface focus:border-primary-container focus:ring-4 focus:ring-primary-container/20 transition-all duration-250 outline-none" placeholder="123 Zamalek St, Apt 4" type="text"/>
+            <span asp-validation-for="NewAddressStreet" class="text-error text-sm mt-1"></span>
+        </div>
+        <div class="flex flex-col">
+            <label class="font-label-caps text-label-caps text-on-surface-variant mb-2 ml-2">City</label>
+            <input asp-for="NewAddressCity" class="w-full bg-surface-container-lowest border border-on-surface/20 rounded-xl px-4 py-3 font-body-md text-body-md text-on-surface focus:border-primary-container focus:ring-4 focus:ring-primary-container/20 transition-all duration-250 outline-none" placeholder="Cairo" type="text"/>
+            <span asp-validation-for="NewAddressCity" class="text-error text-sm mt-1"></span>
+        </div>
+        <div class="flex flex-col">
+            <label class="font-label-caps text-label-caps text-on-surface-variant mb-2 ml-2">State (Optional)</label>
+            <input asp-for="NewAddressState" class="w-full bg-surface-container-lowest border border-on-surface/20 rounded-xl px-4 py-3 font-body-md text-body-md text-on-surface focus:border-primary-container focus:ring-4 focus:ring-primary-container/20 transition-all duration-250 outline-none" placeholder="Cairo" type="text"/>
+        </div>
+        <div class="flex flex-col">
+            <label class="font-label-caps text-label-caps text-on-surface-variant mb-2 ml-2">Country</label>
+            <input asp-for="NewAddressCountry" class="w-full bg-surface-container-lowest border border-on-surface/20 rounded-xl px-4 py-3 font-body-md text-body-md text-on-surface focus:border-primary-container focus:ring-4 focus:ring-primary-container/20 transition-all duration-250 outline-none" type="text" value="Egypt" readonly/>
+        </div>
+        <div class="flex flex-col">
+            <label class="font-label-caps text-label-caps text-on-surface-variant mb-2 ml-2">Postal Code</label>
+            <input asp-for="NewAddressPostalCode" class="w-full bg-surface-container-lowest border border-on-surface/20 rounded-xl px-4 py-3 font-body-md text-body-md text-on-surface focus:border-primary-container focus:ring-4 focus:ring-primary-container/20 transition-all duration-250 outline-none" placeholder="11511" type="text"/>
+            <span asp-validation-for="NewAddressPostalCode" class="text-error text-sm mt-1"></span>
+        </div>
+        <div class="flex flex-col md:col-span-2">
+            <label class="flex items-center space-x-2 mt-2">
+                <input asp-for="SaveNewAddress" type="checkbox" class="w-5 h-5 text-primary focus:ring-primary border-outline-variant rounded" />
+                <span class="font-body-md text-on-surface-variant">Save this address for future orders</span>
+            </label>
+        </div>
+        
+        <input type="hidden" name="ShowNewAddressForm" value="true" />
+    </div>
+}
+else
+{
+    <div class="space-y-4">
+        @foreach (var address in Model.Addresses)
+        {
+            var isChecked = address.Id == Model.AddressId;
+            var activeClass = isChecked ? "border-primary-container bg-surface-container-low" : "border-outline-variant/30 bg-surface-container-lowest";
+            
+            <label class="flex items-start p-4 border-2 rounded-xl cursor-pointer hover:border-primary-container/50 transition-colors @activeClass">
+                <input type="radio" name="AddressId" value="@address.Id" class="mt-1 sr-only peer" @(isChecked ? "checked" : "") onchange="this.form.action='@Url.Action("SelectSavedAddress", "Orders")'; this.form.submit();" />
+                <div class="w-5 h-5 rounded-full border-2 border-outline-variant flex items-center justify-center mr-4 mt-0.5 peer-checked:border-primary">
+                    <div class="w-2.5 h-2.5 rounded-full bg-primary scale-0 peer-checked:scale-100 transition-transform"></div>
+                </div>
+                <div class="flex-1">
+                    <span class="block font-body-lg text-on-surface">@address.FullName <span class="text-sm text-on-surface-variant">(@address.PhoneNumber)</span></span>
+                    <span class="block font-body-md text-on-surface-variant">@address.DisplayLine</span>
+                    @if (address.IsDefault)
                     {
-                        @if (item.IsGiftBundle)
-                        {
-                            <div class="rounded-2xl border border-primary/10 bg-primary/5 p-4">
-                                <div class="flex items-start justify-between gap-3">
-                                    <div>
-                                        <span class="rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-primary">Gift Bundle</span>
-                                        <h3 class="mt-2 text-base font-bold text-slate-900">@item.GiftBundleTitle</h3>
-                                    </div>
-                                    <div class="text-right">
-                                        <p class="font-semibold text-slate-900">@item.LineTotal.ToString("0.00") EGP</p>
-                                        @if (item.GiftBundleOriginalTotal.HasValue && item.GiftBundleOriginalTotal.Value > item.PriceSnapshot)
-                                        {
-                                            <p class="text-xs text-slate-400 line-through">@item.GiftBundleOriginalTotal.Value.ToString("0.00") EGP</p>
-                                        }
-                                    </div>
-                                </div>
-
-                                <div class="mt-4 space-y-3">
-                                    @foreach (var bundleProduct in item.BundleItems)
-                                    {
-                                        <div class="flex gap-3 rounded-xl border border-white/70 bg-white/80 p-3">
-                                            <div class="h-14 w-14 flex-shrink-0 overflow-hidden rounded-xl bg-white">
-                                                <img src="@(bundleProduct.ImageUrl ?? "https://placehold.co/100")"
-                                                     alt="@bundleProduct.ProductName"
-                                                     class="h-full w-full object-cover" />
-                                            </div>
-                                            <div class="min-w-0">
-                                                <p class="line-clamp-1 text-sm font-semibold text-slate-900">@bundleProduct.ProductName</p>
-                                                <p class="mt-1 text-xs text-slate-500">@bundleProduct.Size / @bundleProduct.Color</p>
-                                            </div>
-                                        </div>
-                                    }
-                                </div>
-
-                                <div class="mt-4 flex items-center justify-between gap-2 text-sm">
-                                    <span class="text-slate-500">@SR["QuantityShort"] @item.Quantity</span>
-                                    <span class="font-semibold text-primary">@item.PriceSnapshot.ToString("0.00") EGP per bundle</span>
-                                </div>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="flex gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-3">
-                                <div class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-white">
-                                    <img src="@(item.ImageUrl ?? "https://placehold.co/100")"
-                                         alt="@item.ProductName"
-                                         class="h-full w-full object-cover" />
-                                </div>
-                                <div class="flex flex-1 flex-col justify-between">
-                                    <div>
-                                        <h3 class="line-clamp-1 font-medium text-slate-900">@item.ProductName</h3>
-                                        <p class="mt-1 text-sm text-slate-500">@item.Size / @item.Color</p>
-                                    </div>
-                                    <div class="flex items-center justify-between gap-2">
-                                        <span class="text-sm text-slate-500">@SR["QuantityShort"] @item.Quantity</span>
-                                        <span class="font-semibold text-slate-900">@item.LineTotal.ToString("0.00") EGP</span>
-                                    </div>
-                                </div>
-                            </div>
-                        }
+                        <span class="inline-block mt-2 px-2 py-0.5 bg-primary-container text-on-primary-container text-[10px] font-label-caps rounded-full">Default</span>
                     }
                 </div>
-
-                <div class="mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                    <div class="mb-3 flex items-center justify-between gap-2">
-                        <label asp-for="CouponCode" class="text-sm font-semibold text-slate-800">@SR["DiscountCode"]</label>
-                        @if (Model?.CouponApplied == true)
-                        {
-                            <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">@SR["Applied"]</span>
-                        }
-                    </div>
-
-                    <div class="flex gap-2">
-                        <input asp-for="CouponCode"
-                               placeholder="@SR["DiscountCode"]"
-                               class="w-full rounded-xl border-slate-300 bg-white text-sm shadow-sm focus:border-primary focus:ring-primary/20" />
-                        <button type="submit"
-                                formmethod="get"
-                                formaction="@Url.Action("Checkout", "Orders", new { area = "Customer" })"
-                                class="rounded-xl bg-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-300">
-                            @SR["Apply"]
-                        </button>
-                    </div>
-
-                    @if (!string.IsNullOrWhiteSpace(Model?.CouponMessage))
-                    {
-                        <p class="mt-3 text-sm @(Model?.CouponApplied == true ? "text-emerald-600" : "text-rose-600")">
-                            @Model?.CouponMessage
-                        </p>
-                    }
-                </div>
-
-                <div class="mb-6 space-y-3 border-b border-slate-200 pb-5 text-sm">
-                    <div class="flex items-center justify-between">
-                        <span class="text-slate-500">@SR["ItemsCount"]</span>
-                        <span class="font-medium text-slate-900">@Model?.ItemsCount</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-slate-500">@SR["Subtotal"]</span>
-                        <span class="font-medium text-slate-900">@subtotal.ToString("0.00") EGP</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-slate-500">@SR["Discount"]</span>
-                        <span class="font-medium text-slate-900">@((Model?.DiscountAmount ?? 0m).ToString("0.00")) EGP</span>
-                    </div>
-                    @if (Model?.CouponApplied == true && !string.IsNullOrWhiteSpace(Model.CouponCode))
-                    {
-                        <div class="flex items-center justify-between">
-                            <span class="text-slate-500">@SR["Code"]</span>
-                            <span class="font-medium text-emerald-600">@Model.CouponCode</span>
-                        </div>
-                    }
-                </div>
-
-                <div class="mb-6 flex items-end justify-between gap-3">
-                    <span class="text-lg font-semibold text-slate-900">@SR["Total"]</span>
-                    <div class="text-right">
-                        <span class="mr-1 text-xs text-slate-400">EGP</span>
-                        <span class="text-2xl font-bold text-slate-900">@total.ToString("0.00")</span>
-                    </div>
-                </div>
-
-                <button type="submit"
-                        class="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-primary to-primary py-3.5 text-base font-semibold text-white shadow-[0_10px_20px_rgba(70,72,212,0.18)] transition hover:opacity-95">
-                    <span class="material-symbols-outlined text-xl" style="font-variation-settings:'FILL' 1">lock</span>
-                    @SR["PlaceOrder"]
-                </button>
-            </div>
-        </aside>
-    </form>
+            </label>
+        }
+        <input type="hidden" name="ShowNewAddressForm" value="false" />
+    </div>
+}
 </section>
+
+<!-- Payment Method Selection -->
+<section>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-stack-md">Payment Method</h2>
+<div class="space-y-stack-md" id="payment-methods-container">
+<!-- Vodafone Cash -->
+<label class="payment-card group flex items-start p-6 border-2 border-outline-variant/30 hover:border-primary-container/50 rounded-xl cursor-pointer bg-surface-container-lowest transition-all duration-250 relative overflow-hidden @(Model.PaymentMethod == LioraApp.Utilities.SD.PaymentMethod_VodafoneCash ? "border-primary-container" : "")">
+<input class="peer sr-only" name="PaymentMethod" type="radio" value="@LioraApp.Utilities.SD.PaymentMethod_VodafoneCash" @(Model.PaymentMethod == LioraApp.Utilities.SD.PaymentMethod_VodafoneCash ? "checked" : "") onchange="toggleManualUpload(this)"/>
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center mr-4 mt-1 transition-colors peer-checked:border-primary">
+<div class="w-3 h-3 rounded-full bg-primary scale-0 peer-checked:scale-100 transition-transform"></div>
+</div>
+<div class="flex-1">
+<span class="block font-body-lg text-body-lg text-on-surface mb-1">Vodafone Cash</span>
+<span class="block font-body-md text-body-md text-on-surface-variant">Transfer securely to our merchant number. Ideal for quick processing.</span>
+</div>
+<span class="material-symbols-outlined text-primary-container opacity-20 absolute -right-4 -bottom-4 text-[100px] pointer-events-none group-hover:scale-110 transition-transform duration-500">account_balance_wallet</span>
+</label>
+
+<!-- InstaPay -->
+<label class="payment-card group flex items-start p-6 border-2 border-outline-variant/30 hover:border-primary-container/50 rounded-xl cursor-pointer bg-surface-container-lowest transition-all duration-250 relative overflow-hidden @(Model.PaymentMethod == LioraApp.Utilities.SD.PaymentMethod_InstaPay ? "border-primary-container" : "")">
+<input class="peer sr-only" name="PaymentMethod" type="radio" value="@LioraApp.Utilities.SD.PaymentMethod_InstaPay" @(Model.PaymentMethod == LioraApp.Utilities.SD.PaymentMethod_InstaPay ? "checked" : "") onchange="toggleManualUpload(this)"/>
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center mr-4 mt-1 transition-colors peer-checked:border-primary">
+<div class="w-3 h-3 rounded-full bg-primary scale-0 peer-checked:scale-100 transition-transform"></div>
+</div>
+<div class="flex-1">
+<span class="block font-body-lg text-body-lg text-on-surface mb-1">InstaPay</span>
+<span class="block font-body-md text-body-md text-on-surface-variant">Instant bank transfer. Safe and seamless.</span>
+</div>
+</label>
+
+<!-- Cash on Delivery -->
+<label class="payment-card group flex items-start p-6 border-2 border-outline-variant/30 hover:border-primary-container/50 rounded-xl cursor-pointer bg-surface-container-lowest transition-all duration-250 relative overflow-hidden @(Model.PaymentMethod == LioraApp.Utilities.SD.PaymentMethod_CashOnDelivery ? "border-primary-container" : "")">
+<input class="peer sr-only" name="PaymentMethod" type="radio" value="@LioraApp.Utilities.SD.PaymentMethod_CashOnDelivery" @(Model.PaymentMethod == LioraApp.Utilities.SD.PaymentMethod_CashOnDelivery ? "checked" : "") onchange="toggleManualUpload(this)"/>
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center mr-4 mt-1 transition-colors peer-checked:border-primary">
+<div class="w-3 h-3 rounded-full bg-primary scale-0 peer-checked:scale-100 transition-transform"></div>
+</div>
+<div class="flex-1">
+<span class="block font-body-lg text-body-lg text-on-surface mb-1">Cash on Delivery</span>
+<span class="block font-body-md text-body-md text-on-surface-variant">Pay when your order arrives. Note: May incur additional handling fees.</span>
+</div>
+</label>
+</div>
+
+<!-- Manual Payment Conditional Upload Zone -->
+<div class="mt-stack-lg transition-all duration-500 overflow-hidden @(Model.PaymentMethod == LioraApp.Utilities.SD.PaymentMethod_CashOnDelivery ? "opacity-0 max-h-0" : "opacity-100 max-h-[500px]")" id="manual-upload-zone">
+<div class="bg-surface-container-low p-8 rounded-xl">
+<h3 class="font-body-lg text-body-lg text-on-surface mb-2">Upload Transfer Receipt (Optional)</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">To complete your Vodafone Cash or InstaPay order, please upload a clear screenshot of your successful transaction.</p>
+<div class="border-2 border-dashed border-primary-container/40 rounded-xl p-10 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-surface-container-lowest hover:border-primary-container transition-all duration-250 group">
+<div class="w-16 h-16 rounded-full bg-surface-bright flex items-center justify-center mb-4 group-hover:scale-110 shadow-sm transition-transform duration-250">
+<span class="material-symbols-outlined text-3xl text-primary-container">cloud_upload</span>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface mb-2">Click to browse or drag image here</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Supports JPG, PNG up to 5MB</span>
+<input accept="image/png, image/jpeg" class="hidden" type="file" name="ReceiptFile"/>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- Right Column: Sticky Summary -->
+<div class="lg:col-span-5 xl:col-span-4 relative">
+<aside class="sticky top-24 bg-on-tertiary-fixed text-on-tertiary rounded-xl p-6 lg:p-8 shadow-[0_20px_50px_rgba(26,16,37,0.15)] flex flex-col">
+<h2 class="font-headline-md text-headline-md mb-stack-lg pb-4 border-b border-on-tertiary/10">Order Summary</h2>
+
+<!-- Items List -->
+<div class="space-y-6 mb-8 flex-1 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
+    @foreach (var item in Model.Items)
+    {
+        var imgSrc = item.ImageUrl ?? Url.Content("~/images/product-placeholder.svg");
+<div class="flex items-center space-x-4">
+<div class="w-20 h-24 bg-surface rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('@imgSrc')"></div>
+<div class="flex-1 min-w-0">
+<span class="block font-body-lg text-body-lg truncate text-on-tertiary mb-1">
+            @if(item.IsGiftBundle)
+            {
+                <text>@item.GiftBundleTitle</text>
+            }
+            else
+            {
+                <text>@item.ProductName</text>
+            }
+</span>
+<span class="block font-body-md text-body-md text-on-tertiary/60 mb-2">
+            @if(!item.IsGiftBundle)
+            {
+                <text>Size: @item.Size | Color: @item.Color | </text>
+            }
+            Qty: @item.Quantity
+</span>
+<span class="block font-body-md text-body-md text-primary-fixed-dim">@item.LineTotal.ToString("C")</span>
+</div>
+</div>
+    }
+</div>
+
+<!-- Costs -->
+<div class="space-y-3 pt-6 border-t border-on-tertiary/10 mb-stack-lg">
+<div class="flex justify-between items-center font-body-md text-body-md text-on-tertiary/80">
+<span>Subtotal</span>
+<span>@Model.Subtotal.ToString("C")</span>
+</div>
+
+@if (Model.DiscountAmount > 0)
+{
+<div class="flex justify-between items-center font-body-md text-body-md text-on-tertiary/80">
+<span>Discount (@Model.CouponCode)</span>
+<span class="text-primary-fixed-dim">-@Model.DiscountAmount.ToString("C")</span>
+</div>
+}
+
+<div class="flex justify-between items-center font-body-md text-body-md text-on-tertiary/80">
+<span>Shipping</span>
+<span>Calculated at checkout</span>
+</div>
+<div class="flex justify-between items-center font-headline-md text-headline-md text-on-tertiary mt-6 pt-6 border-t border-on-tertiary/10">
+<span>Total</span>
+<span>@Model.Total.ToString("C")</span>
+</div>
+</div>
+
+<!-- Coupon Section (Hidden, handled in Order processing directly if submitted from cart or here) -->
+<input type="hidden" asp-for="CouponCode" />
+
+<!-- Call to Action -->
+<button type="submit" class="w-full bg-primary-container text-on-primary-container font-label-caps text-label-caps py-4 rounded-full hover:scale-[0.98] hover:shadow-[0_10px_20px_rgba(196,144,128,0.2)] transition-all duration-250 flex items-center justify-center space-x-2">
+<span>PLACE YOUR ORDER</span>
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+<div class="mt-6 flex items-center justify-center space-x-2 text-on-tertiary/50">
+<span class="material-symbols-outlined text-sm">lock</span>
+<span class="font-body-md text-body-md text-xs">Secure Encrypted Checkout</span>
+</div>
+</aside>
+</div>
+</div>
+</form>
+
+<!-- Hidden forms for address toggling -->
+<form id="show-new-address" method="get" asp-action="Checkout" asp-controller="Orders" style="display:none;">
+    <input type="hidden" name="ShowNewAddressForm" value="true" />
+    <input type="hidden" name="PaymentMethod" value="@Model.PaymentMethod" />
+    <input type="hidden" name="CouponCode" value="@Model.CouponCode" />
+</form>
+
+<form id="show-saved-addresses" method="get" asp-action="Checkout" asp-controller="Orders" style="display:none;">
+    <input type="hidden" name="ShowNewAddressForm" value="false" />
+    <input type="hidden" name="PaymentMethod" value="@Model.PaymentMethod" />
+    <input type="hidden" name="CouponCode" value="@Model.CouponCode" />
+</form>
+
+</main>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        const showNewAddressInput = document.getElementById('ShowNewAddressForm');
-        const newAddressPanel = document.getElementById('new-address-panel');
-        const toggleNewAddressButton = document.getElementById('toggle-new-address');
-        const cancelNewAddressButton = document.getElementById('cancel-new-address');
-        const selectSavedAddressSubmit = document.getElementById('select-saved-address-submit');
-        const savedAddressRadios = Array.from(document.querySelectorAll('[data-saved-address-radio]'));
-        const deleteAddressButtons = Array.from(document.querySelectorAll('[data-delete-address-button]'));
-        const newAddressFullNameInput = document.getElementById('NewAddressFullName');
-        const newAddressPhoneNumberInput = document.getElementById('NewAddressPhoneNumber');
-        const newAddressStreetInput = document.getElementById('NewAddressStreet');
-        const newAddressCityInput = document.getElementById('NewAddressCity');
-        const newAddressStateInput = document.getElementById('NewAddressState');
-        const newAddressCountryInput = document.getElementById('NewAddressCountry');
-        const newAddressPostalCodeInput = document.getElementById('NewAddressPostalCode');
-        const saveNewAddressInput = document.getElementById('SaveNewAddress');
-        const defaultCountryValue = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model?.NewAddressCountry ?? "Egypt"));
-
-        function setNewAddressPanelState(visible) {
-            if (!newAddressPanel || !showNewAddressInput) return;
-
-            newAddressPanel.classList.toggle('hidden', !visible);
-            showNewAddressInput.value = visible ? 'true' : 'false';
-        }
-
-        function clearNewAddressInputs() {
-            if (newAddressFullNameInput) newAddressFullNameInput.value = '';
-            if (newAddressPhoneNumberInput) newAddressPhoneNumberInput.value = '';
-            if (newAddressStreetInput) newAddressStreetInput.value = '';
-            if (newAddressCityInput) newAddressCityInput.value = '';
-            if (newAddressStateInput) newAddressStateInput.value = '';
-            if (newAddressPostalCodeInput) newAddressPostalCodeInput.value = '';
-            if (newAddressCountryInput) newAddressCountryInput.value = defaultCountryValue;
-            if (saveNewAddressInput) saveNewAddressInput.checked = true;
-        }
-
-        function refreshAddressSelectionUi() {
-            savedAddressRadios.forEach(function (radio) {
-                const card = radio.closest('[data-address-card]');
-                const indicator = card?.querySelector('[data-address-indicator]');
-                const indicatorDot = card?.querySelector('[data-address-indicator-dot]');
-
-                if (!card || !indicator || !indicatorDot) return;
-
-                card.classList.toggle('border-primary/30', radio.checked);
-                card.classList.toggle('ring-2', radio.checked);
-                card.classList.toggle('ring-primary/10', radio.checked);
-                card.classList.toggle('border-slate-200', !radio.checked);
-
-                indicator.classList.toggle('border-primary', radio.checked);
-                indicator.classList.toggle('border-slate-300', !radio.checked);
-                indicatorDot.classList.toggle('hidden', !radio.checked);
+        function toggleManualUpload(radio) {
+            const uploadZone = document.getElementById('manual-upload-zone');
+            
+            // UI styles
+            document.querySelectorAll('.payment-card').forEach(card => {
+                card.classList.remove('border-primary-container');
             });
-        }
+            radio.closest('.payment-card').classList.add('border-primary-container');
 
-        toggleNewAddressButton?.addEventListener('click', function () {
-            setNewAddressPanelState(true);
-        });
-
-        cancelNewAddressButton?.addEventListener('click', function () {
-            clearNewAddressInputs();
-            setNewAddressPanelState(false);
-
-            const checkedAddress = savedAddressRadios.find(radio => radio.checked);
-            if (!checkedAddress && savedAddressRadios.length > 0) {
-                savedAddressRadios[0].checked = true;
+            if(radio.value === '@LioraApp.Utilities.SD.PaymentMethod_VodafoneCash' || radio.value === '@LioraApp.Utilities.SD.PaymentMethod_InstaPay') {
+                uploadZone.classList.remove('opacity-0', 'max-h-0');
+                uploadZone.classList.add('opacity-100', 'max-h-[500px]');
+            } else {
+                uploadZone.classList.add('opacity-0', 'max-h-0');
+                uploadZone.classList.remove('opacity-100', 'max-h-[500px]');
             }
-
-            refreshAddressSelectionUi();
-        });
-
-        savedAddressRadios.forEach(function (radio) {
-            const card = radio.closest('[data-address-card]');
-            const selectArea = card?.querySelector('[data-select-address]');
-
-            selectArea?.addEventListener('click', function () {
-                if (!radio.checked) {
-                    radio.checked = true;
-                    setNewAddressPanelState(false);
-                    refreshAddressSelectionUi();
-                    selectSavedAddressSubmit?.click();
-                }
-            });
-
-            radio.addEventListener('change', function () {
-                setNewAddressPanelState(false);
-                refreshAddressSelectionUi();
-                selectSavedAddressSubmit?.click();
-            });
-        });
-
-        deleteAddressButtons.forEach(function (button) {
-            button.addEventListener('click', function (event) {
-                event.preventDefault();
-                event.stopPropagation();
-
-                const form = button.form;
-                if (!form) return;
-
-                const action = button.getAttribute('formaction');
-                const method = button.getAttribute('formmethod');
-
-                if (action) {
-                    form.action = action;
-                }
-
-                if (method) {
-                    form.method = method;
-                }
-
-                form.submit();
-            });
-        });
-
-        refreshAddressSelectionUi();
+        }
     </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05); 
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2); 
+            border-radius: 4px;
+        }
+    </style>
 }

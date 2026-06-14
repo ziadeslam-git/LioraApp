@@ -1,239 +1,454 @@
-@{
-    ViewData["Title"] = "Dashboard";
-}
+<!DOCTYPE html>
 
-<div class="relative overflow-hidden rounded-[24px] border border-slate-200/80 bg-gradient-to-br from-[#eef2ff] via-white to-[#edf7ff] p-4 shadow-sm dark:border-slate-700 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 sm:rounded-[28px] sm:p-5 md:rounded-[32px] md:p-8">
-    <div class="pointer-events-none absolute -left-12 top-6 h-36 w-36 rounded-full bg-indigo-200/40 blur-3xl dark:bg-indigo-500/10"></div>
-    <div class="pointer-events-none absolute -right-10 bottom-6 h-40 w-40 rounded-full bg-sky-200/40 blur-3xl dark:bg-sky-500/10"></div>
-    <div class="pointer-events-none absolute inset-x-1/4 top-0 h-24 rounded-full bg-white/40 blur-3xl dark:bg-white/5"></div>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Liora - Dashboard Overview</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+        darkMode: "class",
+        theme: {
+        extend: {
+        "colors": {
+        "on-primary": "#ffffff",
+        "on-tertiary-fixed-variant": "#4b4450",
+        "secondary-fixed-dim": "#d1c0de",
+        "on-secondary-container": "#6c5f79",
+        "surface-variant": "#e8e1db",
+        "secondary": "#665972",
+        "on-tertiary": "#ffffff",
+        "inverse-on-surface": "#f7efe9",
+        "surface-dim": "#dfd9d3",
+        "primary": "#7f5446",
+        "surface-container-low": "#f9f2ec",
+        "on-secondary-fixed": "#21172c",
+        "tertiary": "#635b68",
+        "error-container": "#ffdad6",
+        "background": "#fff8f3",
+        "secondary-container": "#eedcfa",
+        "inverse-primary": "#f2baa8",
+        "surface-container": "#f4ede7",
+        "primary-fixed-dim": "#f2baa8",
+        "tertiary-fixed-dim": "#cec3d2",
+        "on-secondary-fixed-variant": "#4e425a",
+        "surface-container-highest": "#e8e1db",
+        "on-error": "#ffffff",
+        "on-tertiary-container": "#38313d",
+        "on-background": "#1e1b18",
+        "inverse-surface": "#33302c",
+        "surface-container-lowest": "#ffffff",
+        "error": "#ba1a1a",
+        "surface-tint": "#7f5446",
+        "tertiary-fixed": "#eadfee",
+        "surface": "#fff8f3",
+        "outline": "#83746f",
+        "on-primary-fixed-variant": "#643d30",
+        "primary-container": "#c49080",
+        "secondary-fixed": "#eedcfa",
+        "on-tertiary-fixed": "#1f1924",
+        "on-primary-container": "#4e2a1f",
+        "surface-bright": "#fff8f3",
+        "on-error-container": "#93000a",
+        "primary-fixed": "#ffdbd0",
+        "tertiary-container": "#a299a7",
+        "on-surface-variant": "#514440",
+        "on-surface": "#1e1b18",
+        "on-primary-fixed": "#311309",
+        "outline-variant": "#d5c2bd",
+        "surface-container-high": "#eee7e1",
+        "on-secondary": "#ffffff"
+        },
+        "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+        },
+        "spacing": {
+        "stack-sm": "8px",
+        "stack-md": "16px",
+        "unit": "8px",
+        "section-gap": "120px",
+        "stack-lg": "32px",
+        "gutter": "24px",
+        "container-padding-mobile": "20px",
+        "container-padding-desktop": "64px"
+        },
+        "fontFamily": {
+        "headline-lg": [
+        "Playfair Display"
+        ],
+        "body-lg": [
+        "DM Sans"
+        ],
+        "display-lg": [
+        "Playfair Display"
+        ],
+        "body-md": [
+        "DM Sans"
+        ],
+        "label-caps": [
+        "DM Sans"
+        ],
+        "headline-md": [
+        "Playfair Display"
+        ],
+        "accent-italic": [
+        "EB Garamond"
+        ],
+        "headline-lg-mobile": [
+        "Playfair Display"
+        ],
+        "display-lg-mobile": [
+        "Playfair Display"
+        ]
+        },
+        "fontSize": {
+        "headline-lg": [
+        "40px",
+        {
+        "lineHeight": "1.2",
+        "fontWeight": "600"
+        }
+        ],
+        "body-lg": [
+        "18px",
+        {
+        "lineHeight": "1.6",
+        "fontWeight": "400"
+        }
+        ],
+        "display-lg": [
+        "64px",
+        {
+        "lineHeight": "1.1",
+        "letterSpacing": "-0.02em",
+        "fontWeight": "700"
+        }
+        ],
+        "body-md": [
+        "16px",
+        {
+        "lineHeight": "1.6",
+        "fontWeight": "400"
+        }
+        ],
+        "label-caps": [
+        "12px",
+        {
+        "lineHeight": "1.2",
+        "letterSpacing": "0.1em",
+        "fontWeight": "700"
+        }
+        ],
+        "headline-md": [
+        "32px",
+        {
+        "lineHeight": "1.3",
+        "fontWeight": "500"
+        }
+        ],
+        "accent-italic": [
+        "20px",
+        {
+        "lineHeight": "1.5",
+        "fontWeight": "400"
+        }
+        ],
+        "headline-lg-mobile": [
+        "32px",
+        {
+        "lineHeight": "1.2",
+        "fontWeight": "600"
+        }
+        ],
+        "display-lg-mobile": [
+        "40px",
+        {
+        "lineHeight": "1.2",
+        "fontWeight": "700"
+        }
+        ]
+        }
+        },
+        },
+        }
+    </script>
+    <style>
+        .font-mono {
+        font-family: 'DM Mono', monospace;
+        }
 
-    <div class="relative space-y-8">
-<!-- Section 1: Stats Cards -->
-<div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-4">
-    <!-- Revenue Card -->
-    <div class="flex flex-col rounded-xl border border-slate-100 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-6">
-        <div class="flex justify-between items-start mb-4">
-            <div class="p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg text-indigo-600 dark:text-indigo-400">
-                <span class="material-symbols-outlined">payments</span>
+        .ambient-shadow-1 {
+        box-shadow: 0px 10px 30px rgba(26, 16, 37, 0.05);
+        }
+
+        .ambient-shadow-2 {
+        box-shadow: 0px 20px 50px rgba(26, 16, 37, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased font-body-md bg-surface-container-low">
+    <!-- TopNavBar -->
+    <header class="fixed top-0 right-0 h-[60px] w-[calc(100%-240px)] border-b border-outline-variant bg-surface-container text-primary font-title-sm flex items-center justify-between px-gutter w-full z-50">
+        <div class="flex items-center gap-4 w-1/3">
+            <div class="relative w-full max-w-md hidden md:block">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+                <input class="w-full pl-9 pr-4 py-2 bg-surface-bright border border-outline-variant rounded-full text-sm focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all text-on-surface placeholder:text-on-surface-variant" placeholder="Search orders, products..." type="text" />
             </div>
-            <!-- Example Growth badge -->
-            <span class="px-2 py-1 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-[11px] font-bold rounded-full">+12.5%</span>
         </div>
-        <p class="text-slate-800 dark:text-slate-100 text-2xl font-bold">@(((decimal)ViewBag.TotalRevenue).ToString("C"))</p>
-        <p class="text-slate-500 dark:text-slate-400 text-sm">Total Revenue</p>
-    </div>
-    
-    <!-- Orders Card -->
-    <div class="flex flex-col rounded-xl border border-slate-100 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-6">
-        <div class="flex justify-between items-start mb-4">
-            <div class="p-2 bg-amber-50 dark:bg-amber-900/30 rounded-lg text-amber-600 dark:text-amber-400">
-                <span class="material-symbols-outlined">shopping_cart</span>
+        <div class="flex items-center gap-4">
+            <button class="p-2 text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors cursor-pointer active:scale-95">
+                <span class="material-symbols-outlined">notifications</span>
+            </button>
+            <button class="p-2 text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors cursor-pointer active:scale-95">
+                <span class="material-symbols-outlined">account_circle</span>
+            </button>
+        </div>
+    </header>
+    <!-- SideNavBar -->
+    <nav class="fixed left-0 top-0 h-full w-[240px] bg-on-background text-on-primary font-body-md flex flex-col overflow-y-auto z-40 rounded-r-xl shadow-[0px_10px_30px_rgba(26,16,37,0.05)]"><div class="p-6 border-b border-outline-variant/30 flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-lg">L</div><div><h2 class="font-bold text-sm text-on-primary">Liora Admin</h2><p class="text-[10px] text-on-surface-variant uppercase tracking-wider">Fashion Management</p></div></div><div class="py-4 px-3 flex-1 flex flex-col gap-1"><!-- Overview (Active) --><a class="flex items-center gap-3 px-4 py-3 bg-primary text-on-primary rounded-xl duration-200 shadow-sm" href="#"><span class="material-symbols-outlined">dashboard</span><span class="font-medium">Overview</span></a><!-- Catalog --><div class="flex flex-col"><div class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-primary hover:bg-surface-container-highest/10 rounded-xl transition-all cursor-pointer group"><span class="material-symbols-outlined">inventory_2</span><span class="flex-1">Catalog</span><span class="material-symbols-outlined text-sm">expand_more</span></div><div class="flex flex-col pl-10 pb-2 gap-1"><a class="px-4 py-2 text-sm text-on-surface-variant hover:text-on-primary hover:bg-surface-container-highest/10 rounded-lg transition-colors" href="#">Products</a><a class="px-4 py-2 text-sm text-on-surface-variant hover:text-on-primary hover:bg-surface-container-highest/10 rounded-lg transition-colors" href="#">Categories</a></div></div><!-- Sales --><div class="flex flex-col"><div class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-primary hover:bg-surface-container-highest/10 rounded-xl transition-all cursor-pointer group"><span class="material-symbols-outlined">payments</span><span class="flex-1">Sales</span><span class="material-symbols-outlined text-sm">expand_more</span></div><div class="flex flex-col pl-10 pb-2 gap-1"><a class="px-4 py-2 text-sm text-on-surface-variant hover:text-on-primary hover:bg-surface-container-highest/10 rounded-lg transition-colors" href="#">Orders</a><a class="px-4 py-2 text-sm text-on-surface-variant hover:text-on-primary hover:bg-surface-container-highest/10 rounded-lg transition-colors" href="#">Payments</a></div></div><!-- Customers --><a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-primary hover:bg-surface-container-highest/10 rounded-xl transition-all" href="#"><span class="material-symbols-outlined">group</span><span class="">Customers</span></a><!-- Users --><a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-primary hover:bg-surface-container-highest/10 rounded-xl transition-all" href="#"><span class="material-symbols-outlined">person</span><span class="">Users</span></a><!-- Marketing --><div class="flex flex-col"><div class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-primary hover:bg-surface-container-highest/10 rounded-xl transition-all cursor-pointer group"><span class="material-symbols-outlined">sell</span><span class="flex-1">Marketing</span><span class="material-symbols-outlined text-sm">expand_more</span></div><div class="flex flex-col pl-10 pb-2 gap-1"><a class="px-4 py-2 text-sm text-on-surface-variant hover:text-on-primary hover:bg-surface-container-highest/10 rounded-lg transition-colors" href="#">Discounts</a><a class="px-4 py-2 text-sm text-on-surface-variant hover:text-on-primary hover:bg-surface-container-highest/10 rounded-lg transition-colors" href="#">Gift Bundles</a></div></div><!-- Settings --><a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-primary hover:bg-surface-container-highest/10 rounded-xl transition-all" href="#"><span class="material-symbols-outlined">settings</span><span class="">Settings</span></a></div><div class="p-6 mt-auto border-t border-outline-variant/10"><button class="w-full py-3 px-4 bg-surface-container-highest/10 text-on-primary border border-outline-variant/30 rounded-xl text-xs font-medium hover:bg-surface-container-highest/20 transition-all flex items-center justify-center gap-2"><span class="material-symbols-outlined text-sm">home</span>Go Home</button></div></nav>
+    <!-- Main Canvas -->
+    <main class="ml-[240px] mt-[60px] p-container-desktop min-h-[calc(100vh-60px)] flex flex-col gap-stack-lg">
+        <!-- Breadcrumb & Title Header -->
+        <div class="flex flex-col gap-2">
+            <h1 class="font-headline-lg text-headline-lg text-on-surface">Good morning, Admin <span class="text-3xl">👋</span></h1>
+            <p class="font-body-lg text-body-lg text-on-surface-variant">Monday, Oct 28, 2024</p>
+        </div>
+        <!-- Alert -->
+        <div class="bg-surface-bright border-l-4 border-primary-container p-4 rounded-[16px] ambient-shadow-1 flex items-center justify-between">
+            <div class="flex items-center gap-3 text-on-surface">
+                <span class="material-symbols-outlined text-primary-container">warning</span>
+                <span class="font-medium text-sm">8 orders are waiting for payment verification</span>
             </div>
-            <!-- Dynamic Growth Badge could be added here -->
-            <span class="px-2 py-1 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-[11px] font-bold rounded-full">+8.2%</span>
+            <button class="px-4 py-2 bg-primary-container text-on-primary-container rounded-lg text-sm font-medium hover:scale-95 transition-transform duration-250 flex items-center gap-2">
+                Review Now
+                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </button>
         </div>
-        <p class="text-slate-800 dark:text-slate-100 text-2xl font-bold">@ViewBag.TotalOrders</p>
-        <p class="text-slate-500 dark:text-slate-400 text-sm">Total Orders</p>
-    </div>
-    
-    <!-- Products Card -->
-    <div class="flex flex-col rounded-xl border border-slate-100 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-6">
-        <div class="flex justify-between items-start mb-4">
-            <div class="p-2 bg-purple-50 dark:bg-purple-900/30 rounded-lg text-purple-600 dark:text-purple-400">
-                <span class="material-symbols-outlined">package</span>
-            </div>
-        </div>
-        <p class="text-slate-800 dark:text-slate-100 text-2xl font-bold">@ViewBag.TotalProducts</p>
-        <p class="text-slate-500 dark:text-slate-400 text-sm">Total Products</p>
-    </div>
-    
-    <!-- Customers Card -->
-    <div class="flex flex-col rounded-xl border border-slate-100 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-6">
-        <div class="flex justify-between items-start mb-4">
-            <div class="p-2 bg-teal-50 dark:bg-teal-900/30 rounded-lg text-teal-600 dark:text-teal-400">
-                <span class="material-symbols-outlined">groups</span>
-            </div>
-        </div>
-        <p class="text-slate-800 dark:text-slate-100 text-2xl font-bold">@ViewBag.TotalCustomers</p>
-        <p class="text-slate-500 dark:text-slate-400 text-sm">Active Customers</p>
-    </div>
-</div>
-
-<!-- Section 2: Split View -->
-<div class="grid grid-cols-1 gap-8 lg:grid-cols-10">
-    
-    <!-- Left: Recent Orders Table (60%) -->
-    <div class="flex max-h-[460px] flex-col overflow-hidden rounded-xl border border-slate-100 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 lg:col-span-6">
-        <div class="flex items-center justify-between gap-3 border-b border-slate-100 p-4 dark:border-slate-800 md:p-6">
-            <h3 class="text-slate-800 dark:text-slate-100 font-bold">Recent Orders</h3>
-            <a asp-controller="Orders" asp-action="Index" asp-area="Admin" class="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-primary hover:underline sm:text-sm">
-                View all <span class="material-symbols-outlined !text-sm">arrow_forward</span>
-            </a>
-        </div>
-
-        <div class="space-y-3 p-4 md:hidden">
-            @if (ViewBag.RecentOrders != null && ((IEnumerable<LioraApp.Models.Order>)ViewBag.RecentOrders).Any())
-            {
-                foreach (var order in (IEnumerable<LioraApp.Models.Order>)ViewBag.RecentOrders)
-                {
-                    string statusBg, statusText, statusDarkBg, statusDarkText;
-                    switch (order.Status)
-                    {
-                        case LioraApp.Utilities.SD.Status_Delivered:
-                            statusBg = "bg-green-100"; statusText = "text-green-700"; statusDarkBg = "dark:bg-green-900/40"; statusDarkText = "dark:text-green-400"; break;
-                        case LioraApp.Utilities.SD.Status_Processing:
-                            statusBg = "bg-amber-100"; statusText = "text-amber-700"; statusDarkBg = "dark:bg-amber-900/40"; statusDarkText = "dark:text-amber-400"; break;
-                        case LioraApp.Utilities.SD.Status_Cancelled:
-                            statusBg = "bg-red-100"; statusText = "text-red-700"; statusDarkBg = "dark:bg-red-900/40"; statusDarkText = "dark:text-red-400"; break;
-                        default:
-                            statusBg = "bg-slate-100"; statusText = "text-slate-700"; statusDarkBg = "dark:bg-slate-800"; statusDarkText = "dark:text-slate-400"; break;
-                    }
-
-                    <article class="rounded-[18px] border border-slate-200 bg-slate-50/80 p-4 shadow-sm">
-                        <div class="flex items-start justify-between gap-3">
-                            <div>
-                                <p class="text-sm font-bold text-primary">#ORD-@order.Id</p>
-                                <p class="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">@(order.User?.FullName ?? order.Address?.FullName ?? "Unknown")</p>
-                            </div>
-                            <span class="rounded-full px-2.5 py-1 text-[10px] font-bold @statusBg @statusText @statusDarkBg @statusDarkText">@order.Status</span>
-                        </div>
-                        <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
-                            <div>
-                                <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Amount</p>
-                                <p class="mt-1 font-bold text-slate-900 dark:text-slate-100">@order.TotalAmount.ToString("C")</p>
-                            </div>
-                            <div>
-                                <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Date</p>
-                                <p class="mt-1 font-semibold text-slate-600 dark:text-slate-300">@order.CreatedAt.ToString("dd MMM yyyy")</p>
-                            </div>
-                        </div>
-                    </article>
-                }
-            }
-            else
-            {
-                <div class="rounded-[18px] border border-dashed border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-500">
-                    No recent orders found.
+        <!-- Stats Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+            <!-- Stat Card 1 -->
+            <div class="bg-surface-bright p-4 rounded-[16px] ambient-shadow-1 flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-label-caps text-[11px] text-on-surface-variant">TOTAL ORDERS</h3>
+                    <div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary-container">
+                        <span class="material-symbols-outlined text-[18px]">shopping_bag</span>
+                    </div>
                 </div>
-            }
+                <div class="flex items-end justify-between">
+                    <div>
+                        <div class="text-2xl font-mono font-medium text-on-surface">1,284</div>
+                        <div class="mt-1 flex items-center gap-1 text-xs text-[#14532D]">
+                            <span class="material-symbols-outlined text-[12px]">trending_up</span>
+                            <span class="">Today: +12</span>
+                        </div>
+                    </div>
+                    <div class="flex items-end gap-1 h-8 w-16 opacity-70">
+                        <div class="w-1/5 bg-[#14532D] rounded-t-[2px] h-[30%]"></div>
+                        <div class="w-1/5 bg-[#14532D] rounded-t-[2px] h-[45%]"></div>
+                        <div class="w-1/5 bg-[#14532D] rounded-t-[2px] h-[60%]"></div>
+                        <div class="w-1/5 bg-[#14532D] rounded-t-[2px] h-[80%]"></div>
+                        <div class="w-1/5 bg-[#14532D] rounded-t-[2px] h-[100%]"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Stat Card 2 -->
+            <div class="bg-surface-bright p-4 rounded-[16px] ambient-shadow-1 flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-label-caps text-[11px] text-on-surface-variant">PENDING VERIFICATION</h3>
+                    <div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-[#B45309]">
+                        <span class="material-symbols-outlined text-[18px]">hourglass_empty</span>
+                    </div>
+                </div>
+                <div class="flex items-end justify-between">
+                    <div>
+                        <div class="text-2xl font-mono font-medium text-[#B45309]">8</div>
+                        <a class="mt-1 flex items-center gap-1 text-xs text-[#B45309] hover:underline" href="#">
+                            <span class="">Need Your Review</span>
+                            <span class="material-symbols-outlined text-[12px]">arrow_forward</span>
+                        </a>
+                    </div>
+                    <div class="flex items-end gap-1 h-8 w-16 opacity-70">
+                        <div class="w-1/5 bg-[#B45309] rounded-t-[2px] h-[80%]"></div>
+                        <div class="w-1/5 bg-[#B45309] rounded-t-[2px] h-[60%]"></div>
+                        <div class="w-1/5 bg-[#B45309] rounded-t-[2px] h-[75%]"></div>
+                        <div class="w-1/5 bg-[#B45309] rounded-t-[2px] h-[90%]"></div>
+                        <div class="w-1/5 bg-[#B45309] rounded-t-[2px] h-[100%]"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Stat Card 3 -->
+            <div class="bg-surface-bright p-4 rounded-[16px] ambient-shadow-1 flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-label-caps text-[11px] text-on-surface-variant">TOTAL PRODUCTS</h3>
+                    <div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary-container">
+                        <span class="material-symbols-outlined text-[18px]">sell</span>
+                    </div>
+                </div>
+                <div class="flex items-end justify-between">
+                    <div>
+                        <div class="text-2xl font-mono font-medium text-on-surface">452</div>
+                        <div class="mt-1 flex items-center gap-1 text-xs text-error">
+                            <span class="material-symbols-outlined text-[12px]">warning</span>
+                            <span class="">3 Out of Stock</span>
+                        </div>
+                    </div>
+                    <div class="flex items-end gap-1 h-8 w-16 opacity-70">
+                        <div class="w-1/5 bg-primary-container rounded-t-[2px] h-[40%]"></div>
+                        <div class="w-1/5 bg-primary-container rounded-t-[2px] h-[55%]"></div>
+                        <div class="w-1/5 bg-primary-container rounded-t-[2px] h-[50%]"></div>
+                        <div class="w-1/5 bg-primary-container rounded-t-[2px] h-[70%]"></div>
+                        <div class="w-1/5 bg-primary-container rounded-t-[2px] h-[90%]"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Stat Card 4 -->
+            <div class="bg-surface-bright p-4 rounded-[16px] ambient-shadow-1 flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-label-caps text-[11px] text-on-surface-variant">TOTAL CUSTOMERS</h3>
+                    <div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary-container">
+                        <span class="material-symbols-outlined text-[18px]">group</span>
+                    </div>
+                </div>
+                <div class="flex items-end justify-between">
+                    <div>
+                        <div class="text-2xl font-mono font-medium text-on-surface">3,892</div>
+                        <div class="mt-1 flex items-center gap-1 text-xs text-[#14532D]">
+                            <span class="material-symbols-outlined text-[12px]">trending_up</span>
+                            <span class="">+124 This Month</span>
+                        </div>
+                    </div>
+                    <div class="flex items-end gap-1 h-8 w-16 opacity-70">
+                        <div class="w-1/5 bg-[#14532D] rounded-t-[2px] h-[20%]"></div>
+                        <div class="w-1/5 bg-[#14532D] rounded-t-[2px] h-[35%]"></div>
+                        <div class="w-1/5 bg-[#14532D] rounded-t-[2px] h-[60%]"></div>
+                        <div class="w-1/5 bg-[#14532D] rounded-t-[2px] h-[75%]"></div>
+                        <div class="w-1/5 bg-[#14532D] rounded-t-[2px] h-[100%]"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <div class="hidden flex-1 overflow-y-auto md:block">
-            <table class="w-full text-left border-collapse">
-                <thead class="sticky top-0 bg-slate-50 dark:bg-slate-800/80 backdrop-blur-sm z-10">
-                    <tr>
-                        <th class="px-6 py-4 text-[13px] font-semibold text-slate-500 uppercase tracking-wider">Order ID</th>
-                        <th class="px-6 py-4 text-[13px] font-semibold text-slate-500 uppercase tracking-wider">Customer</th>
-                        <th class="px-6 py-4 text-[13px] font-semibold text-slate-500 uppercase tracking-wider">Amount</th>
-                        <th class="px-6 py-4 text-[13px] font-semibold text-slate-500 uppercase tracking-wider text-right">Status</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-                    @if (ViewBag.RecentOrders != null && ((IEnumerable<LioraApp.Models.Order>)ViewBag.RecentOrders).Any())
-                    {
-                        var isEven = false;
-                        foreach (var order in (IEnumerable<LioraApp.Models.Order>)ViewBag.RecentOrders)
-                        {
-                            var rowClass = isEven ? "bg-[#F8FAFC] dark:bg-slate-800/20 hover:bg-slate-100/50" : "hover:bg-slate-50/50 dark:hover:bg-slate-800/20";
-                            isEven = !isEven;
-
-                            string statusBg, statusText, statusDarkBg, statusDarkText;
-                            switch (order.Status)
-                            {
-                                case LioraApp.Utilities.SD.Status_Delivered:
-                                    statusBg = "bg-green-100"; statusText = "text-green-700"; statusDarkBg = "dark:bg-green-900/40"; statusDarkText = "dark:text-green-400"; break;
-                                case LioraApp.Utilities.SD.Status_Processing:
-                                    statusBg = "bg-amber-100"; statusText = "text-amber-700"; statusDarkBg = "dark:bg-amber-900/40"; statusDarkText = "dark:text-amber-400"; break;
-                                case LioraApp.Utilities.SD.Status_Cancelled:
-                                    statusBg = "bg-red-100"; statusText = "text-red-700"; statusDarkBg = "dark:bg-red-900/40"; statusDarkText = "dark:text-red-400"; break;
-                                default:
-                                    statusBg = "bg-slate-100"; statusText = "text-slate-700"; statusDarkBg = "dark:bg-slate-800"; statusDarkText = "dark:text-slate-400"; break;
-                            }
-
-                            <tr class="@rowClass transition-colors">
-                                <td class="px-6 py-4 text-sm font-medium text-slate-800 dark:text-slate-100">#ORD-@order.Id</td>
-                                <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">@(order.User?.FullName ?? order.Address?.FullName ?? "Unknown")</td>
-                                <td class="px-6 py-4 text-sm font-semibold text-slate-800 dark:text-slate-100">@order.TotalAmount.ToString("C")</td>
-                                <td class="px-6 py-4 text-right">
-                                    <span class="px-2.5 py-1 text-[11px] font-bold rounded-full @statusBg @statusText @statusDarkBg @statusDarkText">@order.Status</span>
+        <!-- Content Area: Table & Quick Actions -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-gutter">
+            <!-- Recent Orders Table (Takes 2 columns on XL) -->
+            <div class="xl:col-span-2 bg-surface-bright rounded-[16px] ambient-shadow-1 overflow-hidden flex flex-col">
+                <div class="p-6 border-b border-outline-variant/50 flex items-center justify-between">
+                    <h2 class="font-label-caps text-label-caps text-on-surface">RECENT ORDERS</h2>
+                    <a class="text-sm font-medium text-primary hover:text-primary-container transition-colors flex items-center gap-1" href="#">
+                        View All <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                    </a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-surface-container-low text-on-surface-variant text-[11px] font-label-caps uppercase border-b border-outline-variant/50">
+                                <th class="px-6 py-2.5 font-medium">Order ID</th>
+                                <th class="px-6 py-2.5 font-medium">Customer</th>
+                                <th class="px-6 py-2.5 font-medium">Date</th>
+                                <th class="px-6 py-2.5 font-medium">Items</th>
+                                <th class="px-6 py-2.5 font-medium">Total</th>
+                                <th class="px-6 py-2.5 font-medium">Payment</th>
+                                <th class="px-6 py-2.5 font-medium">Status</th>
+                                <th class="px-6 py-2.5 font-medium text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm text-on-surface divide-y divide-outline-variant/30">
+                            <tr class="hover:bg-surface-container-low transition-colors group">
+                                <td class="px-6 py-2.5 font-mono text-xs">#LRA-9824</td>
+                                <td class="px-6 py-2.5 font-medium">Nourhan El-Sayed</td>
+                                <td class="px-6 py-2.5 text-on-surface-variant text-xs">Oct 28</td>
+                                <td class="px-6 py-2.5 text-xs">2 Items</td>
+                                <td class="px-6 py-2.5 font-mono text-xs">EGP 3,950</td>
+                                <td class="px-6 py-2.5">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-[#E0E7FF] text-[#3730A3]">InstaPay</span>
+                                </td>
+                                <td class="px-6 py-2.5">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A]">Processing</span>
+                                </td>
+                                <td class="px-6 py-2.5 text-right">
+                                    <button class="text-on-surface-variant hover:text-primary transition-colors p-1 rounded-full hover:bg-surface-container group-hover:opacity-100 opacity-50">
+                                        <span class="material-symbols-outlined text-[18px]">visibility</span>
+                                    </button>
                                 </td>
                             </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="4" class="px-6 py-8 text-center text-sm text-slate-500">No recent orders found.</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-    
-    <!-- Right: Top Products (40%) -->
-    <div class="max-h-[460px] overflow-y-auto rounded-xl border border-slate-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-6 lg:col-span-4">
-        <h3 class="text-slate-800 dark:text-slate-100 font-bold mb-6">Top Products</h3>
-        <div class="space-y-5">
-            @if (ViewBag.TopProducts != null && ((IEnumerable<LioraApp.ViewModels.Admin.TopProductVM>)ViewBag.TopProducts).Any())
-            {
-                foreach (var product in (IEnumerable<LioraApp.ViewModels.Admin.TopProductVM>)ViewBag.TopProducts)
-                {
-                    <div class="flex items-center gap-3 md:gap-4">
-                        <div class="size-10 rounded-lg bg-cover bg-center bg-slate-100 dark:bg-slate-800" style="background-image: url('@(string.IsNullOrEmpty(product.ImageUrl) ? "https://ui-avatars.com/api/?name=" + Uri.EscapeDataString(product.ProductName) + "&background=random&color=fff" : product.ImageUrl)')"></div>
-                        <div class="min-w-0 flex-1">
-                            <p class="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">@product.ProductName</p>
-                            <p class="text-[12px] text-slate-400">@product.CategoryName</p>
-                        </div>
-                        <p class="shrink-0 text-sm font-bold text-primary">@product.TotalSold sold</p>
-                    </div>
-                }
-            }
-            else
-            {
-                <p class="text-sm text-slate-500 text-center py-4">No top products available yet.</p>
-            }
-        </div>
-    </div>
-</div>
-
-<!-- Section 3: Monthly Revenue Bar Chart (Full Width) -->
-<div class="rounded-xl border border-slate-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-8">
-    <h3 class="text-slate-800 dark:text-slate-100 font-bold mb-8">Monthly Revenue</h3>
-    <div class="h-64 flex flex-col justify-end">
-        <div class="flex-1 flex items-end justify-between gap-4 px-2 relative">
-            <!-- Chart Gridlines -->
-            <div class="absolute inset-0 flex flex-col justify-between pointer-events-none">
-                <div class="border-t border-slate-100 dark:border-slate-800 w-full"></div>
-                <div class="border-t border-slate-100 dark:border-slate-800 w-full"></div>
-                <div class="border-t border-slate-100 dark:border-slate-800 w-full"></div>
-                <div class="border-t border-slate-100 dark:border-slate-800 w-full"></div>
-            </div>
-            
-            <!-- Bars -->
-            @{
-                var months = new[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-                decimal[] revArr = (ViewBag.MonthlyRevenue as decimal[]) ?? new decimal[12];
-                decimal maxRev = revArr.Any() ? revArr.Max() : 0;
-                if (maxRev == 0) maxRev = 1; // prevent division by zero
-            }
-            @for (int i = 0; i < 12; i++)
-            {
-                int heightPct = (int)((revArr[i] / maxRev) * 100);
-                // Make sure non-zero values have a visible bar
-                if (revArr[i] > 0 && heightPct < 2) heightPct = 2;
-                
-                <div class="relative flex-1 group h-full flex flex-col justify-end items-center" title="@months[i]: @revArr[i].ToString("C")">
-                    <div class="w-full max-w-[40px] @(revArr[i] > 0 && revArr[i] == maxRev ? "bg-primary" : "bg-primary/40 group-hover:bg-primary") rounded-t-lg transition-all duration-300 relative group" style="height: @heightPct%;">
-                        <div class="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] py-1 px-2 rounded whitespace-nowrap transition-opacity pointer-events-none z-10">
-                            @revArr[i].ToString("C0")
-                        </div>
-                    </div>
-                    <span class="mt-4 text-[11px] @(revArr[i] > 0 && revArr[i] == maxRev ? "text-slate-800 dark:text-slate-100 font-bold" : "text-slate-400 font-medium")">@months[i]</span>
+                            <tr class="hover:bg-surface-container-low transition-colors group">
+                                <td class="px-6 py-2.5 font-mono text-xs">#LRA-9823</td>
+                                <td class="px-6 py-2.5 font-medium">Youssef Ahmed</td>
+                                <td class="px-6 py-2.5 text-on-surface-variant text-xs">Oct 28</td>
+                                <td class="px-6 py-2.5 text-xs">1 Item</td>
+                                <td class="px-6 py-2.5 font-mono text-xs">EGP 1,200</td>
+                                <td class="px-6 py-2.5">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-[#F3F4F6] text-[#374151]">Cash on Delivery</span>
+                                </td>
+                                <td class="px-6 py-2.5">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#DCFCE7] text-[#166534] border border-[#BBF7D0]">Completed</span>
+                                </td>
+                                <td class="px-6 py-2.5 text-right">
+                                    <button class="text-on-surface-variant hover:text-primary transition-colors p-1 rounded-full hover:bg-surface-container group-hover:opacity-100 opacity-50">
+                                        <span class="material-symbols-outlined text-[18px]">visibility</span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-surface-container-low transition-colors group">
+                                <td class="px-6 py-2.5 font-mono text-xs">#LRA-9822</td>
+                                <td class="px-6 py-2.5 font-medium">Salma Tarek</td>
+                                <td class="px-6 py-2.5 text-on-surface-variant text-xs">Oct 27</td>
+                                <td class="px-6 py-2.5 text-xs">4 Items</td>
+                                <td class="px-6 py-2.5 font-mono text-xs">EGP 8,400</td>
+                                <td class="px-6 py-2.5">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-[#DBEAFE] text-[#1E40AF]">Credit Card</span>
+                                </td>
+                                <td class="px-6 py-2.5">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#FEF2F2] text-[#991B1B] border border-[#FECACA]">Pending Verification</span>
+                                </td>
+                                <td class="px-6 py-2.5 text-right">
+                                    <button class="text-on-surface-variant hover:text-primary transition-colors p-1 rounded-full hover:bg-surface-container group-hover:opacity-100 opacity-50">
+                                        <span class="material-symbols-outlined text-[18px]">visibility</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            }
+            </div>
+            <!-- Quick Actions Panel -->
+            <div class="bg-surface-bright rounded-[16px] ambient-shadow-1 p-6 flex flex-col gap-6">
+                <h2 class="font-label-caps text-label-caps text-on-surface">QUICK ACTIONS</h2>
+                <div class="flex flex-col gap-3">
+                    <button class="w-full py-3 px-4 bg-primary-container text-on-primary-container rounded-lg text-sm font-medium hover:scale-[0.98] transition-transform duration-250 flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[20px]">add</span>
+                        Add Product
+                    </button>
+                    <button class="w-full py-3 px-4 bg-transparent border border-primary text-primary rounded-lg text-sm font-medium hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[20px]">local_offer</span>
+                        Add Discount
+                    </button>
+                    <div class="h-px w-full bg-outline-variant/50 my-2"></div>
+                    <button class="w-full py-3 px-4 bg-surface-container text-on-surface rounded-lg text-sm font-medium hover:bg-surface-container-high transition-colors flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[20px]">list_alt</span>
+                        View All Orders
+                    </button>
+                </div>
+                <!-- Minimalist Data Visualization Placeholder -->
+                <div class="mt-auto pt-6 border-t border-outline-variant/30">
+                    <p class="text-xs text-on-surface-variant text-center mb-2">Weekly Sales Overview</p>
+                    <div class="h-24 w-full flex items-end gap-2 justify-between px-2">
+                        <div class="w-1/6 bg-surface-container-high rounded-t-sm h-[30%]"></div>
+                        <div class="w-1/6 bg-surface-container-high rounded-t-sm h-[50%]"></div>
+                        <div class="w-1/6 bg-surface-container-high rounded-t-sm h-[40%]"></div>
+                        <div class="w-1/6 bg-primary-container/60 rounded-t-sm h-[80%]"></div>
+                        <div class="w-1/6 bg-surface-container-high rounded-t-sm h-[60%]"></div>
+                        <div class="w-1/6 bg-primary-container rounded-t-sm h-[100%]"></div>
+                        <div class="w-1/6 bg-surface-container-high rounded-t-sm h-[70%]"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-    </div>
-</div>
+    </main>
+</body></html>

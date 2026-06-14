@@ -1,98 +1,285 @@
-@model LioraApp.ViewModels.Identity.AddressVM
-@{
-    ViewData["Title"] = "Edit Address";
-    Layout = "_ProfileLayout";
-}
+<!DOCTYPE html>
 
-<!-- Panel Header -->
-<div class="flex items-center gap-3 mb-6">
-    <a asp-action="Addresses" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
-        <span class="material-symbols-outlined text-xl">arrow_back</span>
-    </a>
-    <div>
-        <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Edit Address</h1>
-        <p class="text-slate-500 text-sm">Update your delivery details</p>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Liora - Edit Address</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=EB+Garamond:ital@0;1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+        darkMode: "class",
+        theme: {
+        extend: {
+        "colors": {
+        "outline": "#83746f",
+        "on-tertiary-fixed-variant": "#4b4450",
+        "secondary-fixed": "#eedcfa",
+        "primary-container": "#c49080",
+        "secondary-fixed-dim": "#d1c0de",
+        "on-secondary-container": "#6c5f79",
+        "tertiary-fixed-dim": "#cec3d2",
+        "on-secondary": "#ffffff",
+        "on-error-container": "#93000a",
+        "surface-variant": "#e8e1db",
+        "secondary": "#665972",
+        "on-tertiary": "#ffffff",
+        "on-primary": "#ffffff",
+        "surface": "#fff8f3",
+        "primary-fixed": "#ffdbd0",
+        "surface-tint": "#7f5446",
+        "surface-dim": "#dfd9d3",
+        "primary": "#7f5446",
+        "on-tertiary-fixed": "#1f1924",
+        "surface-container-low": "#f9f2ec",
+        "on-primary-fixed": "#311309",
+        "tertiary-container": "#a299a7",
+        "on-background": "#1e1b18",
+        "inverse-primary": "#f2baa8",
+        "on-surface": "#1e1b18",
+        "on-secondary-fixed": "#21172c",
+        "surface-container-highest": "#e8e1db",
+        "on-surface-variant": "#514440",
+        "on-error": "#ffffff",
+        "tertiary": "#635b68",
+        "surface-bright": "#fff8f3",
+        "secondary-container": "#eedcfa",
+        "inverse-surface": "#33302c",
+        "outline-variant": "#d5c2bd",
+        "error-container": "#ffdad6",
+        "surface-container": "#f4ede7",
+        "surface-container-lowest": "#ffffff",
+        "surface-container-high": "#eee7e1",
+        "on-primary-fixed-variant": "#643d30",
+        "primary-fixed-dim": "#f2baa8",
+        "on-tertiary-container": "#38313d",
+        "on-primary-container": "#4e2a1f",
+        "tertiary-fixed": "#eadfee",
+        "background": "#fff8f3",
+        "error": "#ba1a1a",
+        "on-secondary-fixed-variant": "#4e425a",
+        "inverse-on-surface": "#f7efe9",
+        "plum": "#1A1025",
+        "rose-gold": "#C49080",
+        "ivory": "#fff8f3"
+        },
+        "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px",
+        "card": "16px",
+        "input": "12px",
+        "pill": "50px",
+        "footer-radius-top": "32px"
+        },
+        "spacing": {
+        "stack-sm": "8px",
+        "container-padding-mobile": "20px",
+        "container-padding-desktop": "64px",
+        "section-gap": "120px",
+        "stack-md": "16px",
+        "unit": "8px",
+        "stack-lg": "32px",
+        "gutter": "24px",
+        "margin-screen": "64px"
+        },
+        "fontFamily": {
+        "label-caps": ["DM Sans", "sans-serif"],
+        "body-md": ["DM Sans", "sans-serif"],
+        "headline-md": ["Playfair Display", "serif"],
+        "display-lg-mobile": ["Playfair Display", "serif"],
+        "accent-italic": ["EB Garamond", "serif"],
+        "headline-lg-mobile": ["Playfair Display", "serif"],
+        "display-lg": ["Playfair Display", "serif"],
+        "headline-lg": ["Playfair Display", "serif"],
+        "body-lg": ["DM Sans", "sans-serif"]
+        },
+        "fontSize": {
+        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "700" }],
+        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "500" }],
+        "display-lg-mobile": ["40px", { "lineHeight": "1.2", "fontWeight": "700" }],
+        "accent-italic": ["20px", { "lineHeight": "1.5", "fontWeight": "400" }],
+        "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+        "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+        "headline-lg": ["40px", { "lineHeight": "1.2", "fontWeight": "600" }],
+        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+        },
+        "boxShadow": {
+        "level-1": "0px 10px 30px rgba(26, 16, 37, 0.05)",
+        "level-2": "0px 20px 50px rgba(26, 16, 37, 0.08)",
+        "footer": "0 -8px 24px rgba(196,144,128,0.08)"
+        }
+        }
+        }
+        }
+    </script>
+    <style>
+        .input-glow:focus {
+        outline: none;
+        border-color: #C49080;
+        box-shadow: 0 0 0 4px rgba(196, 144, 128, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen flex flex-col antialiased">
+    <!-- Announcement Bar -->
+    <div class="bg-primary dark:bg-primary-container text-on-primary dark:text-on-primary-container font-label-caps text-label-caps w-full top-0 flex justify-center items-center py-2 px-4 text-center z-[60] hover:opacity-90 transition-opacity">
+        FREE STANDARD SHIPPING ON ALL ORDERS OVER £150
     </div>
-</div>
-
-<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm p-6 md:p-8 max-w-2xl">
-    <form asp-action="EditAddress" method="post" class="space-y-6">
-        <div asp-validation-summary="ModelOnly" class="text-rose-500 text-sm font-semibold mb-4"></div>
-        <input type="hidden" asp-for="Id" />
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="space-y-2 md:col-span-2">
-                <label asp-for="FullName" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1"></label>
-                <div class="relative">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">person</span>
-                    <input asp-for="FullName" class="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="e.g. Home, Office, John Doe" />
-                </div>
-                <span asp-validation-for="FullName" class="text-rose-500 text-xs mt-1 block"></span>
+    <!-- TopNavBar -->
+    <header class="bg-surface/80 backdrop-blur-md dark:bg-surface/80 docked full-width top-0 sticky border-b border-white/5 shadow-sm z-50 transition-all duration-300">
+        <div class="flex justify-between items-center w-full px-container-padding-mobile md:px-margin-screen h-20 max-w-7xl mx-auto">
+            <!-- Navigation Links -->
+            <nav class="hidden md:flex gap-8">
+                <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary hover:scale-105 transition-all duration-300" href="#">HOME</a>
+                <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary hover:scale-105 transition-all duration-300" href="#">SHOP ALL</a>
+                <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary hover:scale-105 transition-all duration-300" href="#">COLLECTIONS</a>
+                <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary hover:scale-105 transition-all duration-300" href="#">ABOUT</a>
+                <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary hover:scale-105 transition-all duration-300" href="#">CONTACT</a>
+            </nav>
+            <!-- Brand Logo -->
+            <div class="flex-shrink-0 flex items-center justify-center">
+                <a class="font-accent-italic text-[28px] italic text-primary dark:text-primary-fixed hover:scale-105 transition-transform duration-200" href="#">
+                    liora
+                </a>
             </div>
-
-            <div class="space-y-2 md:col-span-2">
-                <label asp-for="Street" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1"></label>
-                <div class="relative">
-                    <span class="material-symbols-outlined absolute left-3 top-3 text-slate-400">home_pin</span>
-                    <textarea asp-for="Street" rows="2" class="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none resize-none" placeholder="123 Main St, Apt 4B..."></textarea>
-                </div>
-                <span asp-validation-for="Street" class="text-rose-500 text-xs mt-1 block"></span>
-            </div>
-
-            <div class="space-y-2">
-                <label asp-for="City" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1"></label>
-                <input asp-for="City" class="w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="City" />
-                <span asp-validation-for="City" class="text-rose-500 text-xs mt-1 block"></span>
-            </div>
-
-            <div class="space-y-2">
-                <label asp-for="State" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1"></label>
-                <input asp-for="State" class="w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="State/Province" />
-                <span asp-validation-for="State" class="text-rose-500 text-xs mt-1 block"></span>
-            </div>
-
-            <div class="space-y-2">
-                <label asp-for="PostalCode" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1"></label>
-                <input asp-for="PostalCode" class="w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="ZIP/Postal Code" />
-                <span asp-validation-for="PostalCode" class="text-rose-500 text-xs mt-1 block"></span>
-            </div>
-
-            <div class="space-y-2">
-                <label asp-for="Country" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1"></label>
-                <select asp-for="Country" class="w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none appearance-none">
-                    <option value="">Select Country</option>
-                    <option value="US">United States</option>
-                    <option value="UK">United Kingdom</option>
-                    <option value="CA">Canada</option>
-                    <option value="AU">Australia</option>
-                    <option value="EG">Egypt</option>
-                    <!-- Add more options as needed -->
-                </select>
-                <span asp-validation-for="Country" class="text-rose-500 text-xs mt-1 block"></span>
-            </div>
-
-            <div class="space-y-2 md:col-span-2">
-                <label asp-for="PhoneNumber" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1"></label>
-                <div class="relative">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">phone</span>
-                    <input asp-for="PhoneNumber" class="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="(555) 123-4567" />
-                </div>
-                <span asp-validation-for="PhoneNumber" class="text-rose-500 text-xs mt-1 block"></span>
+            <!-- Trailing Icons -->
+            <div class="flex items-center gap-6">
+                <button class="text-primary dark:text-primary-fixed hover:scale-105 transition-transform duration-200 active:scale-95">
+                    <span class="material-symbols-outlined text-[24px]">search</span>
+                </button>
+                <button class="text-primary dark:text-primary-fixed border-b-2 border-primary hover:scale-105 transition-transform duration-200 active:scale-95 pb-1">
+                    <span class="material-symbols-outlined text-[24px]">person</span>
+                </button>
+                <button class="text-primary dark:text-primary-fixed hover:scale-105 transition-transform duration-200 active:scale-95 relative">
+                    <span class="material-symbols-outlined text-[24px]">shopping_bag</span>
+                    <span class="absolute -top-1 -right-1 bg-rose-gold text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-label-caps">2</span>
+                </button>
             </div>
         </div>
-
-        <div class="flex items-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-            <input type="checkbox" asp-for="IsDefault" class="w-4 h-4 text-primary border-slate-300 rounded focus:ring-primary dark:bg-slate-700 dark:border-slate-600" />
-            <label asp-for="IsDefault" class="text-sm text-slate-700 dark:text-slate-300 font-medium">Set as default delivery address</label>
+    </header>
+    <!-- Main Content -->
+    <main class="flex-grow w-full max-w-7xl mx-auto px-container-padding-mobile md:px-margin-screen py-16 flex justify-center">
+        <!-- Form Container -->
+        <div class="w-full max-w-[600px] bg-surface rounded-card shadow-level-1 p-8 md:p-12 border border-outline-variant/20">
+            <div class="mb-10 text-center">
+                <h1 class="font-headline-md text-headline-md text-on-surface mb-2">Edit Address</h1>
+                <p class="font-body-md text-body-md text-on-surface-variant">Please update the details for your delivery address.</p>
+            </div>
+            <form class="space-y-6">
+                <!-- Full Name -->
+                <div class="space-y-2">
+                    <label class="block font-label-caps text-label-caps text-on-surface" for="fullName">Full Name *</label>
+                    <input class="w-full bg-surface border border-plum/20 rounded-input px-4 py-3 font-body-md text-on-surface input-glow transition-all duration-250 placeholder-on-surface-variant/50" id="fullName" placeholder="e.g. Amina Hassan" required="" type="text" />
+                </div>
+                <!-- Phone Number -->
+                <div class="space-y-2">
+                    <label class="block font-label-caps text-label-caps text-on-surface" for="phone">Phone Number *</label>
+                    <div class="flex">
+                        <span class="inline-flex items-center px-4 rounded-l-input border border-r-0 border-plum/20 bg-surface-container-high text-on-surface font-body-md">
+                            +20
+                        </span>
+                        <input class="flex-1 bg-surface border border-plum/20 rounded-r-input px-4 py-3 font-body-md text-on-surface input-glow transition-all duration-250 placeholder-on-surface-variant/50" id="phone" placeholder="1X XXXX XXXX" required="" type="tel" />
+                    </div>
+                </div>
+                <!-- Street Address -->
+                <div class="space-y-2">
+                    <label class="block font-label-caps text-label-caps text-on-surface" for="street">Street Address *</label>
+                    <input class="w-full bg-surface border border-plum/20 rounded-input px-4 py-3 font-body-md text-on-surface input-glow transition-all duration-250 placeholder-on-surface-variant/50" id="street" placeholder="Street name and house number" required="" type="text" />
+                </div>
+                <!-- Apartment (Optional) -->
+                <div class="space-y-2">
+                    <label class="block font-label-caps text-label-caps text-on-surface" for="apartment">Apartment, suite, etc. (Optional)</label>
+                    <input class="w-full bg-surface border border-plum/20 rounded-input px-4 py-3 font-body-md text-on-surface input-glow transition-all duration-250 placeholder-on-surface-variant/50" id="apartment" placeholder="Apartment, suite, unit, etc." type="text" />
+                </div>
+                <!-- City and Governorate -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="block font-label-caps text-label-caps text-on-surface" for="city">City *</label>
+                        <input class="w-full bg-surface border border-plum/20 rounded-input px-4 py-3 font-body-md text-on-surface input-glow transition-all duration-250 placeholder-on-surface-variant/50" id="city" placeholder="City" required="" type="text" />
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block font-label-caps text-label-caps text-on-surface" for="governorate">Governorate *</label>
+                        <div class="relative">
+                            <select class="w-full bg-surface border border-plum/20 rounded-input px-4 py-3 font-body-md text-on-surface input-glow transition-all duration-250 appearance-none pr-10" id="governorate" required="">
+                                <option disabled="" selected="" value="">Select Governorate</option>
+                                <option value="cairo">Cairo</option>
+                                <option value="giza">Giza</option>
+                                <option value="alexandria">Alexandria</option>
+                                <option value="luxor">Luxor</option>
+                                <option value="aswan">Aswan</option>
+                            </select>
+                            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Postal Code (Optional) -->
+                <div class="space-y-2">
+                    <label class="block font-label-caps text-label-caps text-on-surface" for="postal">Postal Code (Optional)</label>
+                    <input class="w-full md:w-1/2 bg-surface border border-plum/20 rounded-input px-4 py-3 font-body-md text-on-surface input-glow transition-all duration-250 placeholder-on-surface-variant/50" id="postal" placeholder="Postal / Zip Code" type="text" />
+                </div>
+                <!-- Set as Default Checkbox -->
+                <div class="flex items-center gap-3 pt-2">
+                    <input class="w-5 h-5 rounded border-plum/30 text-primary-container focus:ring-primary-container focus:ring-offset-surface bg-surface transition-colors duration-250 cursor-pointer" id="defaultAddress" type="checkbox" />
+                    <label class="font-body-md text-body-md text-on-surface cursor-pointer select-none" for="defaultAddress">
+                        Set as default shipping address
+                    </label>
+                </div>
+                <!-- Actions -->
+                <div class="pt-8 flex flex-col md:flex-row gap-4 items-center justify-end border-t border-outline-variant/20 mt-8">
+                    <button class="w-full md:w-auto px-8 py-3 font-label-caps text-label-caps text-on-surface bg-transparent hover:bg-surface-container-high rounded-pill transition-all duration-250 hover:scale-[0.98] active:scale-95" type="button">
+                        CANCEL
+                    </button>
+                    <button class="w-full md:w-auto px-8 py-3 font-label-caps text-label-caps text-ivory bg-rose-gold hover:opacity-90 rounded-pill shadow-level-1 hover:shadow-level-2 transition-all duration-250 hover:scale-[0.98] active:scale-95" type="submit">
+                        SAVE ADDRESS
+                    </button>
+                </div>
+            </form>
         </div>
-
-        <div class="flex items-center gap-4 pt-4">
-            <button type="submit" class="flex-1 bg-primary hover:bg-primary/90 text-white py-3 rounded-lg font-bold transition-all shadow-md shadow-primary/20">
-                Update Address
-            </button>
-            <a asp-action="Addresses" class="flex-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 py-3 rounded-lg font-bold transition-all text-center">
-                Cancel
-            </a>
+    </main>
+    <!-- Footer -->
+    <footer class="bg-surface-container-high dark:bg-surface-container-high rounded-t-footer-radius-top mt-stack-lg border-t border-outline-variant/10 shadow-footer">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-stack-lg px-container-padding-mobile md:px-margin-screen py-20 max-w-7xl mx-auto">
+            <!-- Brand Section -->
+            <div class="flex flex-col gap-6">
+                <a class="font-accent-italic text-headline-md italic text-primary" href="#">liora</a>
+                <p class="font-body-sm text-body-md text-on-surface-variant max-w-xs">
+                    Empowered elegance and intimate luxury, crafted for the modern narrative.
+                </p>
+                <div class="flex gap-4">
+                    <a class="text-on-surface-variant hover:text-primary transition-colors duration-200 hover:scale-110" href="#">
+                        <span class="material-symbols-outlined">camera_alt</span>
+                    </a>
+                    <a class="text-on-surface-variant hover:text-primary transition-colors duration-200 hover:scale-110" href="#">
+                        <span class="material-symbols-outlined">mail</span>
+                    </a>
+                </div>
+            </div>
+            <!-- Links Section 1 -->
+            <div class="flex flex-col gap-4">
+                <h4 class="font-label-caps text-label-caps text-primary tracking-widest mb-2">SHOP &amp; DISCOVER</h4>
+                <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:translate-x-1 transition-all duration-200" href="#">Shop All</a>
+                <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:translate-x-1 transition-all duration-200" href="#">Size Guide</a>
+                <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:translate-x-1 transition-all duration-200" href="#">About</a>
+                <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:translate-x-1 transition-all duration-200" href="#">Contact</a>
+            </div>
+            <!-- Links Section 2 -->
+            <div class="flex flex-col gap-4">
+                <h4 class="font-label-caps text-label-caps text-primary tracking-widest mb-2">CUSTOMER CARE</h4>
+                <a class="font-body-md text-body-md text-primary font-bold hover:translate-x-1 transition-all duration-200" href="#">My Orders</a>
+                <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:translate-x-1 transition-all duration-200" href="#">Track Order</a>
+                <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:translate-x-1 transition-all duration-200" href="#">FAQ</a>
+                <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:translate-x-1 transition-all duration-200" href="#">Refunds</a>
+                <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:translate-x-1 transition-all duration-200" href="#">Privacy</a>
+            </div>
         </div>
-    </form>
-</div>
+        <div class="text-center py-6 border-t border-outline-variant/10 font-body-md text-[14px] text-on-surface-variant">
+            © 2026 liora. All rights reserved.
+        </div>
+    </footer>
+</body></html>

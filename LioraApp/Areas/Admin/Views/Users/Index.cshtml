@@ -1,301 +1,431 @@
-@model IEnumerable<UserAdminVM>
-@{
-    ViewData["Title"] = "Customers";
-    int currentPage = ViewBag.CurrentPage is int cp ? cp : 1;
-    int totalPages = ViewBag.TotalPages is int tp ? tp : 1;
-    int totalCount = ViewBag.TotalCount is int tc ? tc : Model.Count();
-    int activeCount = ViewBag.ActiveCount is int ac ? ac : Model.Count(u => u.IsActive);
-    int inactiveCount = ViewBag.InactiveCount is int ic ? ic : Model.Count(u => !u.IsActive);
-    int joinedRecentlyCount = ViewBag.JoinedRecentlyCount is int jc ? jc : Model.Count(u => u.CreatedAt >= DateTime.UtcNow.AddDays(-30));
-    int startPage = Math.Max(1, currentPage - 2);
-    int endPage = Math.Min(totalPages, currentPage + 2);
-    var activePercent = totalCount > 0 ? (activeCount * 100 / totalCount) : 0;
-}
+<!DOCTYPE html>
 
-@section Styles {
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Users - Liora Admin</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+        darkMode: "class",
+        theme: {
+        extend: {
+        "colors": {
+        "secondary-fixed-dim": "#d1c0de",
+        "surface-container-high": "#eee7e1",
+        "primary": "#7f5446",
+        "surface-dim": "#dfd9d3",
+        "secondary": "#665972",
+        "on-tertiary": "#ffffff",
+        "on-background": "#1e1b18",
+        "outline-variant": "#d5c2bd",
+        "primary-fixed": "#ffdbd0",
+        "on-tertiary-fixed-variant": "#4b4450",
+        "surface": "#fff8f3",
+        "outline": "#83746f",
+        "on-secondary-container": "#6c5f79",
+        "on-primary-fixed": "#311309",
+        "background": "#fff8f3",
+        "error-container": "#ffdad6",
+        "tertiary-fixed": "#eadfee",
+        "on-primary-container": "#4e2a1f",
+        "on-surface": "#1e1b18",
+        "surface-container-low": "#f9f2ec",
+        "on-secondary-fixed": "#21172c",
+        "on-error": "#ffffff",
+        "inverse-on-surface": "#f7efe9",
+        "primary-container": "#c49080",
+        "surface-container": "#f4ede7",
+        "tertiary": "#635b68",
+        "error": "#ba1a1a",
+        "secondary-container": "#eedcfa",
+        "on-primary-fixed-variant": "#643d30",
+        "surface-variant": "#e8e1db",
+        "tertiary-fixed-dim": "#cec3d2",
+        "on-secondary-fixed-variant": "#4e425a",
+        "inverse-primary": "#f2baa8",
+        "surface-tint": "#7f5446",
+        "on-primary": "#ffffff",
+        "surface-container-lowest": "#ffffff",
+        "tertiary-container": "#a299a7",
+        "surface-container-highest": "#e8e1db",
+        "on-tertiary-container": "#38313d",
+        "secondary-fixed": "#eedcfa",
+        "on-surface-variant": "#514440",
+        "on-error-container": "#93000a",
+        "surface-bright": "#fff8f3",
+        "primary-fixed-dim": "#f2baa8",
+        "on-secondary": "#ffffff",
+        "on-tertiary-fixed": "#1f1924",
+        "inverse-surface": "#33302c"
+        },
+        "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+        },
+        "spacing": {
+        "container-padding-mobile": "20px",
+        "stack-sm": "8px",
+        "stack-md": "16px",
+        "container-padding-desktop": "64px",
+        "stack-lg": "32px",
+        "section-gap": "120px",
+        "unit": "8px",
+        "gutter": "24px"
+        },
+        "fontFamily": {
+        "label-caps": [
+        "DM Sans"
+        ],
+        "headline-lg-mobile": [
+        "Playfair Display"
+        ],
+        "accent-italic": [
+        "EB Garamond"
+        ],
+        "display-lg-mobile": [
+        "Playfair Display"
+        ],
+        "headline-lg": [
+        "Playfair Display"
+        ],
+        "display-lg": [
+        "Playfair Display"
+        ],
+        "body-lg": [
+        "DM Sans"
+        ],
+        "headline-md": [
+        "Playfair Display"
+        ],
+        "body-md": [
+        "DM Sans"
+        ]
+        },
+        "fontSize": {
+        "label-caps": [
+        "12px",
+        {
+        "lineHeight": "1.2",
+        "letterSpacing": "0.1em",
+        "fontWeight": "700"
+        }
+        ],
+        "headline-lg-mobile": [
+        "32px",
+        {
+        "lineHeight": "1.2",
+        "fontWeight": "600"
+        }
+        ],
+        "accent-italic": [
+        "20px",
+        {
+        "lineHeight": "1.5",
+        "fontWeight": "400"
+        }
+        ],
+        "display-lg-mobile": [
+        "40px",
+        {
+        "lineHeight": "1.2",
+        "fontWeight": "700"
+        }
+        ],
+        "headline-lg": [
+        "40px",
+        {
+        "lineHeight": "1.2",
+        "fontWeight": "600"
+        }
+        ],
+        "display-lg": [
+        "64px",
+        {
+        "lineHeight": "1.1",
+        "letterSpacing": "-0.02em",
+        "fontWeight": "700"
+        }
+        ],
+        "body-lg": [
+        "18px",
+        {
+        "lineHeight": "1.6",
+        "fontWeight": "400"
+        }
+        ],
+        "headline-md": [
+        "32px",
+        {
+        "lineHeight": "1.3",
+        "fontWeight": "500"
+        }
+        ],
+        "body-md": [
+        "16px",
+        {
+        "lineHeight": "1.6",
+        "fontWeight": "400"
+        }
+        ]
+        }
+        },
+        },
+        }
+    </script>
     <style>
-        .glass-effect {
-            backdrop-filter: blur(12px);
-            background-color: rgba(255, 255, 255, 0.8);
+        .ease-out-250 {
+        transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+        transition-duration: 250ms;
+        }
+
+        .table-row-hover:hover {
+        box-shadow: 0px 10px 30px rgba(26, 16, 37, 0.05);
+        transform: translateY(-2px);
+        z-index: 10;
+        }
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+        background: theme('colors.surface-container');
+        }
+
+        ::-webkit-scrollbar-thumb {
+        background: theme('colors.outline-variant');
+        border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+        background: theme('colors.outline');
         }
     </style>
-}
-
-<div class="space-y-8 font-inter">
-    <!-- --- PAGE HEADER --- -->
-    <div class="flex justify-between items-end">
-        <div>
-            <h2 class="text-[24px] font-bold text-slate-800 leading-tight">Customers</h2>
-            <p class="text-[14px] text-slate-500 mt-1">Manage registered customers and their account status</p>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased overflow-hidden flex h-screen">
+    <!-- SideNavBar -->
+    <nav class="hidden md:flex flex-col h-full overflow-y-auto bg-surface-container-low dark:bg-surface-container-low fixed left-0 top-0 h-full w-[240px] border-r border-outline-variant z-40">
+        <div class="p-6">
+            <h1 class="font-headline-md text-headline-md font-bold text-primary">Liora</h1>
+            <p class="text-on-surface-variant font-label-caps text-label-caps mt-1">Enterprise Portal</p>
         </div>
-        <a asp-action="ExportWord" class="flex items-center gap-2 text-primary font-semibold text-sm px-4 py-2 hover:bg-primary/5 rounded-xl transition-all border border-transparent hover:border-primary/10">
-            <span class="material-symbols-outlined text-[18px]">download</span>
-            Export Word
-        </a>
-    </div>
-
-    <!-- --- STATS ROW --- -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <!-- Total Customers -->
-        <div class="bg-surface-container-lowest p-5 rounded-xl border border-slate-100 shadow-[0_20px_40px_rgba(15,23,42,0.03)] flex flex-col gap-1">
-            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Customers</span>
-            <div class="flex items-end justify-between">
-                <span class="text-2xl font-bold text-slate-800">@totalCount</span>
-            </div>
+        <div class="flex flex-col gap-1 px-3 mt-4 flex-1">
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors ease-out-250 rounded-lg" href="#">
+                <span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+                <span class="font-body-md text-body-md">Overview</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors ease-out-250 rounded-lg" href="#">
+                <span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+                <span class="font-body-md text-body-md">Catalog</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors ease-out-250 rounded-lg" href="#">
+                <span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">payments</span>
+                <span class="font-body-md text-body-md">Sales</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 border-l-2 border-primary bg-surface-container-high text-primary font-bold ease-out-250 rounded-r-lg" href="#">
+                <span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">group</span>
+                <span class="font-body-md text-body-md">Customers</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors ease-out-250 rounded-lg" href="#">
+                <span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">settings</span>
+                <span class="font-body-md text-body-md">Settings</span>
+            </a>
         </div>
-
-        <!-- Active -->
-        <div class="bg-surface-container-lowest p-5 rounded-xl border border-slate-100 shadow-[0_20px_40px_rgba(15,23,42,0.03)] flex flex-col gap-1">
-            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Users</span>
-            <div class="flex items-end justify-between">
-                <span class="text-2xl font-bold text-emerald-600">@activeCount</span>
-                <div class="h-1.5 w-16 bg-emerald-100 rounded-full overflow-hidden">
-                    <div class="h-full bg-emerald-500" style="width: @activePercent%"></div>
+        <div class="p-6 mt-auto border-t border-outline-variant">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold">
+                    LA
+                </div>
+                <div>
+                    <p class="font-bold text-sm">Liora Admin</p>
+                    <p class="text-xs text-on-surface-variant">Admin</p>
                 </div>
             </div>
         </div>
-
-        <!-- Inactive -->
-        <div class="bg-surface-container-lowest p-5 rounded-xl border border-slate-100 shadow-[0_20px_40px_rgba(15,23,42,0.03)] flex flex-col gap-1">
-            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Inactive</span>
-            <div class="flex items-end justify-between">
-                <span class="text-2xl font-bold text-error">@inactiveCount</span>
-                <span class="text-[10px] text-error font-semibold">@((100 - activePercent))% total</span>
-            </div>
-        </div>
-
-        <!-- Joined -->
-        <div class="bg-surface-container-lowest p-5 rounded-xl border border-slate-100 shadow-[0_20px_40px_rgba(15,23,42,0.03)] flex flex-col gap-1">
-            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Joined (30d)</span>
-            <div class="flex items-end justify-between">
-                <span class="text-2xl font-bold text-primary">@joinedRecentlyCount</span>
-                <span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">trending_up</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- --- FILTER BAR --- -->
-    <form asp-action="Index" method="get" class="bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-slate-100 flex flex-wrap items-center gap-4">
-        <div class="flex-1 min-w-[240px] relative">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
-            <input type="text" name="searchQuery" value="@ViewBag.SearchQuery" class="w-full border border-outline-variant/30 rounded-lg pl-10 py-2 text-sm focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all" placeholder="Filter by name or email..." />
-        </div>
-        <div class="w-48">
-            <select name="statusFilter" class="w-full border border-outline-variant/30 rounded-lg py-2 text-sm focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all">
-                <option value="">All Statuses</option>
-                <option value="Active" selected="@(ViewBag.StatusFilter != null && ViewBag.StatusFilter.ToString() == "Active")">Active</option>
-                <option value="Inactive" selected="@(ViewBag.StatusFilter != null && ViewBag.StatusFilter.ToString() == "Inactive")">Inactive</option>
-            </select>
-        </div>
-        <button type="submit" class="p-2 text-slate-500 hover:bg-slate-100 rounded-lg transition-all border border-transparent hover:border-slate-200">
-            <span class="material-symbols-outlined">filter_list</span>
-        </button>
-    </form>
-
-    <!-- --- CUSTOMERS TABLE --- -->
-    <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-slate-100 overflow-hidden relative">
-        <div class="space-y-3 p-4 md:hidden">
-            @foreach (var user in Model)
-            {
-                var initial = !string.IsNullOrEmpty(user.FullName) ? user.FullName.Substring(0, 1).ToUpper() : "U";
-                <article class="rounded-[18px] border border-slate-200 bg-slate-50/80 p-4 shadow-sm @(user.IsActive ? "" : "bg-red-50/30")">
-                    <div class="flex items-start justify-between gap-3">
-                        <div class="flex items-center gap-3">
-                            <div class="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-primary to-[#6063ee] font-bold text-white shadow-sm">
-                                @initial
+    </nav>
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col md:ml-[240px] h-full overflow-hidden">
+        <!-- TopNavBar -->
+        <header class="hidden md:flex items-center justify-between px-gutter w-full z-30 bg-surface-container dark:bg-surface-container border-b border-outline-variant h-[60px] shrink-0">
+            <div class="flex items-center">
+                <!-- Breadcrumbs in header for this layout -->
+                <nav aria-label="Breadcrumb" class="flex text-sm text-on-surface-variant font-body-md text-body-md">
+                    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                        <li class="inline-flex items-center">
+                            <a class="inline-flex items-center hover:text-primary transition-colors ease-out-250" href="#">
+                                Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <div class="flex items-center">
+                                <span class="material-symbols-outlined text-sm mx-1">chevron_right</span>
+                                <span aria-current="page" class="text-primary font-medium">Users</span>
                             </div>
-                            <div>
-                                <p class="text-sm font-bold text-slate-900">@user.FullName</p>
-                                <p class="text-xs text-slate-500">@user.Email</p>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors ease-out-250 p-2 cursor-pointer active:scale-95 flex items-center justify-center w-10 h-10">
+                    <span class="material-symbols-outlined">notifications</span>
+                </button>
+                <button class="text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors ease-out-250 p-2 cursor-pointer active:scale-95 flex items-center justify-center w-10 h-10">
+                    <span class="material-symbols-outlined">account_circle</span>
+                </button>
+            </div>
+        </header>
+        <!-- Mobile Header (Simplified for space) -->
+        <header class="md:hidden flex items-center justify-between px-container-padding-mobile py-4 border-b border-outline-variant bg-surface-container shrink-0 z-30">
+            <h1 class="font-headline-md text-headline-md font-extrabold text-primary">Liora</h1>
+            <button class="p-2 text-on-surface-variant">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+        </header>
+        <!-- Main Canvas -->
+        <main class="flex-1 overflow-y-auto p-container-padding-mobile md:p-container-padding-desktop bg-surface pb-32">
+            <div class="max-w-[1280px] mx-auto w-full">
+                <!-- Page Header & Actions -->
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-stack-lg mb-12">
+                    <div>
+                        <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-background mb-2">Users Management</h2>
+                        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Manage customer accounts, roles, and order histories across the platform.</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <!-- Search -->
+                        <div class="relative w-full sm:w-72">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-outline">
+                                <span class="material-symbols-outlined text-lg">search</span>
                             </div>
+                            <input class="bg-surface-container-lowest border border-outline-variant text-on-background text-sm rounded-full focus:ring-primary focus:border-primary block w-full pl-10 p-3 outline-none transition-all ease-out-250 shadow-[0_4px_10px_rgba(26,16,37,0.02)] focus:shadow-[0_4px_20px_rgba(196,144,128,0.15)] placeholder-outline" placeholder="Search users by name, email..." type="text" />
                         </div>
-                        @if (user.IsActive)
-                        {
-                            <span class="rounded-full border border-emerald-200 bg-emerald-100 px-2 py-1 text-[10px] font-extrabold uppercase text-emerald-700">Active</span>
-                        }
-                        else
-                        {
-                            <span class="rounded-full border border-red-200 bg-red-100 px-2 py-1 text-[10px] font-extrabold uppercase text-error">Inactive</span>
-                        }
+                        <button class="bg-primary-container text-on-primary-container px-6 py-3 rounded-full font-label-caps text-label-caps hover:bg-primary-fixed transition-all ease-out-250 shadow-[0_10px_30px_rgba(26,16,37,0.05)] active:scale-[0.98] whitespace-nowrap flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-sm">person_add</span>
+                            ADD USER
+                        </button>
                     </div>
-
-                    <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
-                        <div>
-                            <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Orders</p>
-                            <p class="mt-1 font-bold text-slate-900">@user.TotalOrders</p>
-                        </div>
-                        <div>
-                            <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Joined</p>
-                            <p class="mt-1 font-semibold text-slate-600">@user.CreatedAt.ToString("MMM dd, yyyy")</p>
-                        </div>
-                        <div class="col-span-2">
-                            <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Last Order</p>
-                            <p class="mt-1 font-semibold text-slate-600">@(user.LastOrderDate.HasValue ? user.LastOrderDate.Value.ToString("MMM dd, yyyy") : "No orders yet")</p>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 flex items-center justify-end gap-2">
-                        <a asp-action="Details" asp-route-id="@user.Id" class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-600 shadow-sm transition hover:bg-slate-100" title="View Details">
-                            <span class="material-symbols-outlined text-[18px]">person_search</span>
-                        </a>
-
-                        <form asp-action="ToggleActive" method="post" class="inline-block">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="id" value="@user.Id" />
-                            @if (user.Email == User.Identity?.Name)
-                            {
-                                <button type="button" disabled class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-300 cursor-not-allowed" title="Cannot deactivate yourself">
-                                    <span class="material-symbols-outlined text-[22px]">toggle_on</span>
-                                </button>
-                            }
-                            else
-                            {
-                                <button type="submit"
-                                        class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm transition @(user.IsActive ? "text-emerald-500 hover:bg-emerald-50" : "text-slate-300 hover:bg-slate-100 hover:text-slate-500")"
-                                        title="@(user.IsActive ? "Set user inactive" : "Set user active")">
-                                    <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">
-                                        @(user.IsActive ? "toggle_on" : "toggle_off")
-                                    </span>
-                                </button>
-                            }
-                        </form>
-                    </div>
-                </article>
-            }
-            @if (!Model.Any())
-            {
-                <div class="rounded-[18px] border border-dashed border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-500">
-                    No customers found.
                 </div>
-            }
-        </div>
-
-        <div class="hidden overflow-x-auto md:block">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-surface-container-low text-slate-500 uppercase text-[11px] font-bold tracking-widest border-b border-slate-100">
-                        <th class="px-6 py-4 w-12">
-                            <input type="checkbox" class="rounded border-outline-variant/80 text-primary focus:ring-primary/20" />
-                        </th>
-                        <th class="px-6 py-4">Customer</th>
-                        <th class="px-6 py-4">Email Address</th>
-                        <th class="px-6 py-4 text-center">Orders</th>
-                        <th class="px-6 py-4">Last Order</th>
-                        <th class="px-6 py-4">Joined</th>
-                        <th class="px-6 py-4">Status</th>
-                        <th class="px-6 py-4 text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100">
-                    @foreach (var user in Model)
-                    {
-                        <tr class="hover:bg-slate-50/70 transition-colors group @(user.IsActive ? "" : "bg-red-50/20")">
-                            <td class="px-6 py-4">
-                                <input type="checkbox" class="rounded border-outline-variant/80 text-primary focus:ring-primary/20" />
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    @{
-                                        // Generate an avatar based on initials if we don't have images
-                                        var initial = !string.IsNullOrEmpty(user.FullName) ? user.FullName.Substring(0, 1).ToUpper() : "U";
-                                    }
-                                    <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white bg-gradient-to-br from-primary to-[#6063ee] shadow-sm">
-                                        @initial
-                                    </div>
-                                    <span class="font-semibold text-slate-800 text-sm">@user.FullName</span>
+                <!-- Users Data Grid (Bento/Card inspired list) -->
+                <div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden shadow-[0_10px_30px_rgba(26,16,37,0.02)] relative z-10">
+                    <!-- Table Header (Hidden on mobile) -->
+                    <div class="hidden md:grid grid-cols-12 gap-4 px-6 py-4 bg-surface-container-low border-b border-outline-variant text-on-surface-variant font-label-caps text-label-caps">
+                        <div class="col-span-4">User</div>
+                        <div class="col-span-2">Joined Date</div>
+                        <div class="col-span-2 text-right">Orders &amp; Value</div>
+                        <div class="col-span-2 text-center">Role</div>
+                        <div class="col-span-2 text-right">Actions</div>
+                    </div>
+                    <!-- User Rows -->
+                    <div class="flex flex-col divide-y divide-outline-variant relative">
+                        <!-- Row 1 -->
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 p-6 items-center bg-surface-container-lowest transition-all ease-out-250 table-row-hover relative">
+                            <!-- User Info -->
+                            <div class="col-span-1 md:col-span-4 flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-headline-md text-headline-md font-bold shrink-0">
+                                    ES
                                 </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-slate-600 font-medium">@user.Email</td>
-                            <td class="px-6 py-4 text-center">
-                                <span class="bg-surface-container text-on-surface text-xs font-bold px-2.5 py-1 rounded-lg">
-                                    @user.TotalOrders
+                                <div>
+                                    <p class="font-body-md text-body-md font-bold text-on-background">Eleanor Sterling</p>
+                                    <p class="text-sm text-on-surface-variant">eleanor.s@example.com</p>
+                                </div>
+                            </div>
+                            <!-- Joined Date -->
+                            <div class="col-span-1 md:col-span-2 flex justify-between md:block">
+                                <span class="md:hidden font-label-caps text-label-caps text-on-surface-variant">Joined</span>
+                                <span class="font-body-md text-body-md text-on-surface">Oct 12, 2023</span>
+                            </div>
+                            <!-- Orders & Value -->
+                            <div class="col-span-1 md:col-span-2 flex justify-between md:justify-end md:text-right items-center gap-2">
+                                <span class="md:hidden font-label-caps text-label-caps text-on-surface-variant">Stats</span>
+                                <div class="flex flex-col items-end">
+                                    <a class="text-primary hover:text-surface-tint underline decoration-1 underline-offset-2 transition-colors" href="#">14 Orders</a>
+                                    <span class="font-mono text-sm font-semibold text-primary-container">£4,250.00</span>
+                                </div>
+                            </div>
+                            <!-- Role -->
+                            <div class="col-span-1 md:col-span-2 flex justify-between md:justify-center items-center">
+                                <span class="md:hidden font-label-caps text-label-caps text-on-surface-variant">Role</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-surface-container-high text-on-surface">
+                                    Customer
                                 </span>
-                            </td>
-                            <td class="px-6 py-4 text-xs text-slate-500 font-medium whitespace-nowrap">
-                                @(user.LastOrderDate.HasValue ? user.LastOrderDate.Value.ToString("MMM dd, yyyy") : "No orders yet")
-                            </td>
-                            <td class="px-6 py-4 text-xs text-slate-500 font-medium whitespace-nowrap">@user.CreatedAt.ToString("MMM dd, yyyy")</td>
-                            <td class="px-6 py-4">
-                                @if (user.IsActive)
-                                {
-                                    <span class="bg-emerald-100 text-emerald-700 text-[10px] font-extrabold uppercase px-2 py-1 rounded-full border border-emerald-200 shadow-sm">Active</span>
-                                }
-                                else
-                                {
-                                    <span class="bg-red-100 text-error text-[10px] font-extrabold uppercase px-2 py-1 rounded-full border border-red-200">Inactive</span>
-                                }
-                            </td>
-                            <td class="px-6 py-4 relative text-right">
-                                <div class="flex items-center justify-end gap-2">
-                                    <a asp-action="Details" asp-route-id="@user.Id" class="material-symbols-outlined p-1 text-slate-400 hover:text-primary hover:bg-slate-100 rounded transition-colors text-xl" title="View Details">person_search</a>
-                                    
-                                    <form asp-action="ToggleActive" method="post" class="inline-block">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="id" value="@user.Id" />
-                                        @if (user.Email == User.Identity?.Name)
-                                        {
-                                            <button type="button" disabled class="material-symbols-outlined text-slate-300 text-2xl cursor-not-allowed opacity-50" title="Cannot deactivate yourself">toggle_on</button>
-                                        }
-                                        else
-                                        {
-                                            <button type="submit" class="material-symbols-outlined @(user.IsActive ? "text-emerald-500" : "text-slate-300 hover:text-slate-500") hover:opacity-80 transition-colors text-2xl align-middle" style="font-variation-settings: 'FILL' 1;" title="@(user.IsActive ? "Set user inactive" : "Set user active")">
-                                                @(user.IsActive ? "toggle_on" : "toggle_off")
-                                            </button>
-                                        }
-                                    </form>
+                            </div>
+                            <!-- Actions -->
+                            <div class="col-span-1 md:col-span-2 flex justify-end gap-2 mt-4 md:mt-0">
+                                <button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary-fixed rounded-full transition-all ease-out-250 group relative" title="View Orders">
+                                    <span class="material-symbols-outlined text-xl">visibility</span>
+                                </button>
+                                <button class="p-2 text-on-surface-variant hover:text-error hover:bg-error-container rounded-full transition-all ease-out-250 group relative" title="Block User">
+                                    <span class="material-symbols-outlined text-xl">block</span>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Row 2 -->
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 p-6 items-center bg-surface-container-lowest transition-all ease-out-250 table-row-hover relative">
+                            <!-- User Info -->
+                            <div class="col-span-1 md:col-span-4 flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-headline-md text-headline-md font-bold shrink-0">
+                                    JM
                                 </div>
-                            </td>
-                        </tr>
-                    }
-                    @if (!Model.Any())
-                    {
-                        <tr>
-                            <td colspan="8" class="text-center py-12">
-                                <span class="material-symbols-outlined text-4xl text-slate-300 mb-2">group_off</span>
-                                <p class="text-slate-500 font-medium">No customers found.</p>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Pagination -->
-        @if (ViewBag.TotalPages > 1)
-        {
-            <div class="px-6 py-4 bg-surface-container-low border-t border-slate-100 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                <span class="text-xs text-slate-500 font-medium">
-                    Showing <span class="font-semibold text-slate-700">@(((currentPage - 1) * (ViewBag.PageSize is int ps ? ps : 10)) + (Model.Any() ? 1 : 0))</span>
-                    to <span class="font-semibold text-slate-700">@(((currentPage - 1) * (ViewBag.PageSize is int ps2 ? ps2 : 10)) + Model.Count())</span>
-                    of <span class="font-semibold text-slate-700">@totalCount</span> customers
-                </span>
-                <div class="flex flex-wrap gap-2 items-center">
-                    <a asp-action="Index" asp-route-page="@(currentPage - 1)" asp-route-searchQuery="@ViewBag.SearchQuery" asp-route-statusFilter="@ViewBag.StatusFilter"
-                       class="inline-flex items-center gap-1 rounded-xl border px-3 py-2 text-xs font-semibold transition-all @(currentPage == 1 ? "pointer-events-none border-slate-200 bg-slate-100 text-slate-300" : "border-slate-200 bg-white text-slate-600 hover:border-primary/30 hover:text-primary")">
-                        <span class="material-symbols-outlined text-sm">chevron_left</span>
-                        Previous
-                    </a>
-
-                    @for (int i = startPage; i <= endPage; i++)
-                    {
-                        if (i == currentPage)
-                        {
-                            <button class="inline-flex h-10 min-w-10 items-center justify-center rounded-xl border border-primary bg-primary px-3 text-xs font-bold text-white shadow-md shadow-primary/20">@i</button>
-                        }
-                        else
-                        {
-                            <a asp-action="Index" asp-route-page="@i" asp-route-searchQuery="@ViewBag.SearchQuery" asp-route-statusFilter="@ViewBag.StatusFilter" class="inline-flex h-10 min-w-10 items-center justify-center rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-600 transition-all hover:border-primary/30 hover:text-primary">@i</a>
-                        }
-                    }
-
-                    <a asp-action="Index" asp-route-page="@(currentPage + 1)" asp-route-searchQuery="@ViewBag.SearchQuery" asp-route-statusFilter="@ViewBag.StatusFilter"
-                       class="inline-flex items-center gap-1 rounded-xl border px-3 py-2 text-xs font-semibold transition-all @(currentPage == totalPages ? "pointer-events-none border-slate-200 bg-slate-100 text-slate-300" : "border-slate-200 bg-white text-slate-600 hover:border-primary/30 hover:text-primary")">
-                        Next
-                        <span class="material-symbols-outlined text-sm">chevron_right</span>
-                    </a>
+                                <div>
+                                    <p class="font-body-md text-body-md font-bold text-on-background">Julian Mercer</p>
+                                    <p class="text-sm text-on-surface-variant">j.mercer@company.co.uk</p>
+                                </div>
+                            </div>
+                            <!-- Joined Date -->
+                            <div class="col-span-1 md:col-span-2 flex justify-between md:block">
+                                <span class="md:hidden font-label-caps text-label-caps text-on-surface-variant">Joined</span>
+                                <span class="font-body-md text-body-md text-on-surface">Jan 05, 2024</span>
+                            </div>
+                            <!-- Orders & Value -->
+                            <div class="col-span-1 md:col-span-2 flex justify-between md:justify-end md:text-right items-center gap-2">
+                                <span class="md:hidden font-label-caps text-label-caps text-on-surface-variant">Stats</span>
+                                <div class="flex flex-col items-end">
+                                    <span class="text-on-surface-variant opacity-50 cursor-not-allowed">0 Orders</span>
+                                    <span class="font-mono text-sm font-semibold text-outline-variant">£0.00</span>
+                                </div>
+                            </div>
+                            <!-- Role -->
+                            <div class="col-span-1 md:col-span-2 flex justify-between md:justify-center items-center">
+                                <span class="md:hidden font-label-caps text-label-caps text-on-surface-variant">Role</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary-fixed-dim text-on-primary-fixed">
+                                    Admin
+                                </span>
+                            </div>
+                            <!-- Actions -->
+                            <div class="col-span-1 md:col-span-2 flex justify-end gap-2 mt-4 md:mt-0">
+                                <button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary-fixed rounded-full transition-all ease-out-250 group relative" title="View Profile">
+                                    <span class="material-symbols-outlined text-xl">visibility</span>
+                                </button>
+                                <button class="p-2 text-on-surface-variant opacity-30 cursor-not-allowed rounded-full transition-all ease-out-250 group relative" disabled="" title="Cannot Block Admins">
+                                    <span class="material-symbols-outlined text-xl">block</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pagination -->
+                <div class="mt-8 flex items-center justify-between border-t border-outline-variant pt-6">
+                    <p class="text-sm text-on-surface-variant font-body-md">Showing 1 to 2 of 2 entries</p>
+                    <div class="flex gap-2">
+                        <button class="w-10 h-10 flex items-center justify-center rounded-full border border-outline-variant text-on-surface-variant hover:bg-surface-container-high transition-colors ease-out-250 opacity-50 cursor-not-allowed" disabled="">
+                            <span class="material-symbols-outlined text-sm">chevron_left</span>
+                        </button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-full bg-primary text-on-primary font-bold shadow-[0_10px_30px_rgba(26,16,37,0.05)]">
+                            1
+                        </button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-full border border-outline-variant text-on-surface-variant hover:bg-surface-container-high transition-colors ease-out-250 opacity-50 cursor-not-allowed" disabled="">
+                            <span class="material-symbols-outlined text-sm">chevron_right</span>
+                        </button>
+                    </div>
                 </div>
             </div>
-        }
+        </main>
     </div>
-</div>
-
+</body></html>

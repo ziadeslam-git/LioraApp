@@ -1,329 +1,445 @@
-@model LioraApp.ViewModels.Identity.ProfileVM
-@{
-    ViewData["Title"] = "Personal Information";
-    Layout = "_ProfileLayout";
-}
+<!DOCTYPE html>
 
-<div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200/60 dark:border-slate-800 p-8">
-    <!-- Header Section -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-2">
-        <h1 class="text-lg font-bold text-slate-800 dark:text-white">Personal Information</h1>
-        <span class="text-xs font-medium text-slate-400">Manage your profile details</span>
-    </div>
-
-    <!-- Profile Form -->
-    <form asp-action="Index" method="post" enctype="multipart/form-data" class="space-y-8">
-        @Html.AntiForgeryToken()
-        <div asp-validation-summary="ModelOnly" class="text-rose-500 text-sm font-semibold mb-4"></div>
-        <input asp-for="ProfileImage" id="profileImageInput" accept="image/jpeg,image/png,image/webp" class="hidden" />
-        <input asp-for="CroppedProfileImageDataUrl" id="croppedProfileImageDataUrl" class="hidden" />
-
-        <div class="grid grid-cols-1 gap-8 lg:grid-cols-[260px,1fr]">
-            <div class="rounded-[18px] border border-slate-200/80 bg-slate-50/70 p-6 dark:border-slate-700 dark:bg-slate-800/40">
-                <div class="flex flex-col items-center text-center">
-                    <div class="relative mb-5">
-                        <div class="flex h-36 w-36 items-center justify-center overflow-hidden rounded-full bg-slate-100 ring-4 ring-white shadow-sm dark:bg-slate-800 dark:ring-slate-700">
-                            @if (!string.IsNullOrWhiteSpace(Model.ProfileImageUrl))
-                            {
-                                <img id="profileAvatarPreview" src="@Model.ProfileImageUrl" alt="@Model.FullName" class="h-full w-full object-cover" />
-                                <span id="profileAvatarFallback" class="hidden material-symbols-outlined text-[60px] text-primary/80">person</span>
-                            }
-                            else
-                            {
-                                <img id="profileAvatarPreview" src="" alt="@Model.FullName" class="hidden h-full w-full object-cover" />
-                                <span id="profileAvatarFallback" class="material-symbols-outlined text-[60px] text-primary/80">person</span>
-                            }
-                        </div>
-                        <button id="changePhotoButton" type="button" class="absolute bottom-2 right-2 flex size-10 items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/30 transition hover:bg-primary/90">
-                            <span class="material-symbols-outlined text-[20px]">photo_camera</span>
-                        </button>
-                    </div>
-
-                    <h2 class="text-base font-bold text-slate-800 dark:text-white">Profile Photo</h2>
-                    <p class="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
-                        Upload a square photo, then drag and zoom to choose exactly which part appears.
-                    </p>
-
-                    <div class="mt-5 flex w-full flex-col gap-3">
-                        <button id="uploadPhotoButton" type="button" class="inline-flex items-center justify-center gap-2 rounded-[18px] bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary/90">
-                            <span class="material-symbols-outlined text-[18px]">upload</span>
-                            Upload New Photo
-                        </button>
-                        <p class="text-xs text-slate-400">JPG, PNG or WebP. Max size 5 MB.</p>
-                        <span asp-validation-for="ProfileImage" class="text-rose-500 text-xs mt-1 block"></span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Full Name -->
-                <div class="space-y-2">
-                    <label asp-for="FullName" class="text-[13px] font-semibold text-slate-700 dark:text-slate-300 ml-1"></label>
-                    <input asp-for="FullName" class="w-full h-11 px-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" />
-                    <span asp-validation-for="FullName" class="text-rose-500 text-xs mt-1 block"></span>
-                </div>
-
-                <!-- Email -->
-                <div class="space-y-2">
-                    <div class="flex items-center justify-between gap-3">
-                        <label asp-for="Email" class="text-[13px] font-semibold text-slate-700 dark:text-slate-300 ml-1"></label>
-                        <a asp-action="ChangeEmail" class="text-primary text-xs font-semibold hover:underline ml-2">Change Email</a>
-                    </div>
-                    <input asp-for="Email" readonly disabled class="w-full h-11 px-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-500 text-sm cursor-default outline-none" />
-                </div>
-
-                <!-- Phone -->
-                <div class="space-y-2">
-                    <label asp-for="PhoneNumber" class="text-[13px] font-semibold text-slate-700 dark:text-slate-300 ml-1"></label>
-                    <input asp-for="PhoneCountryIso2" type="hidden" class="js-phone-country" />
-                    <input asp-for="PhoneNumber"
-                           type="tel"
-                           autocomplete="tel"
-                           inputmode="tel"
-                           class="js-phone-input smart-phone-input w-full h-11 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
-                           data-phone-required="false"
-                           data-phone-error-invalid="Please enter a valid phone number for the selected country."
-                           placeholder="+20 10 1234 5678" />
-                    <span asp-validation-for="PhoneNumber" class="text-rose-500 text-xs mt-1 block"></span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Form Footer Buttons -->
-        <div class="pt-8 flex justify-end items-center gap-4 border-t border-slate-100 dark:border-slate-800 mt-6">
-            <button type="submit" class="px-8 py-2.5 bg-primary text-white text-sm font-bold rounded-lg shadow-sm shadow-primary/30 hover:bg-primary/90 transition-all">
-                Save Changes
-            </button>
-        </div>
-    </form>
-</div>
-
-<div id="profileCropperModal" class="fixed inset-0 z-[80] hidden items-center justify-center bg-slate-950/70 px-4 py-6">
-    <div class="w-full max-w-5xl rounded-[22px] bg-white p-5 shadow-2xl dark:bg-slate-900 md:p-6">
-        <div class="mb-5 flex items-start justify-between gap-4">
-            <div>
-                <h3 class="text-lg font-bold text-slate-800 dark:text-white">Adjust Profile Photo</h3>
-                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Move and zoom the image to choose the exact part that will be shown.</p>
-            </div>
-            <button id="closeCropperModalButton" type="button" class="flex size-10 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-        </div>
-
-        <div class="grid gap-6 lg:grid-cols-[1fr,240px]">
-            <div class="overflow-hidden rounded-[22px] bg-slate-100 dark:bg-slate-800">
-                <img id="profileCropperImage" src="" alt="Crop profile image" class="max-h-[65vh] w-full object-contain" />
-            </div>
-
-            <div class="flex flex-col gap-4">
-                <div class="rounded-[22px] border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/60">
-                    <p class="text-sm font-semibold text-slate-700 dark:text-slate-200">Live Preview</p>
-                    <div class="mt-4 flex justify-center">
-                        <div class="profile-crop-preview h-36 w-36 overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-sm dark:border-slate-700 dark:bg-slate-700"></div>
-                    </div>
-                </div>
-
-                <div class="rounded-[22px] border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-500 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-400">
-                    Tip: drag the image to reposition it, then use your mouse wheel or trackpad to zoom in and out.
-                </div>
-            </div>
-        </div>
-
-        <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-            <button id="cancelCropButton" type="button" class="rounded-[18px] border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800">
-                Cancel
-            </button>
-            <button id="applyCropButton" type="button" class="rounded-[18px] bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary/90">
-                Use This Photo
-            </button>
-        </div>
-    </div>
-</div>
-
-@section Styles {
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@28.0.4/build/css/intlTelInput.css" />
-    <style>
-        .iti {
-            width: 100%;
-        }
-
-        .iti input.smart-phone-input {
-            padding-left: 3.75rem !important;
-        }
-
-        .field-validation-error {
-            color: #f43f5e;
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 500;
-            margin-top: 0.25rem;
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Liora - Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,700&amp;family=EB+Garamond:ital,wght@1,400&amp;family=Playfair+Display:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24
         }
     </style>
-}
-
-@section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@28.0.4/build/js/intlTelInput.min.js"></script>
-    <script src="~/js/phone-input.js" asp-append-version="true"></script>
-    <script>
-        (function () {
-            const fileInput = document.getElementById('profileImageInput');
-            const uploadButton = document.getElementById('uploadPhotoButton');
-            const changeButton = document.getElementById('changePhotoButton');
-            const modal = document.getElementById('profileCropperModal');
-            const cropImage = document.getElementById('profileCropperImage');
-            const croppedImageDataInput = document.getElementById('croppedProfileImageDataUrl');
-            const cancelButton = document.getElementById('cancelCropButton');
-            const closeButton = document.getElementById('closeCropperModalButton');
-            const applyButton = document.getElementById('applyCropButton');
-            const mainAvatar = document.getElementById('profileAvatarPreview');
-            const mainFallback = document.getElementById('profileAvatarFallback');
-            const sidebarAvatar = document.getElementById('profileSidebarAvatarImage');
-            const sidebarFallback = document.getElementById('profileSidebarAvatarFallback');
-
-            if (!fileInput || !uploadButton || !modal || !cropImage || !applyButton || !croppedImageDataInput) {
-                return;
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "outline": "#83746f",
+                      "on-tertiary-fixed-variant": "#4b4450",
+                      "secondary-fixed": "#eedcfa",
+                      "primary-container": "#c49080",
+                      "secondary-fixed-dim": "#d1c0de",
+                      "on-secondary-container": "#6c5f79",
+                      "tertiary-fixed-dim": "#cec3d2",
+                      "on-secondary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "surface-variant": "#e8e1db",
+                      "secondary": "#665972",
+                      "on-tertiary": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "surface": "#fff8f3",
+                      "primary-fixed": "#ffdbd0",
+                      "surface-tint": "#7f5446",
+                      "surface-dim": "#dfd9d3",
+                      "primary": "#7f5446",
+                      "on-tertiary-fixed": "#1f1924",
+                      "surface-container-low": "#f9f2ec",
+                      "on-primary-fixed": "#311309",
+                      "tertiary-container": "#a299a7",
+                      "on-background": "#1e1b18",
+                      "inverse-primary": "#f2baa8",
+                      "on-surface": "#1e1b18",
+                      "on-secondary-fixed": "#21172c",
+                      "surface-container-highest": "#e8e1db",
+                      "on-surface-variant": "#514440",
+                      "on-error": "#ffffff",
+                      "tertiary": "#635b68",
+                      "surface-bright": "#fff8f3",
+                      "secondary-container": "#eedcfa",
+                      "inverse-surface": "#33302c",
+                      "outline-variant": "#d5c2bd",
+                      "error-container": "#ffdad6",
+                      "surface-container": "#f4ede7",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-high": "#eee7e1",
+                      "on-primary-fixed-variant": "#643d30",
+                      "primary-fixed-dim": "#f2baa8",
+                      "on-tertiary-container": "#38313d",
+                      "on-primary-container": "#4e2a1f",
+                      "tertiary-fixed": "#eadfee",
+                      "background": "#fff8f3",
+                      "error": "#ba1a1a",
+                      "on-secondary-fixed-variant": "#4e425a",
+                      "inverse-on-surface": "#f7efe9"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-sm": "8px",
+                      "container-padding-mobile": "20px",
+                      "container-padding-desktop": "64px",
+                      "section-gap": "120px",
+                      "stack-md": "16px",
+                      "unit": "8px",
+                      "stack-lg": "32px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "label-caps": [
+                              "DM Sans"
+                      ],
+                      "body-md": [
+                              "DM Sans"
+                      ],
+                      "headline-md": [
+                              "Playfair Display"
+                      ],
+                      "display-lg-mobile": [
+                              "Playfair Display"
+                      ],
+                      "accent-italic": [
+                              "EB Garamond"
+                      ],
+                      "headline-lg-mobile": [
+                              "Playfair Display"
+                      ],
+                      "display-lg": [
+                              "Playfair Display"
+                      ],
+                      "headline-lg": [
+                              "Playfair Display"
+                      ],
+                      "body-lg": [
+                              "DM Sans"
+                      ]
+              },
+              "fontSize": {
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display-lg-mobile": [
+                              "40px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "accent-italic": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "64px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg": [
+                              "40px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
             }
-
-            let cropper = null;
-            let sourceFile = null;
-
-            const openPicker = function () {
-                fileInput.click();
-            };
-
-            const openModal = function () {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                document.body.classList.add('overflow-hidden');
-            };
-
-            const closeModal = function (resetImage) {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-                document.body.classList.remove('overflow-hidden');
-
-                if (cropper) {
-                    cropper.destroy();
-                    cropper = null;
-                }
-
-                if (resetImage) {
-                    cropImage.src = '';
-                }
-            };
-
-            const setPreview = function (imageUrl) {
-                if (mainAvatar) {
-                    mainAvatar.src = imageUrl;
-                    mainAvatar.classList.remove('hidden');
-                }
-
-                if (mainFallback) {
-                    mainFallback.classList.add('hidden');
-                }
-
-                if (sidebarAvatar) {
-                    sidebarAvatar.src = imageUrl;
-                } else if (mainAvatar) {
-                    const sidebarContainer = document.getElementById('profileSidebarAvatarContainer');
-                    if (sidebarContainer) {
-                        const img = document.createElement('img');
-                        img.id = 'profileSidebarAvatarImage';
-                        img.src = imageUrl;
-                        img.alt = 'Profile Photo';
-                        img.className = 'h-full w-full object-cover';
-                        sidebarContainer.innerHTML = '';
-                        sidebarContainer.appendChild(img);
-                    }
-                }
-
-                if (sidebarFallback) {
-                    sidebarFallback.classList.add('hidden');
-                }
-            };
-
-            const initializeCropper = function (dataUrl) {
-                cropImage.src = dataUrl;
-                openModal();
-
-                cropImage.onload = function () {
-                    if (cropper) {
-                        cropper.destroy();
-                    }
-
-                    cropper = new Cropper(cropImage, {
-                        aspectRatio: 1,
-                        viewMode: 1,
-                        dragMode: 'move',
-                        background: false,
-                        autoCropArea: 1,
-                        responsive: true,
-                        preview: '.profile-crop-preview'
-                    });
-                };
-            };
-
-            uploadButton.addEventListener('click', openPicker);
-            if (changeButton) {
-                changeButton.addEventListener('click', openPicker);
-            }
-
-            fileInput.addEventListener('click', function () {
-                fileInput.value = '';
-            });
-
-            fileInput.addEventListener('change', function (event) {
-                const file = event.target.files && event.target.files[0];
-                if (!file) {
-                    return;
-                }
-
-                sourceFile = file;
-                const reader = new FileReader();
-                reader.onload = function (loadEvent) {
-                    initializeCropper(loadEvent.target.result);
-                };
-                reader.readAsDataURL(file);
-            });
-
-            const stopCropping = function () {
-                closeModal(true);
-            };
-
-            cancelButton.addEventListener('click', stopCropping);
-            closeButton.addEventListener('click', stopCropping);
-
-            applyButton.addEventListener('click', function () {
-                if (!cropper || !sourceFile) {
-                    return;
-                }
-
-                const canvas = cropper.getCroppedCanvas({
-                    width: 700,
-                    height: 700,
-                    imageSmoothingEnabled: true,
-                    imageSmoothingQuality: 'high'
-                });
-
-                canvas.toBlob(function (blob) {
-                    if (!blob) {
-                        return;
-                    }
-
-                    const previewUrl = URL.createObjectURL(blob);
-                    croppedImageDataInput.value = canvas.toDataURL('image/jpeg', 0.92);
-                    setPreview(previewUrl);
-                    closeModal(true);
-                }, 'image/jpeg', 0.92);
-            });
-
-            modal.addEventListener('click', function (event) {
-                if (event.target === modal) {
-                    stopCropping();
-                }
-            });
-        })();
+          }
+        }
     </script>
-}
+</head>
+<body class="bg-surface text-on-surface antialiased">
+<!-- TopNavBar -->
+<nav class="bg-surface/80 backdrop-blur-md dark:bg-surface/80 docked full-width top-0 sticky border-b border-white/5 shadow-sm z-50">
+<div class="flex justify-between items-center w-full px-container-padding-desktop h-20 max-w-7xl mx-auto">
+<!-- Left Navigation (Desktop) -->
+<ul class="hidden md:flex space-x-8 font-label-caps text-label-caps">
+<li><a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">HOME</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">SHOP ALL</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">COLLECTIONS</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">ABOUT</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">CONTACT</a></li>
+</ul>
+<!-- Brand -->
+<div class="font-accent-italic text-headline-md italic text-primary dark:text-primary-fixed">
+<a href="#">liora</a>
+</div>
+<!-- Right Actions -->
+<div class="flex items-center space-x-6 text-primary dark:text-primary-fixed">
+<button aria-label="search" class="hover:scale-105 transition-transform duration-200">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+<button aria-label="person" class="text-primary dark:text-primary-fixed border-b-2 border-primary hover:scale-105 transition-transform duration-200">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</button>
+<button aria-label="shopping_bag" class="hover:scale-105 transition-transform duration-200">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="max-w-7xl mx-auto px-container-padding-mobile md:px-container-padding-desktop py-stack-lg md:py-section-gap min-h-screen">
+<!-- Welcome Card -->
+<section class="rounded-2xl p-stack-lg shadow-[0_10px_30px_rgba(26,16,37,0.05)] mb-stack-lg relative overflow-hidden bg-gradient-to-br from-[#1A1025] to-[#C49080]">
+<div class="relative z-10">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-white mb-stack-sm">
+                    Welcome back, Nourhan! 💖
+                </h1>
+<p class="font-body-md text-body-md text-white/80">
+                    Member since Oct 2024
+                </p>
+</div>
+<!-- Decorative atmospheric effect -->
+<div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(circle at top right, #fff, transparent 60%);"></div>
+</section>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Left Column: Account Details -->
+<div class="lg:col-span-1 space-y-stack-lg">
+<!-- Account Info Card -->
+<div class="bg-[#1A1025] rounded-2xl p-stack-lg shadow-[0_10px_30px_rgba(26,16,37,0.05)] text-white">
+<div class="flex justify-between items-center mb-stack-md">
+<h2 class="font-headline-md text-headline-md">Personal Details</h2>
+<button class="text-primary-container hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-stack-md">
+<div class="group relative pb-2 border-b border-white/10">
+<label class="font-label-caps text-label-caps text-white/60 block mb-1">First Name</label>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-body-md">Nourhan</span>
+<button aria-label="Edit First Name" class="opacity-0 group-hover:opacity-100 transition-opacity text-primary-container">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+</div>
+</div>
+<div class="group relative pb-2 border-b border-white/10">
+<label class="font-label-caps text-label-caps text-white/60 block mb-1">Last Name</label>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-body-md">El-Sayed</span>
+<button aria-label="Edit Last Name" class="opacity-0 group-hover:opacity-100 transition-opacity text-primary-container">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+</div>
+</div>
+<div class="group relative pb-2 border-b border-white/10">
+<label class="font-label-caps text-label-caps text-white/60 block mb-1">Email</label>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-body-md">nourhan@example.com</span>
+<button aria-label="Edit Email" class="opacity-0 group-hover:opacity-100 transition-opacity text-primary-container">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+</div>
+</div>
+<div class="group relative pb-2 border-b border-white/10">
+<label class="font-label-caps text-label-caps text-white/60 block mb-1">Phone</label>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-body-md">+20 100 123 4567</span>
+<button aria-label="Edit Phone" class="opacity-0 group-hover:opacity-100 transition-opacity text-primary-container">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Navigation Sidebar (Mobile: Below content, Desktop: Sidebar) -->
+<div class="bg-surface-container-lowest rounded-2xl p-stack-lg shadow-[0_10px_30px_rgba(26,16,37,0.05)] border border-surface-variant">
+<ul class="space-y-4">
+<li>
+<a class="flex items-center space-x-3 text-primary font-bold border-l-2 border-primary pl-3" href="#">
+<span class="material-symbols-outlined" data-weight="fill">dashboard</span>
+<span class="font-label-caps text-label-caps">DASHBOARD</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 text-on-surface-variant hover:text-primary transition-colors pl-3 border-l-2 border-transparent" href="#">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="font-label-caps text-label-caps">MY ORDERS</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 text-on-surface-variant hover:text-primary transition-colors pl-3 border-l-2 border-transparent" href="#">
+<span class="material-symbols-outlined">location_on</span>
+<span class="font-label-caps text-label-caps">ADDRESSES</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 text-on-surface-variant hover:text-primary transition-colors pl-3 border-l-2 border-transparent" href="#">
+<span class="material-symbols-outlined">favorite</span>
+<span class="font-label-caps text-label-caps">WISHLIST</span>
+</a>
+</li>
+<li class="pt-4 mt-4 border-t border-surface-variant">
+<a class="flex items-center space-x-3 text-error hover:opacity-80 transition-opacity pl-3" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-caps text-label-caps">SIGN OUT</span>
+</a>
+</li>
+</ul>
+</div>
+</div>
+<!-- Right Column: Stats & Recent Orders -->
+<div class="lg:col-span-2 space-y-stack-lg">
+<!-- Quick Stats Row -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-stack-md">
+<div class="bg-surface-container-lowest rounded-2xl p-stack-md shadow-[0_10px_30px_rgba(26,16,37,0.05)] border border-surface-variant flex flex-col justify-center items-center text-center">
+<span class="material-symbols-outlined text-primary-container mb-2 text-[32px]">inventory_2</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">12</h3>
+<p class="font-label-caps text-label-caps text-on-surface-variant mt-1">TOTAL ORDERS</p>
+</div>
+<div class="bg-surface-container-lowest rounded-2xl p-stack-md shadow-[0_10px_30px_rgba(26,16,37,0.05)] border border-surface-variant flex flex-col justify-center items-center text-center">
+<span class="material-symbols-outlined text-primary-container mb-2 text-[32px]">payments</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">EGP 15,400</h3>
+<p class="font-label-caps text-label-caps text-on-surface-variant mt-1">TOTAL SPENT</p>
+</div>
+<div class="bg-surface-container-lowest rounded-2xl p-stack-md shadow-[0_10px_30px_rgba(26,16,37,0.05)] border border-surface-variant flex flex-col justify-center items-center text-center">
+<span class="material-symbols-outlined text-primary-container mb-2 text-[32px]">home_pin</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">2</h3>
+<p class="font-label-caps text-label-caps text-on-surface-variant mt-1">SAVED ADDRESSES</p>
+</div>
+</div>
+<!-- Recent Orders Preview -->
+<div class="bg-surface-container-lowest rounded-2xl p-stack-lg shadow-[0_10px_30px_rgba(26,16,37,0.05)] border border-surface-variant">
+<div class="flex justify-between items-end mb-stack-md pb-stack-sm border-b border-surface-variant">
+<h2 class="font-headline-md text-headline-md text-on-surface">Recent Orders</h2>
+<a class="font-label-caps text-label-caps text-primary hover:text-primary-container transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-primary-container after:origin-center after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-250" href="#">
+                            VIEW ALL
+                        </a>
+</div>
+<div class="space-y-stack-md">
+<!-- Order Item 1 -->
+<div class="flex items-center space-x-4 p-4 rounded-xl hover:bg-surface-container-low transition-colors duration-250 group">
+<div class="w-16 h-16 rounded-lg overflow-hidden bg-surface-variant flex-shrink-0">
+<img alt="Silk blouse thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A close-up photograph of a luxurious, light beige silk blouse neatly folded. The lighting is soft and studio-quality, highlighting the smooth, reflective texture of the fabric. The aesthetic is clean, modern, and high-fashion editorial, embodying an elegant light-mode luxury feel. Deep plum shadows provide subtle depth against the pristine surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEkRHmrPSMB_bl2DsQYBDfe4hONyQG6PI9fFaDBda1J3m1AfXBjO9I3JQi9V46jaJJ7Zlk0zubh0sgfhX1t0Qb20xOfAWYtV6fqu3_BPPSQ-p4ot5XVwjy_bpS23fkn4AlqT_vz774b_0kn22jkBVPhKrwgRIf9TMCS99qvzDDUoagKddCDn7-X7At0qdvPfwBFSxzhigAQuDPWq-tjy43F4IXuxo4c87MhyZzHlow_RRC3QAoLx01uMkDQZzFaPLA4IcGrCuqT7Xi"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">ORDER #LRA-9823</p>
+<p class="font-body-md text-body-md text-on-surface">Placed on Oct 12, 2024</p>
+</div>
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-surface-container-high text-on-surface font-label-caps text-[10px]">
+                                        DELIVERED
+                                    </span>
+</div>
+</div>
+</div>
+<!-- Order Item 2 -->
+<div class="flex items-center space-x-4 p-4 rounded-xl hover:bg-surface-container-low transition-colors duration-250 group">
+<div class="w-16 h-16 rounded-lg overflow-hidden bg-surface-variant flex-shrink-0">
+<img alt="Lace trim dress thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A detailed shot of a sophisticated dress featuring delicate lace trim over smooth fabric. The piece is bathed in gentle, warm light, creating soft rose gold highlights. The composition is minimalist, focusing on the craftsmanship and material quality. The overall mood is intimate luxury within a light, airy editorial context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWH3lfEXkQp3EsdkbM3CcpJph0iJHoRxCtLNRMQIweOnYX8rGYJK7e03AZJ0MQMscjL6QmxBzK7IVAiAEnGU7QCi2Ge4u2fLLi6mvi_CJXHGl_5Ha4dx99pGMNXA5gFJRUFLjxSVQia4GnYRSrEPKGtGdZP7rbFmm8eoeyFcNAOzkQB3rphDwkC0LztsfPEsYvTUTdm-4w1wVl0NUU0J5uWWIBm3PWU57Sigo7EdrVcMDCesHtjDY1iuAqYpOhv7gm7ZL7qR2zMISX"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">ORDER #LRA-8471</p>
+<p class="font-body-md text-body-md text-on-surface">Placed on Sep 28, 2024</p>
+</div>
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-surface-container-high text-on-surface font-label-caps text-[10px]">
+                                        DELIVERED
+                                    </span>
+</div>
+</div>
+</div>
+<!-- Order Item 3 -->
+<div class="flex items-center space-x-4 p-4 rounded-xl hover:bg-surface-container-low transition-colors duration-250 group">
+<div class="w-16 h-16 rounded-lg overflow-hidden bg-surface-variant flex-shrink-0">
+<div class="w-full h-full bg-surface-variant flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">inventory_2</span>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">ORDER #LRA-7102</p>
+<p class="font-body-md text-body-md text-on-surface">Placed on Aug 05, 2024</p>
+</div>
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-surface-container-high text-on-surface font-label-caps text-[10px]">
+                                        DELIVERED
+                                    </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-high dark:bg-surface-container-high rounded-t-[24px] mt-stack-lg border-t border-outline-variant/10 shadow-[0_-8px_24px_rgba(196,144,128,0.08)]">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-stack-lg px-container-padding-desktop py-20 max-w-7xl mx-auto">
+<!-- Brand Column -->
+<div class="flex flex-col space-y-stack-md">
+<div class="font-accent-italic text-headline-md italic text-primary">
+                    liora
+                </div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                    Modern Egyptian craftsmanship.<br/>Empowered elegance.
+                </p>
+<p class="font-label-caps text-label-caps text-on-surface-variant mt-auto">
+                    © 2024 liora. All rights reserved.
+                </p>
+</div>
+<!-- Links Column 1 -->
+<div class="flex flex-col space-y-stack-sm">
+<h4 class="font-headline-sm text-headline-sm text-primary mb-2">Shop</h4>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary hover:translate-x-1 transition-all duration-200 block" href="#">Shop All</a>
+<a class="font-label-caps text-label-caps text-primary font-bold hover:translate-x-1 transition-all duration-200 block" href="#">My Orders</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary hover:translate-x-1 transition-all duration-200 block" href="#">Track Order</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary hover:translate-x-1 transition-all duration-200 block" href="#">Size Guide</a>
+</div>
+<!-- Links Column 2 -->
+<div class="flex flex-col space-y-stack-sm">
+<h4 class="font-headline-sm text-headline-sm text-primary mb-2">Company</h4>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary hover:translate-x-1 transition-all duration-200 block" href="#">About</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary hover:translate-x-1 transition-all duration-200 block" href="#">Contact</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary hover:translate-x-1 transition-all duration-200 block" href="#">FAQ</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary hover:translate-x-1 transition-all duration-200 block" href="#">Privacy</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary hover:translate-x-1 transition-all duration-200 block" href="#">Refunds</a>
+</div>
+</div>
+</footer>
+</body></html>

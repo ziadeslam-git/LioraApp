@@ -1,576 +1,204 @@
 @model LioraApp.ViewModels.Customer.ProductController.ProductDetailsVM
-@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResource> SR
 @{
-    var isAr = System.Globalization.CultureInfo.CurrentUICulture.Name.StartsWith("ar", StringComparison.OrdinalIgnoreCase);
-    string T(string en, string ar) => isAr ? ar : en;
-    List<string> BuildGallery(IEnumerable<string?> urls) =>
-        urls.Where(url => !string.IsNullOrWhiteSpace(url))
-            .Select(url => url!)
-            .Distinct()
-            .ToList();
-
-    var product  = Model?.Product;
-    var related  = Model?.RelatedProducts ?? [];
-    var allVariants = product?.Variants?.OrderBy(v => v.Size).ThenBy(v => v.Color).ToList() ?? [];
-    var availableVariants = allVariants.Where(v => v.IsActive && v.Stock > 0).OrderBy(v => v.Price).ToList();
-    var firstAvailableVariant = availableVariants.FirstOrDefault();
-    var sizes    = allVariants.Select(v => v.Size)
-                              .Where(s => !string.IsNullOrWhiteSpace(s))
-                              .Distinct()
-                              .OrderBy(s => s)
-                              .ToList();
-    var colors   = allVariants.Select(v => v.Color).Distinct().OrderBy(c => c).ToList();
-    var placeholderImage = Url.Content("~/images/product-placeholder.svg");
-    var productMainImage = product?.Images?.FirstOrDefault(i => i.IsMain)?.ImageUrl
-                        ?? product?.Images?.OrderBy(i => i.DisplayOrder).FirstOrDefault()?.ImageUrl;
-    List<string> BuildVariantGallery(LioraApp.Models.ProductVariant? variant)
-    {
-        var mergedGallery = BuildGallery(
-            new[] { productMainImage }
-                .Concat(product?.Images?
-                    .OrderByDescending(i => i.IsMain)
-                    .ThenBy(i => i.DisplayOrder)
-                    .Select(i => i.ImageUrl) ?? [])
-                .Concat(variant?.Images?
-                    .OrderByDescending(i => i.IsMain)
-                    .ThenBy(i => i.Id)
-                    .Select(i => i.ImageUrl) ?? []));
-
-        if (!mergedGallery.Any())
-        {
-            mergedGallery.Add(placeholderImage);
-        }
-
-        return mergedGallery;
-    }
-    var fallbackGalleryImages = BuildVariantGallery(null);
-    var defaultGalleryImages = BuildVariantGallery(firstAvailableVariant ?? allVariants.FirstOrDefault());
-    var minPrice     = availableVariants.Select(v => (decimal?)v.Price).OrderBy(p => p).FirstOrDefault();
-    var displayPrice = (minPrice.HasValue && minPrice > 0) ? minPrice.Value : product?.BasePrice ?? 0m;
-    var hasStock     = availableVariants.Any();
-    var returnUrl = Context.Request.Path + Context.Request.QueryString;
-    var isAuthenticated = User.Identity?.IsAuthenticated == true;
-    var loginReturnUrl = $"/Identity/Account/Login?ReturnUrl={Uri.EscapeDataString(returnUrl)}";
-    ViewData["Title"] = product?.Name ?? T("Product Details", "تفاصيل المنتج");
+    Layout = "_CustomerLayout";
+    ViewData["Title"] = Model.Product.Name;
+    var displayPrice = Model.Product.Variants.Any(v => v.IsActive && v.Stock > 0)
+        ? Model.Product.Variants.Where(v => v.IsActive && v.Stock > 0).Min(v => v.Price)
+        : Model.Product.BasePrice;
+    
+    var allImages = Model.Product.Images.OrderByDescending(i => i.IsMain).ThenBy(i => i.DisplayOrder).ToList();
+    var mainImage = allImages.FirstOrDefault()?.ImageUrl ?? Url.Content("~/images/product-placeholder.svg");
+    var hasStock = Model.Product.Variants.Any(v => v.IsActive && v.Stock > 0);
+    
+    // Group sizes and colors
+    var uniqueSizes = Model.Product.Variants.Where(v => v.IsActive).Select(v => v.Size).Distinct().OrderBy(s => s).ToList();
+    var uniqueColors = Model.Product.Variants.Where(v => v.IsActive && !string.IsNullOrEmpty(v.Color)).Select(v => v.Color).Distinct().ToList();
 }
 
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
-    <a asp-area="Customer" asp-controller="Products" asp-action="Index"
-       class="inline-flex items-center gap-1 text-sm text-primary hover:underline">
-        <span class="material-symbols-outlined text-base">arrow_back</span>@T("Products", "المنتجات")
-    </a>
+<main class="max-w-[1280px] mx-auto px-container-padding-mobile md:px-container-padding-desktop py-stack-lg md:py-section-gap">
+<!-- Breadcrumbs -->
+<nav aria-label="Breadcrumb" class="mb-stack-lg">
+<ol class="flex items-center space-x-2 font-label-caps text-label-caps text-on-surface-variant">
+<li><a class="hover:text-primary transition-colors duration-250 ease-tactile" href="@Url.Action("Index", "Home", new { area = "Customer" })">HOME</a></li>
+<li><span class="material-symbols-outlined text-[16px]">chevron_right</span></li>
+<li><a class="hover:text-primary transition-colors duration-250 ease-tactile" href="@Url.Action("Index", "Products", new { area = "Customer" })">SHOP ALL</a></li>
+<li><span class="material-symbols-outlined text-[16px]">chevron_right</span></li>
+@if (Model.Product.Category != null)
+{
+<li><a class="hover:text-primary transition-colors duration-250 ease-tactile" href="@Url.Action("Index", "Products", new { area = "Customer", categoryId = Model.Product.CategoryId })">@Model.Product.Category.Name.ToUpper()</a></li>
+<li><span class="material-symbols-outlined text-[16px]">chevron_right</span></li>
+}
+<li aria-current="page" class="text-primary-container truncate max-w-[200px]">@Model.Product.Name.ToUpper()</li>
+</ol>
+</nav>
 
-    <div class="grid lg:grid-cols-2 gap-8">
+<!-- Product Layout Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter lg:gap-16">
+<!-- Left: Image Gallery -->
+<div class="flex flex-col-reverse md:flex-row gap-stack-sm md:gap-4 h-full">
+<!-- Thumbnail Strip -->
+<div class="flex md:flex-col gap-stack-sm overflow-x-auto md:overflow-visible md:w-24 shrink-0 no-scrollbar">
+@foreach (var img in allImages)
+{
+    var isActiveClass = img.IsMain ? "border-primary-container" : "border-transparent opacity-70";
+<button class="thumbnail-btn w-20 h-24 md:w-full md:h-32 shrink-0 rounded-xl overflow-hidden border-2 @isActiveClass hover:border-outline-variant transition-all duration-250 ease-tactile hover:opacity-100">
+<img alt="@Model.Product.Name thumbnail" class="w-full h-full object-cover" src="@img.ImageUrl"/>
+</button>
+}
+</div>
+<!-- Main Image -->
+<div class="flex-grow aspect-[3/4] rounded-xl overflow-hidden bg-surface-container-low relative shadow-ambient-lvl1">
+<img id="main-product-image" alt="@Model.Product.Name" class="w-full h-full object-cover" src="@mainImage"/>
+</div>
+</div>
 
-        <div class="space-y-3">
-            <div id="productGalleryViewport" class="relative aspect-square overflow-hidden rounded-2xl border border-slate-200 bg-white">
-                <div id="productGalleryTrack" class="flex h-full transition-transform duration-700 ease-out">
-                    @for (var i = 0; i < defaultGalleryImages.Count; i++)
-                    {
-                        <div class="h-full min-w-full">
-                            <img src="@defaultGalleryImages[i]"
-                                 class="h-full w-full object-cover"
-                                 alt="@(product?.Name ?? "Product") image @(i + 1)"
-                                 loading="@(i == 0 ? "eager" : "lazy")"
-                                 decoding="async"
-                                 onerror="this.onerror=null;this.src='@placeholderImage';" />
-                        </div>
-                    }
+<!-- Right: Product Info -->
+<div class="flex flex-col pt-4 md:pt-0">
+<!-- Header & Price -->
+<div class="mb-stack-lg border-b border-outline-variant/30 pb-stack-md">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-md md:text-headline-md text-on-surface mb-2">@Model.Product.Name</h1>
+<p class="font-accent-italic text-accent-italic text-on-surface-variant mb-4">Effortless grace in every thread.</p>
+<div class="font-body-lg text-body-lg font-semibold text-primary-container">
+                    @displayPrice.ToString("C")
                 </div>
+</div>
 
-                <div id="productGalleryCounter" class="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between p-4 @(defaultGalleryImages.Count > 1 ? "" : "hidden")">
-                    <span class="rounded-full bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm backdrop-blur">
-                        <span id="productGalleryCurrent">1</span> / <span id="productGalleryTotal">@defaultGalleryImages.Count</span>
-                    </span>
-                </div>
+<form method="post" asp-action="AddToCart" asp-controller="Cart" asp-area="Customer">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="productId" value="@Model.Product.Id" />
+    <input type="hidden" name="quantity" value="1" />
 
-                <button type="button"
-                        id="productGalleryPrev"
-                        class="absolute left-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-slate-700 shadow-lg backdrop-blur transition hover:bg-white @(defaultGalleryImages.Count > 1 ? "" : "hidden")">
-                    <span class="material-symbols-outlined">chevron_left</span>
-                </button>
-                <button type="button"
-                        id="productGalleryNext"
-                        class="absolute right-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-slate-700 shadow-lg backdrop-blur transition hover:bg-white @(defaultGalleryImages.Count > 1 ? "" : "hidden")">
-                    <span class="material-symbols-outlined">chevron_right</span>
-                </button>
-            </div>
-
-            <div id="productGalleryThumbs" class="flex gap-2 overflow-x-auto pb-1">
-                @for (var i = 0; i < defaultGalleryImages.Count; i++)
-                {
-                    <button type="button"
-                            data-gallery-thumb
-                            data-index="@i"
-                            class="group flex h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-white transition hover:border-primary @(i == 0 ? "ring-2 ring-primary/20 border-primary" : "")">
-                        <img src="@defaultGalleryImages[i]"
-                             alt="@(product?.Name ?? "Product") thumbnail @(i + 1)"
-                             class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                             loading="lazy"
-                             decoding="async"
-                             onerror="this.onerror=null;this.src='@placeholderImage';" />
-                    </button>
-                }
-            </div>
-        </div>
-
-        <div class="space-y-5">
-            <h1 class="text-3xl font-bold">@(product?.Name ?? T("Product", "المنتج"))</h1>
-
-            <p class="text-2xl font-extrabold text-primary">@displayPrice.ToString("0.00") EGP</p>
-
-            <div id="variant-stock-badge-wrap">
-                @if (!hasStock)
-                {
-                    <span id="variant-stock-badge"
-                          class="inline-flex items-center gap-1.5 rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-bold text-rose-600 shadow-sm">
-                        <span class="h-1.5 w-1.5 rounded-full bg-rose-500"></span>
-                        @T("Out of Stock", "نفد المخزون")
-                    </span>
-                }
-                else if (firstAvailableVariant?.Stock <= 5)
-                {
-                    <span id="variant-stock-badge"
-                          class="inline-flex items-center gap-1.5 rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-xs font-bold text-orange-600 shadow-sm">
-                        <span class="h-1.5 w-1.5 rounded-full bg-orange-500"></span>
-                        @T("Low Stock", "مخزون منخفض")
-                    </span>
-                }
-                else
-                {
-                    <span id="variant-stock-badge"
-                          class="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-600 shadow-sm">
-                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-                        @T("In Stock", "متوفر")
-                    </span>
-                }
-            </div>
-
-            <div id="variant-stock-notice"
-                 class="@(hasStock ? "hidden" : "block") rounded-2xl border px-4 py-3 text-sm font-medium @(hasStock ? "border-rose-200 bg-rose-50 text-rose-700" : "border-rose-200 bg-rose-50 text-rose-700")">
-                @T("Out of stock. Restock soon.", "نفد المخزون حاليًا وسيتم توفيره قريبًا.")
-            </div>
-
-            <form asp-area="Customer" asp-controller="Cart" asp-action="AddToCart"
-                  method="post" data-ajax-form="cart" class="space-y-4" id="add-to-cart-form">
-                @Html.AntiForgeryToken()
-                @* productVariantId resolved by JS from selected size + color *@
-                <input type="hidden" id="selectedVariantId" name="productVariantId" value="" />
-                <input type="hidden" name="returnUrl" value="@returnUrl" />
-
-                @if (sizes.Any())
-                {
-                    <div>
-                        <p class="font-medium mb-2">@T("Size", "المقاس")</p>
-                        <div class="flex flex-wrap gap-2">
-                            @foreach (var s in sizes)
-                            {
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="size" value="@s" class="sr-only peer" data-size-input
-                                           @(firstAvailableVariant?.Size == s ? "checked" : "") />
-                                    <span data-option-pill data-size-pill
-                                          class="px-3 py-2 rounded-lg border border-slate-300 text-sm
-                                                 peer-checked:border-primary peer-checked:bg-primary/10
-                                                 hover:border-primary transition block">@s</span>
-                                </label>
-                            }
-                        </div>
-                    </div>
-                }
-
-                @if (colors.Any())
-                {
-                    <div>
-                        <p class="font-medium mb-2">@T("Color", "اللون")</p>
-                        <div class="flex flex-wrap gap-2">
-                            @foreach (var c in colors)
-                            {
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="color" value="@c" class="sr-only peer" data-color-input
-                                           @(firstAvailableVariant?.Color == c ? "checked" : "") />
-                                    <span data-option-pill data-color-pill
-                                          class="px-3 py-1 rounded-full border border-slate-300 text-xs
-                                                 peer-checked:border-primary peer-checked:bg-primary/10
-                                                 hover:border-primary transition block">@c</span>
-                                </label>
-                            }
-                        </div>
-                    </div>
-                }
-
-                <div class="flex items-center gap-2">
-                    <button type="button" class="qty-btn h-10 w-10 rounded-lg border border-slate-300 font-bold" data-dir="minus">-</button>
-                    <input id="qty" name="quantity" value="1" min="1" type="number"
-                           class="w-16 text-center rounded-lg border-slate-300" />
-                    <button type="button" class="qty-btn h-10 w-10 rounded-lg border border-slate-300 font-bold" data-dir="plus">+</button>
-                </div>
-
-                <div class="flex flex-col sm:flex-row gap-3">
-                    @if (isAuthenticated)
-                    {
-                        <button type="submit"
-                                id="add-to-cart-submit"
-                                data-idle-text="@T("Add to Cart", "أضف للسلة")"
-                                data-loading-text="@T("Adding...", "جارٍ الإضافة...")"
-                                data-success-text="@T("Added!", "تمت الإضافة!")"
-                                data-error-text="@T("Try again", "حاول مرة أخرى")"
-                                data-idle-class="px-5 py-3 rounded-2xl bg-gradient-to-br from-primary to-indigo-500 text-white font-bold shadow-[0_8px_20px_rgba(100,103,242,0.28)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(100,103,242,0.30)]"
-                                data-loading-class="px-5 py-3 rounded-2xl border border-slate-200 bg-slate-200 text-slate-700 font-semibold shadow-sm cursor-wait"
-                                data-success-class="px-5 py-3 rounded-2xl border border-emerald-700 bg-emerald-700 text-white font-bold shadow-[0_8px_20px_rgba(20,108,46,0.24)]"
-                                data-error-class="px-5 py-3 rounded-2xl border border-rose-600 bg-rose-600 text-white font-bold shadow-[0_8px_20px_rgba(225,29,72,0.24)]"
-                                @(hasStock ? null : "disabled")
-                                class="px-5 py-3 rounded-2xl bg-gradient-to-br from-primary to-indigo-500 text-white font-bold shadow-[0_8px_20px_rgba(100,103,242,0.28)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(100,103,242,0.30)]">
-                            <span class="inline-flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1">shopping_cart</span>
-                                <span>@T("Add to Cart", "أضف للسلة")</span>
-                            </span>
-                        </button>
-                    }
-                    else
-                    {
-                        <a href="@loginReturnUrl"
-                           class="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-primary to-indigo-500 px-5 py-3 font-bold text-white shadow-[0_8px_20px_rgba(100,103,242,0.28)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(100,103,242,0.30)]">
-                            <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1">shopping_cart</span>
-                            <span>@T("Login to add to cart", "سجل الدخول للإضافة للسلة")</span>
-                        </a>
-                    }
-                </div>
-            </form>
-
-            @if (!string.IsNullOrWhiteSpace(product?.Description))
-            {
-                <div class="border-t border-slate-200 pt-4">
-                    <p class="text-slate-600">@product.Description</p>
-                </div>
-            }
-        </div>
-    </div>
-
-    @if (related.Any())
+<!-- Color Selection -->
+@if (uniqueColors.Any())
+{
+<div class="mb-stack-md">
+<div class="flex justify-between items-center mb-unit">
+<span class="font-label-caps text-label-caps text-on-surface">COLOR</span>
+</div>
+<div class="flex gap-3">
+    @foreach (var color in uniqueColors)
     {
-        <div>
-            <h2 class="text-xl font-bold mb-4">@T("Related Products", "منتجات مشابهة")</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                @foreach (var rp in related)
-                {
-                    var rpImg = rp.Images?.FirstOrDefault(i => i.IsMain)?.ImageUrl
-                             ?? rp.Images?.OrderBy(i => i.DisplayOrder).FirstOrDefault()?.ImageUrl
-                             ?? "https://placehold.co/400x400";
-                    <a asp-area="Customer" asp-controller="Products" asp-action="Details"
-                       asp-route-id="@rp.Id"
-                       class="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-lg transition block">
-                        <img src="@rpImg" alt="@rp.Name"
-                             class="aspect-[4/5] w-full object-cover" loading="lazy" decoding="async" />
-                        <div class="p-3">
-                            <p class="font-semibold text-sm line-clamp-1">@rp.Name</p>
-                            <p class="text-primary font-bold text-sm">@rp.BasePrice.ToString("0.00") EGP</p>
-                        </div>
-                    </a>
-                }
-            </div>
-        </div>
+<label class="cursor-pointer">
+<input type="radio" name="color" value="@color" class="peer sr-only" required />
+<div class="w-10 h-10 rounded-full border-2 border-background ring-2 ring-transparent peer-checked:ring-primary-container hover:ring-outline-variant transition-transform duration-250 ease-tactile hover:scale-110 flex items-center justify-center font-label-caps text-xs bg-surface-variant text-on-surface-variant">
+                                @color
+                            </div>
+</label>
     }
+</div>
+</div>
+}
+
+<!-- Size Selection -->
+@if (uniqueSizes.Any())
+{
+<div class="mb-stack-lg">
+<div class="flex justify-between items-center mb-unit">
+<span class="font-label-caps text-label-caps text-on-surface">SIZE</span>
+</div>
+<div class="flex flex-wrap gap-3">
+    @foreach (var size in uniqueSizes)
+    {
+<label class="cursor-pointer">
+<input type="radio" name="size" value="@size" class="peer sr-only" required />
+<div class="w-14 h-14 rounded-xl border border-outline-variant text-on-surface-variant peer-checked:bg-primary peer-checked:text-on-primary peer-checked:border-primary font-label-caps text-label-caps flex items-center justify-center hover:border-primary hover:text-primary transition-all duration-250 ease-tactile shadow-ambient-lvl1">
+                                @size
+                            </div>
+</label>
+    }
+</div>
+</div>
+}
+
+<!-- Actions -->
+<div class="flex flex-col gap-3 mb-stack-lg">
+@if (hasStock)
+{
+<button type="submit" class="w-full py-4 rounded-full bg-primary-container text-surface font-label-caps text-label-caps hover:scale-[0.98] transition-transform duration-250 ease-tactile shadow-ambient-lvl1">
+                        ADD TO CART
+                    </button>
+}
+else
+{
+<button type="button" disabled class="w-full py-4 rounded-full bg-surface-variant text-on-surface-variant font-label-caps text-label-caps opacity-70 cursor-not-allowed">
+                        SOLD OUT
+                    </button>
+}
+</div>
+</form>
+
+<!-- Accordions -->
+<div class="flex flex-col gap-2 mt-auto">
+<details class="group bg-surface-container-low rounded-xl overflow-hidden" open>
+<summary class="flex justify-between items-center p-4 cursor-pointer select-none">
+<span class="font-label-caps text-label-caps text-on-surface">PRODUCT DETAILS</span>
+<span class="material-symbols-outlined text-on-surface-variant group-open:rotate-180 transition-transform duration-250 ease-tactile">keyboard_arrow_down</span>
+</summary>
+<div class="px-4 pb-4 font-body-md text-body-md text-on-surface-variant pt-2">
+<p>@Model.Product.Description</p>
+</div>
+</details>
+<details class="group bg-surface-container-low rounded-xl overflow-hidden">
+<summary class="flex justify-between items-center p-4 cursor-pointer select-none">
+<span class="font-label-caps text-label-caps text-on-surface">DELIVERY &amp; RETURNS</span>
+<span class="material-symbols-outlined text-on-surface-variant group-open:rotate-180 transition-transform duration-250 ease-tactile">keyboard_arrow_down</span>
+</summary>
+<div class="px-4 pb-4 font-body-md text-body-md text-on-surface-variant pt-2">
+<p>Standard delivery within 3-5 business days. Express delivery available at checkout. Returns accepted within 14 days of purchase in original condition.</p>
+</div>
+</details>
+</div>
+</div>
+</div>
+
+<!-- You May Also Like Section -->
+@if (Model.RelatedProducts.Any())
+{
+<section class="mt-section-gap">
+<div class="text-center mb-stack-lg">
+<h2 class="font-headline-md text-headline-md text-on-surface">You May Also Like</h2>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+    @foreach (var related in Model.RelatedProducts)
+    {
+        var relUrl = Url.Action("Details", "Products", new { id = related.Id });
+        var relImg = related.Images.OrderByDescending(i => i.IsMain).FirstOrDefault()?.ImageUrl ?? Url.Content("~/images/product-placeholder.svg");
+        var relPrice = related.Variants.Any(v => v.IsActive && v.Stock > 0)
+            ? related.Variants.Where(v => v.IsActive && v.Stock > 0).Min(v => v.Price)
+            : related.BasePrice;
+
+<a class="group block" href="@relUrl">
+<div class="aspect-[3/4] rounded-xl overflow-hidden bg-surface-container-low mb-4 shadow-ambient-lvl1">
+<img alt="@related.Name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-tactile" src="@relImg"/>
+</div>
+<div class="text-center">
+<h3 class="font-body-lg text-body-lg font-medium text-on-surface mb-1 group-hover:text-primary transition-colors">@related.Name</h3>
+<p class="font-body-md text-body-md text-primary-container">@relPrice.ToString("C")</p>
+</div>
+</a>
+    }
+</div>
 </section>
+}
+</main>
 
 @section Scripts {
-    @{
-        var fallbackGalleryImagesJson = System.Text.Json.JsonSerializer.Serialize(fallbackGalleryImages);
-        var defaultGalleryImagesJson = System.Text.Json.JsonSerializer.Serialize(defaultGalleryImages);
-        var variantsJson = System.Text.Json.JsonSerializer.Serialize(
-            product?.Variants?.Select(v => new
-            {
-                id    = v.Id,
-                size  = v.Size,
-                color = v.Color,
-                stock = v.Stock,
-                isActive = v.IsActive,
-                galleryImages = BuildVariantGallery(v)
-            }) ?? Enumerable.Empty<object>()
-        );
-    }
-    <script>
-        const fallbackGalleryImages = @Html.Raw(fallbackGalleryImagesJson);
-        const productPlaceholderImage = '@placeholderImage';
-        let currentGalleryImages = @Html.Raw(defaultGalleryImagesJson);
-        const _variants = @Html.Raw(variantsJson);
-        const galleryTrack = document.getElementById('productGalleryTrack');
-        const galleryViewport = document.getElementById('productGalleryViewport');
-        const galleryPrev = document.getElementById('productGalleryPrev');
-        const galleryNext = document.getElementById('productGalleryNext');
-        const galleryCounter = document.getElementById('productGalleryCounter');
-        const galleryCurrent = document.getElementById('productGalleryCurrent');
-        const galleryTotal = document.getElementById('productGalleryTotal');
-        const galleryThumbsWrap = document.getElementById('productGalleryThumbs');
-
-        const qtyInput = document.getElementById('qty');
-        const addToCartButton = document.getElementById('add-to-cart-submit');
-        const selectedVariantInput = document.getElementById('selectedVariantId');
-        const stockNotice = document.getElementById('variant-stock-notice');
-        const stockBadge = document.getElementById('variant-stock-badge');
-        let galleryIndex = 0;
-        let galleryTimer = null;
-        let galleryThumbs = [];
-
-        function getGalleryCount() {
-            return currentGalleryImages.length;
-        }
-
-        function bindGalleryThumbs() {
-            galleryThumbs = Array.from(document.querySelectorAll('[data-gallery-thumb]'));
-
-            galleryThumbs.forEach(function (thumb) {
-                thumb.addEventListener('click', function () {
-                    const targetIndex = parseInt(thumb.dataset.index || '0', 10) || 0;
-                    renderGallery(targetIndex);
-                    startGalleryAutoPlay();
-                });
+<script>
+    // Micro-interaction for thumbnail clicks to update main image
+    document.querySelectorAll('.thumbnail-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active state from all
+            document.querySelectorAll('.thumbnail-btn').forEach(btn => {
+                btn.classList.remove('border-primary-container');
+                btn.classList.add('border-transparent', 'opacity-70');
             });
-        }
-
-        function renderGalleryMarkup() {
-            if (!galleryTrack || !galleryThumbsWrap) return;
-
-            if (!currentGalleryImages.length) {
-                currentGalleryImages = fallbackGalleryImages.slice();
-            }
-
-            galleryTrack.innerHTML = currentGalleryImages.map(function (url, index) {
-                return `
-                    <div class="h-full min-w-full">
-                        <img src="${url}"
-                             class="h-full w-full object-cover"
-                             alt="Product image ${index + 1}"
-                             loading="${index === 0 ? 'eager' : 'lazy'}"
-                             decoding="async"
-                             onerror="this.onerror=null;this.src='${productPlaceholderImage}'" />
-                    </div>`;
-            }).join('');
-
-            galleryThumbsWrap.innerHTML = currentGalleryImages.map(function (url, index) {
-                return `
-                    <button type="button"
-                            data-gallery-thumb
-                            data-index="${index}"
-                            class="group flex h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-white transition hover:border-primary">
-                        <img src="${url}"
-                             alt="Product thumbnail ${index + 1}"
-                             class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                             loading="lazy"
-                             decoding="async"
-                             onerror="this.onerror=null;this.src='${productPlaceholderImage}'" />
-                    </button>`;
-            }).join('');
-
-            if (galleryTotal) {
-                galleryTotal.textContent = String(getGalleryCount());
-            }
-
-            galleryCounter?.classList.toggle('hidden', getGalleryCount() <= 1);
-            galleryPrev?.classList.toggle('hidden', getGalleryCount() <= 1);
-            galleryNext?.classList.toggle('hidden', getGalleryCount() <= 1);
-
-            galleryIndex = Math.min(galleryIndex, Math.max(getGalleryCount() - 1, 0));
-            bindGalleryThumbs();
-            renderGallery(galleryIndex);
-        }
-
-        function renderGallery(index) {
-            if (!galleryTrack || getGalleryCount() <= 0) return;
-
-            galleryIndex = ((index % getGalleryCount()) + getGalleryCount()) % getGalleryCount();
-            galleryTrack.style.transform = `translateX(-${galleryIndex * 100}%)`;
-
-            if (galleryCurrent) {
-                galleryCurrent.textContent = String(galleryIndex + 1);
-            }
-
-            galleryThumbs.forEach(function (thumb, thumbIndex) {
-                const isActive = thumbIndex === galleryIndex;
-                thumb.classList.toggle('border-primary', isActive);
-                thumb.classList.toggle('ring-2', isActive);
-                thumb.classList.toggle('ring-primary/20', isActive);
-                thumb.classList.toggle('border-slate-200', !isActive);
-            });
-        }
-
-        function stopGalleryAutoPlay() {
-            if (galleryTimer) {
-                clearInterval(galleryTimer);
-                galleryTimer = null;
-            }
-        }
-
-        function startGalleryAutoPlay() {
-            if (getGalleryCount() <= 1) return;
-            stopGalleryAutoPlay();
-            galleryTimer = setInterval(function () {
-                renderGallery(galleryIndex + 1);
-            }, 1000);
-        }
-
-        function isAvailableVariant(variant) {
-            return !!variant && variant.isActive && variant.stock > 0;
-        }
-
-        function getSelectedValue(name) {
-            return document.querySelector(`input[name="${name}"]:checked`)?.value ?? null;
-        }
-
-        function getMatchingVariants(size, color) {
-            return _variants.filter(v =>
-                (size === null || v.size === size) &&
-                (color === null || v.color === color)
-            );
-        }
-
-        function getAvailableVariants(size, color) {
-            return getMatchingVariants(size, color).filter(isAvailableVariant);
-        }
-
-        function setOptionAvailability(inputs, counterpartName, ownName) {
-            const counterpartValue = getSelectedValue(counterpartName);
-
-            inputs.forEach(input => {
-                const ownValue = input.value;
-                const available = ownName === 'size'
-                    ? getAvailableVariants(ownValue, counterpartValue).length > 0
-                    : getAvailableVariants(counterpartValue, ownValue).length > 0;
-                const pill = input.parentElement?.querySelector('[data-option-pill]');
-
-                input.disabled = !available;
-                input.parentElement?.classList.toggle('cursor-not-allowed', !available);
-                input.parentElement?.classList.toggle('cursor-pointer', available);
-
-                if (pill) {
-                    pill.classList.toggle('opacity-40', !available);
-                    pill.classList.toggle('grayscale', !available);
-                    pill.classList.toggle('bg-slate-100', !available);
-                    pill.classList.toggle('text-slate-400', !available);
-                    pill.classList.toggle('border-slate-200', !available);
-                    pill.classList.toggle('hover:border-primary', available);
-                }
-            });
-        }
-
-        function ensureValidSelection(name) {
-            const inputs = Array.from(document.querySelectorAll(`input[name="${name}"]`));
-            const checked = inputs.find(input => input.checked && !input.disabled);
-            if (checked) return;
-
-            inputs.forEach(input => input.checked = false);
-            const firstEnabled = inputs.find(input => !input.disabled);
-            if (firstEnabled) {
-                firstEnabled.checked = true;
-            }
-        }
-
-        function updateStockNotice(message, isVisible) {
-            if (!stockNotice) return;
-            stockNotice.textContent = message;
-            stockNotice.classList.toggle('hidden', !isVisible);
-            stockNotice.classList.toggle('block', isVisible);
-        }
-
-        function updateStockBadge(variant) {
-            if (!stockBadge) return;
-
-            if (!isAvailableVariant(variant)) {
-                stockBadge.className = 'inline-flex items-center gap-1.5 rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-bold text-rose-600 shadow-sm';
-                stockBadge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-rose-500"></span>@T("Out of Stock", "نفد المخزون")';
-                return;
-            }
-
-            if (variant.stock <= 5) {
-                stockBadge.className = 'inline-flex items-center gap-1.5 rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-xs font-bold text-orange-600 shadow-sm';
-                stockBadge.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-orange-500"></span>@T("Low Stock", "مخزون منخفض") · ${variant.stock}`;
-                return;
-            }
-
-            stockBadge.className = 'inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-600 shadow-sm';
-            stockBadge.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>@T("In Stock", "متوفر")';
-        }
-
-        function updateGalleryForVariant(variant) {
-            const nextGalleryImages = Array.isArray(variant?.galleryImages) && variant.galleryImages.length > 0
-                ? variant.galleryImages
-                : fallbackGalleryImages;
-
-            currentGalleryImages = nextGalleryImages.slice();
-            galleryIndex = 0;
-            renderGalleryMarkup();
-            startGalleryAutoPlay();
-        }
-
-        function resolveVariant() {
-            setOptionAvailability(document.querySelectorAll('input[name="size"]'), 'color', 'size');
-            ensureValidSelection('size');
-
-            setOptionAvailability(document.querySelectorAll('input[name="color"]'), 'size', 'color');
-            ensureValidSelection('color');
-
-            setOptionAvailability(document.querySelectorAll('input[name="size"]'), 'color', 'size');
-            ensureValidSelection('size');
-
-            const size = getSelectedValue('size');
-            const color = getSelectedValue('color');
-            const match = getMatchingVariants(size, color)[0];
-
-            selectedVariantInput.value = isAvailableVariant(match) ? match.id : '';
-            updateGalleryForVariant(match);
-
-            const availableStock = isAvailableVariant(match) ? match.stock : 0;
-            qtyInput.max = availableStock > 0 ? availableStock : 1;
-
-            if (parseInt(qtyInput.value || '1', 10) > qtyInput.max) {
-                qtyInput.value = qtyInput.max;
-            }
-
-            const isDisabled = !isAvailableVariant(match);
-            addToCartButton.disabled = isDisabled;
-            addToCartButton.classList.toggle('opacity-50', isDisabled);
-            addToCartButton.classList.toggle('cursor-not-allowed', isDisabled);
-            updateStockBadge(match);
-
-            if (isDisabled) {
-                updateStockNotice('@T("Out of stock. Restock soon.", "نفد المخزون حاليًا وسيتم توفيره قريبًا.")', true);
-            } else {
-                updateStockNotice('', false);
-            }
-        }
-
-        document.querySelectorAll('input[name="size"], input[name="color"]')
-                .forEach(r => r.addEventListener('change', resolveVariant));
-
-        document.querySelectorAll('.qty-btn').forEach(button => button.addEventListener('click', () => {
-            const currentValue = parseInt(qtyInput.value || '1', 10);
-            const maxValue = parseInt(qtyInput.max || '1', 10);
-            const nextValue = button.dataset.dir === 'plus'
-                ? Math.min(maxValue, currentValue + 1)
-                : Math.max(1, currentValue - 1);
-
-            qtyInput.value = nextValue;
-        }));
-
-        qtyInput.addEventListener('input', () => {
-            const maxValue = parseInt(qtyInput.max || '1', 10);
-            const sanitized = Math.max(1, Math.min(maxValue, parseInt(qtyInput.value || '1', 10) || 1));
-            qtyInput.value = sanitized;
+            // Add active state to clicked
+            this.classList.remove('border-transparent', 'opacity-70');
+            this.classList.add('border-primary-container');
+            
+            const newSrc = this.querySelector('img').src;
+            document.querySelector('#main-product-image').src = newSrc;
         });
-
-        galleryPrev?.addEventListener('click', function () {
-            renderGallery(galleryIndex - 1);
-            startGalleryAutoPlay();
-        });
-
-        galleryNext?.addEventListener('click', function () {
-            renderGallery(galleryIndex + 1);
-            startGalleryAutoPlay();
-        });
-
-        galleryViewport?.addEventListener('mouseenter', stopGalleryAutoPlay);
-        galleryViewport?.addEventListener('mouseleave', startGalleryAutoPlay);
-
-        renderGalleryMarkup();
-        resolveVariant(); // initialise on page load
-    </script>
+    });
+</script>
 }
