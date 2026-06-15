@@ -49,6 +49,7 @@ public class DashboardController : Controller
         ViewBag.TotalRevenue  = revenue;
         ViewBag.TotalCustomers = customers.Count;
         ViewBag.PendingOrders = allOrdersList.Count(o => o.Status == SD.Status_Pending);
+        ViewBag.PendingOrdersForNav = allOrdersList.Count(o => o.Status == SD.Status_Pending);
         
         // Pass Recent orders 
         ViewBag.RecentOrders = recentOrders.OrderByDescending(o => o.Id).Take(5).ToList();

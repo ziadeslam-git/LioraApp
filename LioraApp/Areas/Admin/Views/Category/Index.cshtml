@@ -1,288 +1,117 @@
-<!DOCTYPE html>
+@model IEnumerable<LioraApp.ViewModels.Admin.CategoryVM>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Liora - Category Management";
+}
 
-<html class="dark" lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Liora - Category Management</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    <script id="tailwind-config">
-        tailwind.config = {
-        darkMode: "class",
-        theme: {
-        extend: {
-        "colors": {
-        "on-tertiary-fixed-variant": "#4b4450",
-        "on-surface-variant": "#514440",
-        "on-error": "#ffffff",
-        "surface-container-low": "#f9f2ec",
-        "on-secondary": "#ffffff",
-        "secondary-fixed-dim": "#d1c0de",
-        "on-secondary-container": "#6c5f79",
-        "surface-variant": "#e8e1db",
-        "primary-container": "#c49080",
-        "error-container": "#ffdad6",
-        "surface-tint": "#7f5446",
-        "on-secondary-fixed": "#21172c",
-        "on-primary-fixed-variant": "#643d30",
-        "surface-container-high": "#eee7e1",
-        "secondary-container": "#eedcfa",
-        "surface-container-lowest": "#ffffff",
-        "secondary-fixed": "#eedcfa",
-        "tertiary-fixed": "#eadfee",
-        "outline": "#83746f",
-        "on-primary-container": "#4e2a1f",
-        "inverse-surface": "#33302c",
-        "on-primary": "#ffffff",
-        "on-error-container": "#93000a",
-        "tertiary-fixed-dim": "#cec3d2",
-        "primary-fixed-dim": "#f2baa8",
-        "on-tertiary-fixed": "#1f1924",
-        "on-tertiary": "#ffffff",
-        "on-secondary-fixed-variant": "#4e425a",
-        "tertiary": "#635b68",
-        "surface-dim": "#dfd9d3",
-        "on-background": "#1e1b18",
-        "surface-container-highest": "#e8e1db",
-        "surface-bright": "#fff8f3",
-        "on-tertiary-container": "#38313d",
-        "background": "#fff8f3",
-        "primary": "#7f5446",
-        "inverse-on-surface": "#f7efe9",
-        "error": "#ba1a1a",
-        "primary-fixed": "#ffdbd0",
-        "surface-container": "#f4ede7",
-        "surface": "#fff8f3",
-        "secondary": "#665972",
-        "on-primary-fixed": "#311309",
-        "outline-variant": "#d5c2bd",
-        "tertiary-container": "#a299a7",
-        "inverse-primary": "#f2baa8",
-        "on-surface": "#1e1b18"
-        },
-        "borderRadius": {
-        "DEFAULT": "0.25rem",
-        "lg": "0.5rem",
-        "xl": "0.75rem",
-        "full": "9999px"
-        },
-        "spacing": {
-        "stack-md": "16px",
-        "container-padding-desktop": "64px",
-        "stack-lg": "32px",
-        "container-padding-mobile": "20px",
-        "gutter": "24px",
-        "stack-sm": "8px",
-        "section-gap": "120px",
-        "unit": "8px"
-        },
-        "fontFamily": {
-        "body-lg": ["DM Sans"],
-        "accent-italic": ["EB Garamond"],
-        "body-md": ["DM Sans"],
-        "display-lg": ["Playfair Display"],
-        "label-caps": ["DM Sans"],
-        "headline-lg-mobile": ["Playfair Display"],
-        "display-lg-mobile": ["Playfair Display"],
-        "headline-lg": ["Playfair Display"],
-        "headline-md": ["Playfair Display"]
-        },
-        "fontSize": {
-        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
-        "accent-italic": ["20px", {"lineHeight": "1.5", "fontWeight": "400"}],
-        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
-        "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-        "label-caps": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "700"}],
-        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
-        "display-lg-mobile": ["40px", {"lineHeight": "1.2", "fontWeight": "700"}],
-        "headline-lg": ["40px", {"lineHeight": "1.2", "fontWeight": "600"}],
-        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "500"}]
-        }
-        }
-        }
-        }
-    </script>
-    <style>
-        .tree-line::before {
-        content: '';
-        position: absolute;
-        left: -16px;
-        top: -24px;
-        bottom: 50%;
-        width: 1px;
-        background-color: theme('colors.outline-variant');
-        }
+@section Styles {
+<style>
+    .tree-line::before {
+    content: '';
+    position: absolute;
+    left: -16px;
+    top: -24px;
+    bottom: 50%;
+    width: 1px;
+    background-color: theme('colors.outline-variant');
+    }
 
-        .tree-line::after {
-        content: '';
-        position: absolute;
-        left: -16px;
-        top: 50%;
-        width: 16px;
-        height: 1px;
-        background-color: theme('colors.outline-variant');
-        }
+    .tree-line::after {
+    content: '';
+    position: absolute;
+    left: -16px;
+    top: 50%;
+    width: 16px;
+    height: 1px;
+    background-color: theme('colors.outline-variant');
+    }
 
-        .last-child.tree-line::before {
-        bottom: auto;
-        height: 24px;
+    .last-child.tree-line::before {
+    bottom: auto;
+    height: 24px;
+    }
+</style>
+}
+
+<!-- Toolbar -->
+<header class="flex justify-between items-end mb-stack-lg border-b border-outline-variant/50 pb-4">
+    <div>
+        <h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">Categories</h1>
+    </div>
+    <a asp-action="Create" class="px-5 py-2.5 bg-primary text-white rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-primary/90 transition-colors shadow-sm">
+        <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+        Add Category
+    </a>
+</header>
+<!-- Tree View Container -->
+<div class="bg-surface-container-lowest rounded-[16px] shadow-[0px_10px_30px_rgba(26,16,37,0.05)] p-6">
+    <div class="flex flex-col gap-3">
+        @if (!Model.Any())
+        {
+            <div class="p-8 text-center text-on-surface-variant">No categories found.</div>
         }
-    </style>
-</head>
-<body class="bg-surface font-body-md text-on-surface antialiased">
-    <!-- TopNavBar -->
-    <nav class="fixed top-0 right-0 h-[60px] w-[calc(100%-240px)] border-b border-outline-variant bg-surface-container dark:bg-surface-container text-primary dark:text-primary font-title-sm text-title-sm flex items-center justify-between px-gutter w-full z-50">
-        <div class="font-headline-md text-headline-md font-extrabold text-primary">Liora</div>
-        <div class="flex items-center gap-4">
-            <span class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors cursor-pointer active:scale-95 p-2">notifications</span>
-            <span class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors cursor-pointer active:scale-95 p-2">account_circle</span>
-        </div>
-    </nav>
-    <!-- SideNavBar -->
-    <aside class="fixed left-0 top-0 h-full w-[240px] border-r border-outline-variant bg-surface-container-low dark:bg-surface-container-low text-primary dark:text-primary font-body-md text-body-md flex flex-col h-full overflow-y-auto">
-        <div class="p-6 pb-2 border-b border-outline-variant/30 flex items-center gap-4">
-            <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold">LA</div>
-            <div>
-                <h2 class="font-bold text-on-surface">Liora Admin</h2>
-                <p class="text-xs text-on-surface-variant">Enterprise Portal</p>
-            </div>
-        </div>
-        <nav class="flex-1 py-4 flex flex-col gap-1">
-            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200 ease-in-out" href="#">
-                <span class="material-symbols-outlined">dashboard</span>
-                Overview
-            </a>
-            <a class="flex items-center gap-3 px-4 py-3 border-l-2 border-primary bg-surface-container-high text-primary font-bold duration-200 ease-in-out" href="#">
-                <span class="material-symbols-outlined">inventory_2</span>
-                Catalog
-            </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200 ease-in-out" href="#">
-                <span class="material-symbols-outlined">payments</span>
-                Sales
-            </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200 ease-in-out" href="#">
-                <span class="material-symbols-outlined">group</span>
-                Customers
-            </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200 ease-in-out" href="#">
-                <span class="material-symbols-outlined">settings</span>
-                Settings
-            </a>
-        </nav>
-    </aside>
-    <!-- Main Content Canvas -->
-    <main class="ml-[240px] mt-[60px] p-container-padding-desktop min-h-screen">
-        <!-- Toolbar -->
-        <header class="flex justify-between items-end mb-stack-lg border-b border-outline-variant/50 pb-4">
-            <div>
-                <h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">Categories</h1>
-                <p class="text-on-surface-variant font-body-md text-body-md">Manage product taxonomy and collection hierarchies.</p>
-            </div>
-            <button class="bg-primary-container text-on-primary-container px-6 py-3 rounded-full font-label-caps text-label-caps uppercase tracking-wider flex items-center gap-2 hover:scale-[0.98] transition-transform duration-250 ease-out shadow-[0px_10px_30px_rgba(26,16,37,0.05)] hover:shadow-[0px_20px_50px_rgba(26,16,37,0.08)]">
-                <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
-                Add Category
-            </button>
-        </header>
-        <!-- Tree View Container -->
-        <div class="bg-surface-container-lowest rounded-[16px] shadow-[0px_10px_30px_rgba(26,16,37,0.05)] p-6">
-            <div class="flex flex-col gap-3">
-                <!-- Root Category 1 -->
-                <div class="group flex items-center bg-surface rounded-[12px] p-3 border border-outline-variant/30 hover:border-outline-variant transition-colors duration-250 ease-out">
-                    <span class="material-symbols-outlined text-outline-variant cursor-grab mr-2 hover:text-primary transition-colors">drag_indicator</span>
-                    <button class="w-6 h-6 flex items-center justify-center mr-3 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors">
-                        <span class="material-symbols-outlined" style="font-size: 20px;">keyboard_arrow_down</span>
-                    </button>
-                    <div class="w-10 h-10 rounded-[12px] bg-surface-variant overflow-hidden mr-4 shrink-0">
-                        <img alt="Category Thumbnail" class="w-full h-full object-cover" data-alt="A close-up studio shot of luxurious Egyptian silk fabric draped elegantly, catching soft high-key lighting. The minimalist composition features a muted ivory and rose-gold palette, emphasizing the exquisite craftsmanship and premium texture of the textile against a clean, uncluttered background. The overall mood is sophisticated and modern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4gCDErA2MiFK3ctDC6xtw_9qAP3I1WUznYOjqxhs4GyySbkY7w9oOJdbBWJMGyOpKd0_QTRFx1mD1takousyPYRjPbjcDVnmZjPetfj-qe1ynIm8AmzxVUKP_yzZufmXhooJGOmvmRC0G69Skv44kurVjR5d38KQIdRXv1njXMAv8yZgMSCsx4s0oR9mWCXwoqKMlJXZAvyvUon99XUEIcNm9DGdeR_K24Hjz78lLMtFS2m_1fcNqzOTfmhmZlLeGlWPKhI24K_S2" />
+        @foreach (var item in Model)
+        {
+            <div class="group flex items-center bg-surface rounded-[12px] p-3 border border-outline-variant/30 hover:border-outline-variant transition-colors duration-250 ease-out mt-2">
+                <span class="material-symbols-outlined text-outline-variant cursor-grab mr-2 hover:text-primary transition-colors">drag_indicator</span>
+                <div class="w-10 h-10 rounded-[12px] bg-surface-variant overflow-hidden mr-4 shrink-0 flex items-center justify-center text-on-surface-variant">
+                    <span class="material-symbols-outlined">folder</span>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-headline-md text-xl font-medium text-on-surface">@item.Name</h3>
+                    @if (!string.IsNullOrEmpty(item.ParentCategoryName))
+                    {
+                        <p class="text-xs text-on-surface-variant mt-1">Sub-category of: @item.ParentCategoryName</p>
+                    }
+                </div>
+                <div class="mr-6 flex items-center gap-4">
+                    <div class="flex flex-col text-right">
+                        <span class="text-sm font-bold text-on-surface">@item.ProductsCount</span>
+                        <span class="text-[10px] text-on-surface-variant uppercase tracking-wider">Products</span>
                     </div>
-                    <div class="flex-1">
-                        <h3 class="font-body-md text-body-md font-medium text-on-surface">Women's Apparel</h3>
-                        <p class="text-xs text-on-surface-variant">Main Collection</p>
-                    </div>
-                    <div class="mr-6">
-                        <span class="px-3 py-1 bg-surface-container rounded-full font-label-caps text-label-caps text-on-surface-variant">142 Products</span>
-                    </div>
-                    <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-250">
-                        <button class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-full transition-colors" title="Details">
-                            <span class="material-symbols-outlined" style="font-size: 18px;">visibility</span>
-                        </button>
-                        <button class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-full transition-colors" title="Edit">
-                            <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
-                        </button>
-                        <button class="p-2 text-on-surface-variant hover:text-error hover:bg-error-container rounded-full transition-colors" title="Delete">
-                            <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
-                        </button>
+                    <div class="w-px h-6 bg-outline-variant/30"></div>
+                    <div class="flex flex-col text-right">
+                        <span class="text-sm font-bold text-on-surface">@item.SubCategoriesCount</span>
+                        <span class="text-[10px] text-on-surface-variant uppercase tracking-wider">Sub-cats</span>
                     </div>
                 </div>
-                <!-- Sub Categories Level 1 -->
-                <div class="flex flex-col gap-3 pl-[48px] relative">
-                    <!-- Sub 1 -->
-                    <div class="relative group flex items-center bg-surface rounded-[12px] p-3 border border-outline-variant/30 hover:border-outline-variant transition-colors duration-250 ease-out">
-                        <div class="tree-line"></div>
-                        <span class="material-symbols-outlined text-outline-variant cursor-grab mr-2 hover:text-primary transition-colors">drag_indicator</span>
-                        <div class="w-6 h-6 mr-3"></div> <!-- Spacer for missing expand arrow -->
-                        <div class="w-10 h-10 rounded-[12px] bg-surface-variant overflow-hidden mr-4 shrink-0">
-                            <img alt="Category Thumbnail" class="w-full h-full object-cover" data-alt="A minimalist editorial flat lay of a delicate lace top resting on a pristine white marble surface. Soft, diffused lighting creates subtle ambient shadows tinted with pale rose. The image highlights the intricate details of the modern Egyptian craftsmanship, conveying a mood of intimate luxury and effortless grace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkKqgXBPV449BdAnrgbUjAssvwv_ytYjzz8OgJlFYJOZFdkIVX59aa1Zle3DE7HymTqGJanBrs7a3XPCkf_aRJWYe7duTR-GoDUCDp4eP0VayI28PB4Ufj1PSUnmoMI0YTjftCFSH7Rz9e4k2wb2YMQR2WIGxaFb8gJjDspxgIVmHRfctKfYv98w_-L8_OYv6N7hEIQits33ORJ85X675yJvqJk-pypdHlpkewoiaGxG7E2BnNGssscUUciLejb_l0AI9khHS-tTRY" />
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-body-md text-body-md font-medium text-on-surface">Evening Wear</h3>
-                        </div>
-                        <div class="mr-6">
-                            <span class="px-3 py-1 bg-surface-container rounded-full font-label-caps text-label-caps text-on-surface-variant">56 Products</span>
-                        </div>
-                        <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-250">
-                            <button class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-full transition-colors">
-                                <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
-                            </button>
-                        </div>
-                    </div>
-                    <!-- Sub 2 -->
-                    <div class="relative group flex items-center bg-surface rounded-[12px] p-3 border border-outline-variant/30 hover:border-outline-variant transition-colors duration-250 ease-out last-child">
-                        <div class="tree-line last-child"></div>
-                        <span class="material-symbols-outlined text-outline-variant cursor-grab mr-2 hover:text-primary transition-colors">drag_indicator</span>
-                        <div class="w-6 h-6 mr-3"></div> <!-- Spacer -->
-                        <div class="w-10 h-10 rounded-[12px] bg-surface-variant overflow-hidden mr-4 shrink-0">
-                            <img alt="Category Thumbnail" class="w-full h-full object-cover" data-alt="A highly styled, modern fashion still-life featuring a crisp white linen blouse softly draped over an abstract pedestal. High-key lighting illuminates the scene against an ivory background, accented by a subtle plum ambient shadow. The composition is clean, airy, and breathes sophisticated minimalism." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPMTgq-4sLNU_VD_lxjmMs4UOljzdbmZp2TWGCWxa3vQwJ1oWDUGgU40krzJcp6HJQXRJV6BN2el9apTCsQmUpgFoddL6_22j3fxXMeRP-OrvXtvkEDaTTmqqhHpgvmQWcTo7Seg8wj1xEcxxi6JMwJxpPF5R0Mjtji_JT9oc5CK_ncoF6vK5HaIlZl4z4HJ4iGgLBgwk2ml0cjStrlqu5pP6rUTZWNGL2ylsWUwu7WLmhzr5ifgWE-3lR8Yk8b_9p2z_gMDobZ_ki" />
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-body-md text-body-md font-medium text-on-surface">Casual Linens</h3>
-                        </div>
-                        <div class="mr-6">
-                            <span class="px-3 py-1 bg-surface-container rounded-full font-label-caps text-label-caps text-on-surface-variant">86 Products</span>
-                        </div>
-                        <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-250">
-                            <button class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-full transition-colors">
-                                <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Root Category 2 -->
-                <div class="group flex items-center bg-surface rounded-[12px] p-3 border border-outline-variant/30 hover:border-outline-variant transition-colors duration-250 ease-out mt-4">
-                    <span class="material-symbols-outlined text-outline-variant cursor-grab mr-2 hover:text-primary transition-colors">drag_indicator</span>
-                    <button class="w-6 h-6 flex items-center justify-center mr-3 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors">
-                        <span class="material-symbols-outlined" style="font-size: 20px;">keyboard_arrow_right</span>
-                    </button>
-                    <div class="w-10 h-10 rounded-[12px] bg-surface-variant overflow-hidden mr-4 shrink-0">
-                        <img alt="Category Thumbnail" class="w-full h-full object-cover" data-alt="An elegant display of premium leather accessories arranged asymmetrically on a smooth surface. Soft, directional light highlights the rich textures and deep tones of the materials. The setting uses a modern, editorial aesthetic with ample whitespace, conveying quiet luxury and high-end craftsmanship." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxwL2849RLuJhfiKy06Ke8kLJRGS5-aeWd0ectjzwVTo7KNcndynDRe5wUC6j80FIMlYWRBoQRtJtT_7K5KUNSzwgJSNvd-qCdKFlsFRtnA-_UWVWJTA4haFlgpmbSSC1QRduqjHeLdIF8PpbKoZmaMHnha2nYPXAnKYwD4B8CrbtqZEOiOFtbd7TlclVsvrJuhWd-pyK4GEgRspslsU7YJDZUsa_0IXhBcR5pxWFAKxWrX-sPNlMdudbA_7isEPEejvBvuHYlaeqI" />
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="font-body-md text-body-md font-medium text-on-surface">Accessories</h3>
-                        <p class="text-xs text-on-surface-variant">Leather Goods &amp; Jewelry</p>
-                    </div>
-                    <div class="mr-6">
-                        <span class="px-3 py-1 bg-surface-container rounded-full font-label-caps text-label-caps text-on-surface-variant">24 Products</span>
-                    </div>
-                    <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-250">
-                        <button class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-full transition-colors" title="Edit">
-                            <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
-                        </button>
-                    </div>
+                <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-250">
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-full transition-colors" title="Edit">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="p-2 text-on-surface-variant hover:text-error hover:bg-error-container rounded-full transition-colors" title="Delete">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
+                    </a>
                 </div>
             </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    @if (ViewBag.TotalPages > 1)
+    {
+        <div class="flex items-center justify-between mt-8 border-t border-outline-variant/30 pt-4">
+            <p class="text-sm text-on-surface-variant">Showing page <span class="font-medium text-on-surface">@ViewBag.CurrentPage</span> of <span class="font-medium text-on-surface">@ViewBag.TotalPages</span></p>
+            <div class="flex items-center gap-2">
+                @if (ViewBag.CurrentPage > 1)
+                {
+                    <a asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)" class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors flex items-center justify-center border border-outline-variant/50">
+                        <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                    </a>
+                }
+                
+                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    <a asp-action="Index" asp-route-page="@i" class="w-8 h-8 flex items-center justify-center rounded-lg text-sm transition-colors border @(i == ViewBag.CurrentPage ? "bg-primary text-white border-primary" : "text-on-surface-variant border-outline-variant/50 hover:bg-surface-container")">@i</a>
+                }
+                
+                @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                {
+                    <a asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)" class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors flex items-center justify-center border border-outline-variant/50">
+                        <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                    </a>
+                }
+            </div>
         </div>
-    </main>
-</body></html>
+    }
+</div>

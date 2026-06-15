@@ -199,6 +199,9 @@ builder.Services.AddControllersWithViews()
     }); // localizes [Required], [Display] etc.
 builder.Services.AddRazorPages();
 
+// Register IHttpContextAccessor for view components
+builder.Services.AddHttpContextAccessor();
+
 // ──────────────────────────────────────────────────────────────────
 var app = builder.Build();
 // ──────────────────────────────────────────────────────────────────

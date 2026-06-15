@@ -25,4 +25,9 @@ public class ProfileVM
 
     [Display(Name = "ProfilePhoto")]
     public IFormFile? ProfileImage { get; set; }
+
+    public int TotalOrders { get; set; }
+    public decimal TotalSpent { get; set; }
+    public int SavedAddresses { get; set; }
+    public List<LioraApp.Models.Order> RecentOrders { get; set; } = new();
 }

@@ -1,260 +1,90 @@
-<!DOCTYPE html>
+@model LioraApp.ViewModels.Admin.CategoryFormVM
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Liora - Admin Create Category";
+}
 
-<html class="light" lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Liora - Admin Create Category</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    <script id="tailwind-config">
-        tailwind.config = {
-        darkMode: "class",
-        theme: {
-        extend: {
-        "colors": {
-        "on-tertiary-fixed-variant": "#4b4450",
-        "on-surface-variant": "#514440",
-        "on-error": "#ffffff",
-        "surface-container-low": "#f9f2ec",
-        "on-secondary": "#ffffff",
-        "secondary-fixed-dim": "#d1c0de",
-        "on-secondary-container": "#6c5f79",
-        "surface-variant": "#e8e1db",
-        "primary-container": "#c49080",
-        "error-container": "#ffdad6",
-        "surface-tint": "#7f5446",
-        "on-secondary-fixed": "#21172c",
-        "on-primary-fixed-variant": "#643d30",
-        "surface-container-high": "#eee7e1",
-        "secondary-container": "#eedcfa",
-        "surface-container-lowest": "#ffffff",
-        "secondary-fixed": "#eedcfa",
-        "tertiary-fixed": "#eadfee",
-        "outline": "#83746f",
-        "on-primary-container": "#4e2a1f",
-        "inverse-surface": "#33302c",
-        "on-primary": "#ffffff",
-        "on-error-container": "#93000a",
-        "tertiary-fixed-dim": "#cec3d2",
-        "primary-fixed-dim": "#f2baa8",
-        "on-tertiary-fixed": "#1f1924",
-        "on-tertiary": "#ffffff",
-        "on-secondary-fixed-variant": "#4e425a",
-        "tertiary": "#635b68",
-        "surface-dim": "#dfd9d3",
-        "on-background": "#1e1b18",
-        "surface-container-highest": "#e8e1db",
-        "surface-bright": "#fff8f3",
-        "on-tertiary-container": "#38313d",
-        "background": "#fff8f3",
-        "primary": "#7f5446",
-        "inverse-on-surface": "#f7efe9",
-        "error": "#ba1a1a",
-        "primary-fixed": "#ffdbd0",
-        "surface-container": "#f4ede7",
-        "surface": "#fff8f3",
-        "secondary": "#665972",
-        "on-primary-fixed": "#311309",
-        "outline-variant": "#d5c2bd",
-        "tertiary-container": "#a299a7",
-        "inverse-primary": "#f2baa8",
-        "on-surface": "#1e1b18"
-        },
-        "borderRadius": {
-        "DEFAULT": "0.25rem",
-        "lg": "0.5rem",
-        "xl": "0.75rem",
-        "full": "9999px"
-        },
-        "spacing": {
-        "stack-md": "16px",
-        "container-padding-desktop": "64px",
-        "stack-lg": "32px",
-        "container-padding-mobile": "20px",
-        "gutter": "24px",
-        "stack-sm": "8px",
-        "section-gap": "120px",
-        "unit": "8px"
-        },
-        "fontFamily": {
-        "body-lg": ["DM Sans"],
-        "accent-italic": ["EB Garamond"],
-        "body-md": ["DM Sans"],
-        "display-lg": ["Playfair Display"],
-        "label-caps": ["DM Sans"],
-        "headline-lg-mobile": ["Playfair Display"],
-        "display-lg-mobile": ["Playfair Display"],
-        "headline-lg": ["Playfair Display"],
-        "headline-md": ["Playfair Display"]
-        },
-        "fontSize": {
-        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
-        "accent-italic": ["20px", {"lineHeight": "1.5", "fontWeight": "400"}],
-        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
-        "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-        "label-caps": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "700"}],
-        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
-        "display-lg-mobile": ["40px", {"lineHeight": "1.2", "fontWeight": "700"}],
-        "headline-lg": ["40px", {"lineHeight": "1.2", "fontWeight": "600"}],
-        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "500"}]
-        }
-        }
-        }
-        }
-    </script>
-    <style>
-        body {
-        background-color: var(--admin-bg, #0D0812); /* Default overridden below */
-        }
+@section Styles {
+<style>
+    .shadow-ambient-level-1 {
+    box-shadow: 0px 10px 30px rgba(26, 16, 37, 0.05);
+    }
 
-        .bg-admin-dark {
-        background-color: #0D0812;
-        }
+    .shadow-ambient-level-2 {
+    box-shadow: 0px 20px 50px rgba(26, 16, 37, 0.08);
+    }
 
-        .shadow-ambient-level-1 {
-        box-shadow: 0px 10px 30px rgba(26, 16, 37, 0.05);
-        }
+    /* Smooth transitions */
+    .btn-transition {
+    transition: all 250ms ease-out;
+    }
 
-        .shadow-ambient-level-2 {
-        box-shadow: 0px 20px 50px rgba(26, 16, 37, 0.08);
-        }
+    .btn-transition:active {
+    transform: scale(0.98);
+    }
 
-        /* Smooth transitions */
-        .btn-transition {
-        transition: all 250ms ease-out;
-        }
+    /* Input focus effects */
+    .input-focus-ring:focus {
+    border-color: #c49080 !important;
+    box-shadow: 0 0 0 4px rgba(196, 144, 128, 0.2) !important;
+    outline: none;
+    }
+</style>
+}
 
-        .btn-transition:active {
-        transform: scale(0.98);
-        }
-
-        /* Input focus effects */
-        .input-focus-ring:focus {
-        border-color: #c49080 !important;
-        box-shadow: 0 0 0 4px rgba(196, 144, 128, 0.2) !important;
-        outline: none;
-        }
-    </style>
-</head>
-<body class="font-body-md text-body-md bg-background text-on-surface antialiased min-h-screen flex flex-col md:flex-row">
-    <!-- SideNavBar (Persistent Desktop) -->
-    <nav class="hidden md:flex flex-col fixed left-0 top-0 h-full w-[240px] bg-surface-container-low border-r border-outline-variant z-40 overflow-y-auto">
-        <div class="px-gutter py-stack-lg border-b border-outline-variant/30 mb-stack-md">
-            <h1 class="font-headline-md text-headline-md font-bold text-primary">Liora</h1>
-            <div class="mt-4 flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold">
-                    LA
-                </div>
-                <div>
-                    <p class="font-label-caps text-label-caps text-on-surface">Liora Admin</p>
-                    <p class="text-sm text-on-surface-variant">Enterprise Portal</p>
-                </div>
+<div class="w-full max-w-[600px] mb-stack-lg">
+    <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Create Category</h2>
+    <p class="text-on-surface-variant mt-2">Add a new product grouping to your catalog structure.</p>
+</div>
+<!-- Form Card -->
+<div class="w-full max-w-[600px] bg-surface-container-lowest rounded-[16px] shadow-ambient-level-1 p-stack-lg border border-outline-variant/20">
+    <div class="mb-stack-lg pb-stack-sm border-b border-outline-variant/30">
+        <h3 class="font-headline-md text-headline-md text-on-surface text-xl">Add New Category</h3>
+    </div>
+    <form id="createCategoryForm" asp-action="Create" method="post" class="flex flex-col gap-stack-lg">
+        <div asp-validation-summary="All" class="text-error mb-4 col-span-full"></div>
+        <!-- Category Name -->
+        <div class="flex flex-col gap-2">
+            <label asp-for="Name" class="font-label-caps text-label-caps text-on-surface"></label>
+            <input asp-for="Name" class="w-full rounded-[12px] border border-outline/20 bg-surface-container-lowest px-4 py-3 text-on-surface placeholder:text-on-surface-variant/50 input-focus-ring transition-all duration-200 ease-out" placeholder="e.g. Silk Loungewear" />
+            <span asp-validation-for="Name" class="text-xs text-error mt-1"></span>
+        </div>
+        <!-- Category Slug -->
+        <div class="flex flex-col gap-2">
+            <label asp-for="Slug" class="font-label-caps text-label-caps text-on-surface"></label>
+            <input asp-for="Slug" class="w-full rounded-[12px] border border-outline/20 bg-surface-container-lowest px-4 py-3 text-on-surface placeholder:text-on-surface-variant/50 input-focus-ring transition-all duration-200 ease-out" placeholder="e.g. silk-loungewear" />
+            <span asp-validation-for="Slug" class="text-xs text-error mt-1"></span>
+        </div>
+        <!-- Parent Category -->
+        <div class="flex flex-col gap-2">
+            <label asp-for="ParentCategoryId" class="font-label-caps text-label-caps text-on-surface"></label>
+            <div class="relative">
+                <select asp-for="ParentCategoryId" asp-items="Model.ParentCategories" class="w-full appearance-none rounded-[12px] border border-outline/20 bg-surface-container-lowest px-4 py-3 text-on-surface input-focus-ring transition-all duration-200 ease-out">
+                    <option value="">None (Top Level)</option>
+                </select>
+                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">arrow_drop_down</span>
             </div>
+            <span asp-validation-for="ParentCategoryId" class="text-xs text-error mt-1"></span>
         </div>
-        <div class="flex-1 px-4 flex flex-col gap-1">
-            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors rounded-lg duration-200 ease-in-out" href="#">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
-                Overview
-            </a>
-            <a class="flex items-center gap-3 px-4 py-3 border-l-2 border-primary bg-surface-container-high text-primary font-bold rounded-lg duration-200 ease-in-out shadow-ambient-level-1" href="#">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
-                Catalog
-            </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors rounded-lg duration-200 ease-in-out" href="#">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">payments</span>
-                Sales
-            </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors rounded-lg duration-200 ease-in-out" href="#">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">group</span>
-                Customers
-            </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors rounded-lg duration-200 ease-in-out" href="#">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
-                Settings
-            </a>
-        </div>
-    </nav>
-    <!-- TopNavBar (Persistent Mobile/Desktop Header) -->
-    <header class="fixed top-0 right-0 h-[60px] w-full md:w-[calc(100%-240px)] bg-surface-container border-b border-outline-variant flex items-center justify-between px-gutter z-50">
-        <!-- Mobile Menu Toggle & Branding (hidden on desktop) -->
-        <div class="flex items-center gap-4 md:hidden">
-            <button class="text-on-surface-variant hover:bg-surface-container-highest rounded-full p-2 transition-colors cursor-pointer active:scale-95 duration-200 ease-in-out">
-                <span class="material-symbols-outlined">menu</span>
-            </button>
-            <span class="font-headline-md text-headline-md font-extrabold text-primary">Liora</span>
-        </div>
-        <!-- Desktop Breadcrumb / Title -->
-        <div class="hidden md:flex items-center gap-2 text-on-surface-variant">
-            <span class="font-label-caps text-label-caps">CATALOG</span>
-            <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-            <span class="font-label-caps text-label-caps text-primary">CREATE CATEGORY</span>
+        <!-- Image Upload -->
+        <div class="flex flex-col gap-2">
+            <label class="font-label-caps text-label-caps text-on-surface">CATEGORY IMAGE</label>
+            <div class="w-full rounded-[16px] border-2 border-dashed border-outline-variant/50 hover:border-primary-container/80 bg-surface-container-low p-stack-lg flex flex-col items-center justify-center text-center cursor-pointer transition-colors duration-250 ease-out group">
+                <div class="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center mb-4 group-hover:bg-primary-container/20 group-hover:text-primary transition-colors duration-250">
+                    <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">cloud_upload</span>
+                </div>
+                <p class="font-body-md text-body-md text-on-surface mb-1">Click or drag image here to upload</p>
+                <p class="text-sm text-on-surface-variant">PNG, JPG or WebP up to 5MB</p>
+            </div>
         </div>
         <!-- Actions -->
-        <div class="flex items-center gap-2">
-            <button class="text-on-surface-variant hover:bg-surface-container-highest rounded-full p-2 transition-colors cursor-pointer active:scale-95 duration-200 ease-in-out">
-                <span class="material-symbols-outlined">notifications</span>
+        <div class="mt-stack-md pt-stack-md flex items-center justify-end gap-4 border-t border-outline-variant/30">
+            <a asp-action="Index" class="btn-transition px-6 py-3 rounded-full text-primary hover:bg-surface-variant font-label-caps text-label-caps flex items-center justify-center">
+                Cancel
+            </a>
+            <button class="btn-transition px-8 py-3 rounded-full bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary font-label-caps text-label-caps shadow-ambient-level-1 hover:shadow-ambient-level-2" type="submit" form="createCategoryForm">
+                Save Category
             </button>
-            <button class="text-on-surface-variant hover:bg-surface-container-highest rounded-full p-2 transition-colors cursor-pointer active:scale-95 duration-200 ease-in-out">
-                <span class="material-symbols-outlined">account_circle</span>
-            </button>
         </div>
-    </header>
-    <!-- Main Content Canvas -->
-    <main class="flex-1 mt-[60px] md:ml-[240px] p-container-padding-mobile md:p-container-padding-desktop min-h-[calc(100vh-60px)] flex flex-col items-center justify-center">
-        <div class="w-full max-w-[600px] mb-stack-lg">
-            <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Create Category</h2>
-            <p class="text-on-surface-variant mt-2">Add a new product grouping to your catalog structure.</p>
-        </div>
-        <!-- Form Card -->
-        <div class="w-full max-w-[600px] bg-surface-container-lowest rounded-[16px] shadow-ambient-level-1 p-stack-lg border border-outline-variant/20">
-            <div class="mb-stack-lg pb-stack-sm border-b border-outline-variant/30">
-                <h3 class="font-headline-md text-headline-md text-on-surface text-xl">Add New Category</h3>
-            </div>
-            <form class="flex flex-col gap-stack-lg">
-                <!-- Category Name -->
-                <div class="flex flex-col gap-2">
-                    <label class="font-label-caps text-label-caps text-on-surface" for="category_name">CATEGORY NAME *</label>
-                    <input class="w-full rounded-[12px] border border-outline/20 bg-surface-container-lowest px-4 py-3 text-on-surface placeholder:text-on-surface-variant/50 input-focus-ring transition-all duration-200 ease-out" id="category_name" placeholder="e.g. Silk Loungewear" type="text" />
-                </div>
-                <!-- Parent Category -->
-                <div class="flex flex-col gap-2">
-                    <label class="font-label-caps text-label-caps text-on-surface" for="parent_category">PARENT CATEGORY</label>
-                    <div class="relative">
-                        <select class="w-full appearance-none rounded-[12px] border border-outline/20 bg-surface-container-lowest px-4 py-3 text-on-surface input-focus-ring transition-all duration-200 ease-out" id="parent_category">
-                            <option value="">None (Top Level)</option>
-                            <option value="apparel">Apparel</option>
-                            <option value="apparel-loungewear">   ↳ Loungewear</option>
-                            <option value="apparel-sleepwear">   ↳ Sleepwear</option>
-                            <option value="accessories">Accessories</option>
-                            <option value="home">Home &amp; Lifestyle</option>
-                        </select>
-                        <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">arrow_drop_down</span>
-                    </div>
-                </div>
-                <!-- Image Upload -->
-                <div class="flex flex-col gap-2">
-                    <label class="font-label-caps text-label-caps text-on-surface">CATEGORY IMAGE</label>
-                    <div class="w-full rounded-[16px] border-2 border-dashed border-outline-variant/50 hover:border-primary-container/80 bg-surface-container-low p-stack-lg flex flex-col items-center justify-center text-center cursor-pointer transition-colors duration-250 ease-out group">
-                        <div class="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center mb-4 group-hover:bg-primary-container/20 group-hover:text-primary transition-colors duration-250">
-                            <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">cloud_upload</span>
-                        </div>
-                        <p class="font-body-md text-body-md text-on-surface mb-1">Click or drag image here to upload</p>
-                        <p class="text-sm text-on-surface-variant">PNG, JPG or WebP up to 5MB</p>
-                    </div>
-                </div>
-                <!-- Actions -->
-                <div class="mt-stack-md pt-stack-md flex items-center justify-end gap-4 border-t border-outline-variant/30">
-                    <button class="btn-transition px-6 py-3 rounded-full text-primary hover:bg-surface-variant font-label-caps text-label-caps" type="button">
-                        Cancel
-                    </button>
-                    <button class="btn-transition px-8 py-3 rounded-full bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary font-label-caps text-label-caps shadow-ambient-level-1 hover:shadow-ambient-level-2" type="submit">
-                        Save Category
-                    </button>
-                </div>
-            </form>
-        </div>
-    </main>
-</body></html>
+    </form>
+</div>

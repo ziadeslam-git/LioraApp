@@ -1,180 +1,9 @@
-<!DOCTYPE html>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Create Order";
+}
 
-<html class="light" lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Liora - Create Order</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    <script id="tailwind-config">
-        tailwind.config = {
-        darkMode: "class",
-        theme: {
-        extend: {
-        "colors": {
-        "on-background": "#1e1b18",
-        "secondary-fixed-dim": "#d1c0de",
-        "secondary": "#665972",
-        "background": "#fff8f3",
-        "surface-container-highest": "#e8e1db",
-        "on-secondary-container": "#6c5f79",
-        "on-primary": "#ffffff",
-        "inverse-surface": "#33302c",
-        "error": "#ba1a1a",
-        "primary-fixed-dim": "#f2baa8",
-        "tertiary-fixed": "#eadfee",
-        "primary-container": "#c49080",
-        "on-secondary": "#ffffff",
-        "on-tertiary-container": "#38313d",
-        "outline-variant": "#d5c2bd",
-        "surface": "#fff8f3",
-        "tertiary-container": "#a299a7",
-        "tertiary": "#635b68",
-        "on-error": "#ffffff",
-        "on-tertiary-fixed-variant": "#4b4450",
-        "on-surface": "#1e1b18",
-        "on-secondary-fixed": "#21172c",
-        "tertiary-fixed-dim": "#cec3d2",
-        "on-primary-fixed-variant": "#643d30",
-        "surface-dim": "#dfd9d3",
-        "on-secondary-fixed-variant": "#4e425a",
-        "primary-fixed": "#ffdbd0",
-        "secondary-container": "#eedcfa",
-        "primary": "#7f5446",
-        "on-tertiary": "#ffffff",
-        "inverse-on-surface": "#f7efe9",
-        "on-surface-variant": "#514440",
-        "outline": "#83746f",
-        "surface-container-high": "#eee7e1",
-        "error-container": "#ffdad6",
-        "surface-bright": "#fff8f3",
-        "on-tertiary-fixed": "#1f1924",
-        "surface-container-lowest": "#ffffff",
-        "secondary-fixed": "#eedcfa",
-        "surface-container": "#f4ede7",
-        "on-primary-fixed": "#311309",
-        "surface-container-low": "#f9f2ec",
-        "on-primary-container": "#4e2a1f",
-        "on-error-container": "#93000a",
-        "inverse-primary": "#f2baa8",
-        "surface-tint": "#7f5446",
-        "surface-variant": "#e8e1db"
-        },
-        "borderRadius": {
-        "DEFAULT": "0.25rem",
-        "lg": "0.5rem",
-        "xl": "0.75rem",
-        "2xl": "1rem",
-        "full": "9999px"
-        },
-        "spacing": {
-        "unit": "8px",
-        "stack-lg": "32px",
-        "stack-sm": "8px",
-        "gutter": "24px",
-        "container-padding-mobile": "20px",
-        "stack-md": "16px",
-        "section-gap": "120px",
-        "container-padding-desktop": "64px"
-        },
-        "fontFamily": {
-        "headline-md": ["Playfair Display"],
-        "label-caps": ["DM Sans"],
-        "headline-lg": ["Playfair Display"],
-        "body-lg": ["DM Sans"],
-        "headline-lg-mobile": ["Playfair Display"],
-        "accent-italic": ["EB Garamond"],
-        "display-lg-mobile": ["Playfair Display"],
-        "body-md": ["DM Sans"],
-        "display-lg": ["Playfair Display"],
-        "mono": ["DM Mono"]
-        },
-        "fontSize": {
-        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "500" }],
-        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "700" }],
-        "headline-lg": ["40px", { "lineHeight": "1.2", "fontWeight": "600" }],
-        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
-        "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
-        "accent-italic": ["20px", { "lineHeight": "1.5", "fontWeight": "400" }],
-        "display-lg-mobile": ["40px", { "lineHeight": "1.2", "fontWeight": "700" }],
-        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
-        "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }]
-        },
-        "boxShadow": {
-        "level-1": "0px 10px 30px rgba(26,16,37,0.05)",
-        "level-2": "0px 20px 50px rgba(26,16,37,0.08)"
-        }
-        }
-        }
-        }
-    </script>
-    <style>
-        .input-focus-ring:focus-within {
-        border-color: #c49080 !important;
-        box-shadow: 0 0 0 4px rgba(196, 144, 128, 0.2);
-        opacity: 1 !important;
-        }
-    </style>
-</head>
-<body class="bg-background text-on-background min-h-screen flex font-body-md text-body-md antialiased selection:bg-primary-container selection:text-on-primary-container">
-    <!-- SideNavBar -->
-    <nav class="fixed left-0 top-0 h-full flex flex-col p-unit-stack-md bg-on-background dark:bg-on-background shadow-lg shadow-[0px_10px_30px_rgba(26,16,37,0.05)] h-full w-64 rounded-r-xl z-50">
-        <div class="mb-stack-lg px-unit-stack-md pt-unit-stack-md">
-            <h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed-dim tracking-tight">Liora Admin</h1>
-            <p class="font-label-caps text-label-caps text-surface-variant mt-1 opacity-80">Fashion Management</p>
-        </div>
-        <ul class="flex flex-col gap-2 flex-grow">
-            <li>
-                <a class="flex items-center gap-3 px-4 py-3 text-surface-variant dark:text-outline-variant hover:text-on-primary hover:bg-on-secondary-fixed-variant transition-all duration-250 ease-out rounded-xl" href="#">
-                    <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-                    <span class="font-body-md text-body-md">Overview</span>
-                </a>
-            </li>
-            <li>
-                <a class="flex items-center gap-3 px-4 py-3 text-surface-variant dark:text-outline-variant hover:text-on-primary hover:bg-on-secondary-fixed-variant transition-all duration-250 ease-out rounded-xl" href="#">
-                    <span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
-                    <span class="font-body-md text-body-md">Catalog</span>
-                </a>
-            </li>
-            <li>
-                <a class="flex items-center gap-3 px-4 py-3 text-on-primary bg-primary rounded-xl font-bold transition-all duration-250 ease-out shadow-level-1" href="#">
-                    <span class="material-symbols-outlined" data-icon="payments">payments</span>
-                    <span class="font-body-md text-body-md">Sales</span>
-                </a>
-            </li>
-            <li>
-                <a class="flex items-center gap-3 px-4 py-3 text-surface-variant dark:text-outline-variant hover:text-on-primary hover:bg-on-secondary-fixed-variant transition-all duration-250 ease-out rounded-xl" href="#">
-                    <span class="material-symbols-outlined" data-icon="group">group</span>
-                    <span class="font-body-md text-body-md">Customers</span>
-                </a>
-            </li>
-            <li>
-                <a class="flex items-center gap-3 px-4 py-3 text-surface-variant dark:text-outline-variant hover:text-on-primary hover:bg-on-secondary-fixed-variant transition-all duration-250 ease-out rounded-xl" href="#">
-                    <span class="material-symbols-outlined" data-icon="settings">settings</span>
-                    <span class="font-body-md text-body-md">Settings</span>
-                </a>
-            </li>
-        </ul>
-        <div class="mt-auto pt-stack-md border-t border-surface-variant/20">
-            <button class="w-full flex items-center justify-center gap-2 py-3 px-4 bg-primary-container text-on-primary-container rounded-xl font-body-md hover:opacity-90 transition-all duration-250 ease-out">
-                <span class="material-symbols-outlined text-[20px]" data-icon="add">add</span>
-                New Collection
-            </button>
-            <div class="mt-stack-md flex items-center gap-3 px-2">
-                <img alt="Liora Admin Profile" class="w-10 h-10 rounded-full object-cover border border-surface-variant/30" data-alt="A close-up portrait of a professional woman with a minimalist aesthetic, suitable for an administrative profile picture. Soft, natural lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDy-O4HP6YKgTspnLRDohGQmxPNWzIRnLDllEpDRa8yxx97_t37oofDjgMk0RX-n7gBhv8ZU_0LJLmM93I7Ovm9q1PrhV5D_P6wkMoIo6Y4ieHc_tortBR0bMNlLSdhc-eM8unC4CWmjdzWgN2wrxdnS_7O72nqL89MWqZ0E-5KGlRhzA3-7d2aEDWpGswtnyWYD4tlJs73wIg4LCFeZwgn0osVVaws8pjbDdwFk2XoxxFENK7QG-9VcYqeGGfUat3ZXZEOZdIM2Yl9" />
-                <div class="flex flex-col">
-                    <span class="font-body-md text-on-primary text-sm">Liora Admin</span>
-                    <span class="font-label-caps text-[10px] text-surface-variant">Profile</span>
-                </div>
-            </div>
-        </div>
-    </nav>
-    <!-- Main Content Canvas -->
-    <main class="flex-grow ml-64 flex flex-col min-h-screen">
-        <!-- TopAppBar -->
+<!-- TopAppBar -->
         <header class="flex justify-between items-center px-gutter py-unit-stack-md bg-surface border-b border-outline-variant/20 sticky top-0 z-40 w-full transition-colors duration-250">
             <div class="flex items-center gap-4 w-1/3">
                 <div class="relative w-full max-w-md input-focus-ring rounded-full bg-surface border border-primary/20 flex items-center px-4 py-2 transition-all duration-250">
@@ -200,7 +29,7 @@
             <!-- Page Header -->
             <div class="mb-stack-lg flex items-end justify-between">
                 <div>
-                    <a class="inline-flex items-center text-sm font-label-caps text-on-surface-variant hover:text-primary mb-2 transition-colors duration-250" href="#">
+                    <a class="inline-flex items-center text-sm font-label-caps text-on-surface-variant hover:text-primary mb-2 transition-colors duration-250" asp-action="Index">
                         <span class="material-symbols-outlined text-[16px] mr-1" data-icon="arrow_back">arrow_back</span>
                         Back to Orders
                     </a>
@@ -428,5 +257,3 @@
                 </div>
             </div>
         </div>
-    </main>
-</body></html>

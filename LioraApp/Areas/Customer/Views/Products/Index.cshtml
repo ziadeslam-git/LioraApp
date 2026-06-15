@@ -44,13 +44,15 @@
 <h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface">Shop All</h1>
 <p class="font-body-md text-body-md text-on-surface-variant mt-2">Showing @(Model.Products.Count()) results @(string.IsNullOrEmpty(Model.SearchQuery) ? "" : $"for '{Model.SearchQuery}'")</p>
 </div>
-<div class="flex items-center space-x-2">
-<span class="font-label-caps text-label-caps text-on-surface-variant">SORT BY:</span>
-<select aria-label="Sort products" class="bg-transparent border-none font-body-md text-body-md text-on-surface focus:ring-0 cursor-pointer pl-0 py-1" onchange="document.getElementById('sort-hidden').value = this.value; document.getElementById('filter-form').submit();">
-<option value="newest" selected="@(Model.Sort == "newest")">New Arrivals</option>
-<option value="price_asc" selected="@(Model.Sort == "price_asc")">Price: Low to High</option>
-<option value="price_desc" selected="@(Model.Sort == "price_desc")">Price: High to Low</option>
+<div class="flex items-center gap-2 bg-surface-container-low rounded-full px-4 py-2 border border-outline-variant/40 shadow-sm hover:border-primary/40 transition-all">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">sort</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant text-[11px]">SORT:</span>
+<select id="sort-select" aria-label="Sort products" class="bg-transparent border-none font-body-md text-body-md text-on-surface font-semibold focus:ring-0 cursor-pointer py-0 pr-6 pl-0" onchange="document.getElementById('sort-hidden').value = this.value; document.getElementById('filter-form').submit();">
+<option value="newest">New Arrivals</option>
+<option value="price_asc">Price: Low to High</option>
+<option value="price_desc">Price: High to Low</option>
 </select>
+<script>document.getElementById('sort-select').value = '@(Model.Sort ?? "newest")';</script>
 </div>
 </header>
 <!-- Grid -->

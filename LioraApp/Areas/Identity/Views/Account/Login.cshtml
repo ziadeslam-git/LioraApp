@@ -1,224 +1,132 @@
-﻿<!DOCTYPE html>
-
+@{ Layout = null; }
+@using LioraApp.ViewModels.Identity
+@model LoginVM
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Liora - Authentication</title>
-    <!-- Material Symbols -->
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <title>Login - Liora</title>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@100..900&family=Playfair+Display:wght@100..900&display=swap" rel="stylesheet" />
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <!-- Design System Theme Config -->
-    <script id="tailwind-config">
+    <script>
         tailwind.config = {
-        darkMode: "class",
-        theme: {
-        extend: {
-        "colors": {
-        "primary-fixed": "#ffdbd0",
-        "on-tertiary-fixed-variant": "#4b4450",
-        "outline-variant": "#d5c2bd",
-        "surface-dim": "#dfd9d3",
-        "secondary": "#665972",
-        "on-tertiary": "#ffffff",
-        "on-background": "#1e1b18",
-        "secondary-fixed-dim": "#d1c0de",
-        "surface-container-high": "#eee7e1",
-        "primary": "#7f5446",
-        "background": "#fff8f3",
-        "on-primary-fixed": "#311309",
-        "on-secondary-container": "#6c5f79",
-        "surface": "#fff8f3",
-        "outline": "#83746f",
-        "on-primary-container": "#4e2a1f",
-        "tertiary-fixed": "#eadfee",
-        "error-container": "#ffdad6",
-        "surface-container-low": "#f9f2ec",
-        "on-surface": "#1e1b18",
-        "on-error": "#ffffff",
-        "inverse-on-surface": "#f7efe9",
-        "on-secondary-fixed": "#21172c",
-        "secondary-container": "#eedcfa",
-        "on-primary-fixed-variant": "#643d30",
-        "surface-variant": "#e8e1db",
-        "error": "#ba1a1a",
-        "tertiary": "#635b68",
-        "primary-container": "#c49080",
-        "surface-container": "#f4ede7",
-        "on-tertiary-container": "#38313d",
-        "surface-container-highest": "#e8e1db",
-        "surface-container-lowest": "#ffffff",
-        "tertiary-container": "#a299a7",
-        "tertiary-fixed-dim": "#cec3d2",
-        "on-secondary-fixed-variant": "#4e425a",
-        "inverse-primary": "#f2baa8",
-        "surface-tint": "#7f5446",
-        "on-primary": "#ffffff",
-        "on-tertiary-fixed": "#1f1924",
-        "inverse-surface": "#33302c",
-        "surface-bright": "#fff8f3",
-        "primary-fixed-dim": "#f2baa8",
-        "on-secondary": "#ffffff",
-        "on-surface-variant": "#514440",
-        "on-error-container": "#93000a",
-        "secondary-fixed": "#eedcfa",
-        "void": "#0D0812",
-        "mist": "#83746f"
-        },
-        "borderRadius": {
-        "DEFAULT": "0.25rem",
-        "lg": "0.5rem",
-        "xl": "0.75rem",
-        "2xl": "1.5rem",
-        "full": "9999px"
-        },
-        "spacing": {
-        "stack-lg": "32px",
-        "section-gap": "120px",
-        "stack-sm": "8px",
-        "stack-md": "16px",
-        "container-padding-desktop": "64px",
-        "container-padding-mobile": "20px",
-        "gutter": "24px",
-        "unit": "8px"
-        },
-        "fontFamily": {
-        "display-lg-mobile": ["Playfair Display"],
-        "headline-lg": ["Playfair Display"],
-        "display-lg": ["Playfair Display"],
-        "headline-md": ["Playfair Display"],
-        "body-md": ["DM Sans"],
-        "body-lg": ["DM Sans"],
-        "label-caps": ["DM Sans"],
-        "headline-lg-mobile": ["Playfair Display"],
-        "accent-italic": ["EB Garamond"]
-        },
-        "fontSize": {
-        "display-lg-mobile": ["40px", {"lineHeight": "1.2", "fontWeight": "700"}],
-        "headline-lg": ["40px", {"lineHeight": "1.2", "fontWeight": "600"}],
-        "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "500"}],
-        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
-        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
-        "label-caps": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "700"}],
-        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
-        "accent-italic": ["20px", {"lineHeight": "1.5", "fontWeight": "400"}],
-        "logo-sm": ["24px", {"lineHeight": "1.2", "fontWeight": "400"}]
-        }
-        }
-        }
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7f5446",
+                        "background": "#fff8f3",
+                        "outline": "#83746f",
+                        "surface-container-high": "#eee7e1",
+                        "surface-container-lowest": "#ffffff",
+                        "mist": "#83746f",
+                        "error": "#ba1a1a",
+                        "primary-container": "#c49080",
+                    }
+                }
+            }
         }
     </script>
     <style>
-        /* Base styles mapped from Tokens */
-        body {
-        background-color: theme('colors.void');
-        color: theme('colors.surface');
+        body { font-family: 'DM Sans', sans-serif; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        @@keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
-
-        /* Smooth transitions for all interactive elements */
-        a, button, input {
-        transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* Custom Input Styling matching brand guidelines */
-        input:focus {
-        border-color: theme('colors.primary-container');
-        box-shadow: 0 0 8px theme('colors.primary-container');
-        outline: none;
-        }
+        .animate-in { animation: fadeInUp 0.55s cubic-bezier(0.4,0,0.2,1) forwards; }
     </style>
 </head>
-<body class="h-screen w-full overflow-hidden flex flex-col md:flex-row">
-    <!-- Minimal Top Bar (Absolute positioned for overlay effect on left side) -->
-    <header class="absolute top-0 left-0 w-full z-50 flex justify-between items-center px-container-padding-mobile md:px-container-padding-desktop py-stack-md pointer-events-none">
-        <a class="pointer-events-auto font-display-lg text-logo-sm italic text-primary-container hover:text-primary transition-colors duration-250 ease-out flex items-center gap-2" href="/">
-            liora
-        </a>
-    </header>
-    <!-- LEFT PANEL: Split-Screen Editorial Image (Hidden in centered mode or mobile) -->
-    <!-- Assuming default is split-screen, hidden on small screens -->
-    <div class="hidden lg:flex w-1/2 h-full relative flex-col justify-end p-container-padding-desktop pb-section-gap rounded-r-2xl overflow-hidden bg-on-background shadow-[0_0_50px_rgba(26,16,37,0.5)] z-10">
-        <!-- Background Image -->
-        <div class="absolute inset-0 w-full h-full bg-cover bg-center" data-alt="A striking editorial fashion photograph featuring a model in a dimly lit, luxurious setting. Soft, directional light highlights the fine textures of silk and lace garments. The color palette relies heavily on deep plums, stark blacks, and hints of warm rose gold to convey intimate luxury and empowered elegance. The mood is sophisticated and effortlessly graceful." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDg1V2zuJ__OTPcMIFObksxra0OHCR2FqIkXIf0_CyqZXN0Ymo-WcNIGnJV-uQD-y7X5DKwLrQxLtUue88SCw6m0KQtjSPzZ3DAJaixuS1UQy1qJX9YolJ589jpQYGNjHXMx-4VsNY79xzvBhKlOOEmiNqyE-olTvLpQhEkr2dX5wZv3NgfY8jjNeyfDM4WYOEvSUF6jxVtd9m9ImghI_tkE5wNXjTGKfVsbhQJPZzOUWlao7NgIf-Vsllbm3pHZwNhFV8RCiLaLNst');">
+<body class="bg-background min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white rounded-3xl shadow-[0_20px_60px_rgba(127,84,70,0.12)] w-full max-w-md p-8 md:p-12 border border-outline/10 animate-in">
+
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <a href="/" class="font-serif text-4xl italic text-primary tracking-tight">liora</a>
+            <p class="text-mist text-sm mt-2">Sign in to continue</p>
         </div>
-        <!-- Dark Overlay Gradient -->
-        <div class="absolute inset-0 w-full h-full bg-gradient-to-t from-void via-void/50 to-transparent"></div>
-        <!-- Quote Content -->
-        <div class="relative z-20 max-w-md">
-            <p class="font-accent-italic text-accent-italic text-primary-fixed mb-stack-md opacity-90 leading-relaxed">
-                "Elegance is the only beauty that never fades."
-            </p>
-            <p class="font-label-caps text-label-caps text-mist uppercase tracking-widest">
-                @ViewData["AuthQuoteAuthor"] ?? "The Collection"
-            </p>
-        </div>
-    </div>
-    <!-- RIGHT PANEL: Authentication Form Area -->
-    <div class="w-full lg:w-1/2 h-full flex flex-col justify-between items-center p-container-padding-mobile md:p-container-padding-desktop bg-void overflow-y-auto z-20">
-        <!-- Spacer for centering -->
-        <div class="flex-grow"></div>
-        <!-- Main Form Container -->
-        <main class="w-full max-w-[400px] flex flex-col gap-stack-lg animate-fade-in-up">
-            <!-- @RenderBody() Placeholder -->
-            <div class="w-full flex flex-col gap-stack-md">
-                <div class="text-center mb-stack-md">
-                    <h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-surface mb-unit">Welcome Back</h1>
-                    <p class="font-body-md text-body-md text-mist">Sign in to access your exclusive portfolio.</p>
-                </div>
-                <!-- Example Input Fields matching style guidelines -->
-                <div class="flex flex-col gap-unit">
-                    <label class="font-label-caps text-label-caps text-surface-dim uppercase">Email Address</label>
-                    <input class="w-full bg-surface-container-high/10 border border-outline/30 text-surface rounded-xl px-4 py-3 font-body-md placeholder-mist focus:border-primary-container focus:bg-surface-container-high/20 transition-all duration-250 ease-out" placeholder="name@example.com" type="email" />
-                </div>
-                <div class="flex flex-col gap-unit">
-                    <div class="flex justify-between items-center">
-                        <label class="font-label-caps text-label-caps text-surface-dim uppercase">Password</label>
-                        <a class="font-label-caps text-label-caps text-primary-container hover:text-primary-fixed transition-colors" href="#">Forgot?</a>
-                    </div>
-                    <input class="w-full bg-surface-container-high/10 border border-outline/30 text-surface rounded-xl px-4 py-3 font-body-md placeholder-mist focus:border-primary-container focus:bg-surface-container-high/20 transition-all duration-250 ease-out" placeholder="••••••••" type="password" />
-                </div>
-                <!-- Example Button matching style guidelines -->
-                <button class="w-full bg-primary-container text-void font-label-caps text-label-caps py-4 rounded-full hover:bg-primary-fixed hover:scale-[0.98] transition-all duration-250 shadow-[0_10px_30px_rgba(196,144,128,0.15)] mt-stack-sm">
-                    Sign In
-                </button>
+
+        <!-- Error Banner -->
+        @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ContainsKey(string.Empty))
+        {
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 text-sm flex items-start gap-2">
+                <span class="material-symbols-outlined text-[18px] mt-0.5 flex-shrink-0">error</span>
+                <div asp-validation-summary="ModelOnly"></div>
             </div>
-        </main>
-        <!-- Spacer for centering -->
-        <div class="flex-grow"></div>
-        <!-- Footer -->
-        <footer class="w-full flex justify-between items-center pt-stack-lg border-t border-outline/10 font-body-md text-label-caps text-mist">
-            <span class="font-label-caps">© liora 2024</span>
-            <div class="flex gap-stack-md font-label-caps">
-                <a class="hover:text-primary-container transition-colors" href="/privacy">Privacy</a>
-                <a class="hover:text-primary-container transition-colors" href="/terms">Terms</a>
-            </div>
-        </footer>
-    </div>
-    <!--
-        Note: To support Centered Mode (@ViewData["LayoutMode"] == "centered"),
-        the server-side code would need to conditionally render the LEFT PANEL
-        and adjust the wrapper classes of the RIGHT PANEL to center the form within a card.
-        This HTML demonstrates the split-screen view as the primary, complex layout requested.
-    -->
-    <style>
-        @@keyframes fadeInUp {
-        from {
-        opacity: 0;
-        transform: translateY(20px);
         }
 
-        to {
-        opacity: 1;
-        transform: translateY(0);
-        }
+        <!-- Success / Info Toasts from TempData -->
+        @if (TempData["success"] != null)
+        {
+            <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl mb-6 text-sm flex items-start gap-2">
+                <span class="material-symbols-outlined text-[18px] mt-0.5 flex-shrink-0">check_circle</span>
+                <span>@TempData["success"]</span>
+            </div>
         }
 
-        .animate-fade-in-up {
-        animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-    </style>
-</body></html>
+        <form asp-area="Identity" asp-controller="Account" asp-action="Login" method="post" class="flex flex-col gap-5">
+
+            <!-- Email -->
+            <div class="flex flex-col gap-1.5">
+                <label asp-for="Email" class="text-xs font-bold tracking-widest text-mist uppercase">Email Address</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-mist/60 text-[20px]">mail</span>
+                    <input asp-for="Email" autocomplete="email"
+                           class="w-full bg-stone-50 border border-stone-200 text-stone-800 rounded-xl pl-10 pr-4 py-3.5 text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-stone-400"
+                           placeholder="you@example.com" />
+                </div>
+                <span asp-validation-for="Email" class="text-red-500 text-xs"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="flex flex-col gap-1.5">
+                <label asp-for="Password" class="text-xs font-bold tracking-widest text-mist uppercase">Password</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-mist/60 text-[20px]">lock</span>
+                    <input asp-for="Password" autocomplete="current-password"
+                           class="w-full bg-stone-50 border border-stone-200 text-stone-800 rounded-xl pl-10 pr-4 py-3.5 text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-stone-400"
+                           placeholder="••••••••" />
+                </div>
+                <span asp-validation-for="Password" class="text-red-500 text-xs"></span>
+            </div>
+
+            <!-- Remember Me -->
+            <div class="flex items-center gap-2">
+                <input asp-for="RememberMe" class="w-4 h-4 rounded border-stone-300 text-primary focus:ring-primary/30" />
+                <label asp-for="RememberMe" class="text-sm text-mist cursor-pointer select-none">Keep me signed in</label>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit"
+                    class="w-full bg-primary text-white font-bold tracking-widest text-xs uppercase py-4 rounded-xl hover:opacity-90 active:scale-[0.98] transition-all duration-200 shadow-[0_6px_20px_rgba(127,84,70,0.25)] mt-1">
+                Sign In
+            </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="flex items-center gap-3 my-6">
+            <div class="flex-1 h-px bg-stone-200"></div>
+            <span class="text-xs font-bold tracking-widest text-mist uppercase">Or</span>
+            <div class="flex-1 h-px bg-stone-200"></div>
+        </div>
+
+        <!-- Google -->
+        <form asp-area="Identity" asp-controller="ExternalLogin" asp-action="ExternalLogin" method="post">
+            <button type="submit" name="provider" value="Google"
+                    class="w-full bg-white border border-stone-200 text-stone-700 flex items-center justify-center gap-3 py-3.5 rounded-xl hover:bg-stone-50 active:scale-[0.98] transition-all font-medium text-sm shadow-sm">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5" />
+                Continue with Google
+            </button>
+        </form>
+
+        <!-- Sign Up Link -->
+        <p class="text-center text-sm text-mist mt-7">
+            Don't have an account?
+            <a href="@Url.Action("Register", "Account", new { area = "Identity" })" class="text-primary font-bold hover:underline">Sign Up</a>
+        </p>
+    </div>
+
+</body>
+</html>

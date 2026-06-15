@@ -1,300 +1,154 @@
+@{ Layout = null; }
+@using LioraApp.ViewModels.Identity
+@model RegisterVM
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Register - liora</title>
+    <title>Register - Liora</title>
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@100..900&family=Playfair+Display:wght@100..900&display=swap" rel="stylesheet" />
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com" rel="preconnect" />
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
     <script id="tailwind-config">
         tailwind.config = {
-        darkMode: "class",
-        theme: {
-        extend: {
-        "colors": {
-        "primary-fixed": "#ffdbd0",
-        "on-tertiary-fixed-variant": "#4b4450",
-        "outline-variant": "#d5c2bd",
-        "surface-dim": "#dfd9d3",
-        "secondary": "#665972",
-        "on-tertiary": "#ffffff",
-        "on-background": "#1e1b18",
-        "secondary-fixed-dim": "#d1c0de",
-        "surface-container-high": "#eee7e1",
-        "primary": "#7f5446",
-        "background": "#fff8f3",
-        "on-primary-fixed": "#311309",
-        "on-secondary-container": "#6c5f79",
-        "surface": "#fff8f3",
-        "outline": "#83746f",
-        "on-primary-container": "#4e2a1f",
-        "tertiary-fixed": "#eadfee",
-        "error-container": "#ffdad6",
-        "surface-container-low": "#f9f2ec",
-        "on-surface": "#1e1b18",
-        "on-error": "#ffffff",
-        "inverse-on-surface": "#f7efe9",
-        "on-secondary-fixed": "#21172c",
-        "secondary-container": "#eedcfa",
-        "on-primary-fixed-variant": "#643d30",
-        "surface-variant": "#e8e1db",
-        "error": "#ba1a1a",
-        "tertiary": "#635b68",
-        "primary-container": "#c49080",
-        "surface-container": "#f4ede7",
-        "on-tertiary-container": "#38313d",
-        "surface-container-highest": "#e8e1db",
-        "surface-container-lowest": "#ffffff",
-        "tertiary-container": "#a299a7",
-        "tertiary-fixed-dim": "#cec3d2",
-        "on-secondary-fixed-variant": "#4e425a",
-        "inverse-primary": "#f2baa8",
-        "surface-tint": "#7f5446",
-        "on-primary": "#ffffff",
-        "on-tertiary-fixed": "#1f1924",
-        "inverse-surface": "#33302c",
-        "surface-bright": "#fff8f3",
-        "primary-fixed-dim": "#f2baa8",
-        "on-secondary": "#ffffff",
-        "on-surface-variant": "#514440",
-        "on-error-container": "#93000a",
-        "secondary-fixed": "#eedcfa"
-        },
-        "borderRadius": {
-        "DEFAULT": "0.25rem",
-        "lg": "0.5rem",
-        "xl": "0.75rem",
-        "full": "9999px"
-        },
-        "spacing": {
-        "stack-lg": "32px",
-        "section-gap": "120px",
-        "stack-sm": "8px",
-        "stack-md": "16px",
-        "container-padding-desktop": "64px",
-        "container-padding-mobile": "20px",
-        "gutter": "24px",
-        "unit": "8px"
-        },
-        "fontFamily": {
-        "display-lg-mobile": [
-        "Playfair Display"
-        ],
-        "headline-lg": [
-        "Playfair Display"
-        ],
-        "display-lg": [
-        "Playfair Display"
-        ],
-        "headline-md": [
-        "Playfair Display"
-        ],
-        "body-md": [
-        "DM Sans"
-        ],
-        "body-lg": [
-        "DM Sans"
-        ],
-        "label-caps": [
-        "DM Sans"
-        ],
-        "headline-lg-mobile": [
-        "Playfair Display"
-        ],
-        "accent-italic": [
-        "EB Garamond"
-        ]
-        },
-        "fontSize": {
-        "display-lg-mobile": [
-        "40px",
-        {
-        "lineHeight": "1.2",
-        "fontWeight": "700"
-        }
-        ],
-        "headline-lg": [
-        "40px",
-        {
-        "lineHeight": "1.2",
-        "fontWeight": "600"
-        }
-        ],
-        "display-lg": [
-        "64px",
-        {
-        "lineHeight": "1.1",
-        "letterSpacing": "-0.02em",
-        "fontWeight": "700"
-        }
-        ],
-        "headline-md": [
-        "32px",
-        {
-        "lineHeight": "1.3",
-        "fontWeight": "500"
-        }
-        ],
-        "body-md": [
-        "16px",
-        {
-        "lineHeight": "1.6",
-        "fontWeight": "400"
-        }
-        ],
-        "body-lg": [
-        "18px",
-        {
-        "lineHeight": "1.6",
-        "fontWeight": "400"
-        }
-        ],
-        "label-caps": [
-        "12px",
-        {
-        "lineHeight": "1.2",
-        "letterSpacing": "0.1em",
-        "fontWeight": "700"
-        }
-        ],
-        "headline-lg-mobile": [
-        "32px",
-        {
-        "lineHeight": "1.2",
-        "fontWeight": "600"
-        }
-        ],
-        "accent-italic": [
-        "20px",
-        {
-        "lineHeight": "1.5",
-        "fontWeight": "400"
-        }
-        ]
-        }
-        },
-        },
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#ffdbd0",
+                        "primary": "#7f5446",
+                        "background": "#fff8f3",
+                        "surface": "#fff8f3",
+                        "outline": "#83746f",
+                        "surface-container-high": "#eee7e1",
+                        "surface-container-lowest": "#ffffff",
+                        "mist": "#83746f",
+                        "error": "#ba1a1a",
+                        "primary-container": "#c49080",
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Playfair Display"],
+                        "body-md": ["DM Sans"],
+                        "label-caps": ["DM Sans"],
+                    }
+                }
+            }
         }
     </script>
     <style>
-        /* Ambient Shadows */
-        .shadow-level-1 {
-        box-shadow: 0px 10px 30px rgba(26, 16, 37, 0.05);
+        body { font-family: 'DM Sans', sans-serif; }
+        .font-headline-lg { font-family: 'Playfair Display', serif; }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
-
-        .shadow-level-2 {
-        box-shadow: 0px 20px 50px rgba(26, 16, 37, 0.08);
-        }
-        /* Custom Input Focus Glow */
-        .input-glow:focus-within {
-        box-shadow: 0 0 0 4px rgba(196, 144, 128, 0.2);
-        border-color: #c49080;
+        @@keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
-<body class="bg-background text-on-background font-body-md text-body-md antialiased h-screen w-full overflow-hidden flex flex-col md:flex-row">
-    <!-- Top Navigation Placeholder (Hidden for transactional page per rules, only a simplified brand header visible on mobile) -->
-    <header class="md:hidden flex justify-between items-center px-container-padding-mobile py-stack-md w-full z-50 fixed top-0 bg-transparent">
-        <a class="font-display-lg-mobile text-display-lg-mobile text-primary tracking-tighter" href="#">ELÉGANCE</a>
-    </header>
-    <!-- Left Screen: AuthQuote (Hidden on Mobile) -->
-    <div class="hidden md:flex w-1/2 h-full bg-on-secondary-fixed relative items-center justify-center p-container-padding-desktop overflow-hidden">
-        <!-- Background Image overlaying dark void -->
-        <div class="absolute inset-0 w-full h-full opacity-30 bg-cover bg-center" data-alt="A moody, high-fashion editorial portrait of a woman draped in delicate silk, bathed in soft, ethereal lighting against a dark void. The scene exudes luxury, empowerment, and intimate elegance, perfectly complementing a sophisticated, modern Egyptian craftsmanship brand identity. The palette is rich with deep plums, soft ivories, and subtle rose gold highlights, embodying effortless grace." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD1QE0cMwKp41TzYC3uLby438OytRKfsu1KsNkfPjZwsOlQA7kvnfYdAgWkCYVwtrMWZ3gs1VT5i4ChLmbRILOeX-_iHqQifJk3Pt5JtarjDX0he-mmXLLhBYCxuy7t118kCHUngJYNFPgfKimIRAXvq1GHoZQCueNrbEp1h_sKuaONJqC7ZnCzxXPc6suY1XPiCLZzxkmRUW_B9vijrPttGY9TuW5RFkRPFsQUfHD2Z_CkLD62pw9Ulo4Jn_oqiY7fqdD7B627CCPt');">
+<body class="bg-background min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-surface-container-lowest shadow-[0_20px_40px_rgba(127,84,70,0.08)] rounded-[2rem] w-full max-w-md p-8 md:p-12 relative overflow-hidden animate-fade-in-up border border-outline/10 mt-10 mb-10">
+        <!-- Decorative corner highlight -->
+        <div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/10 rounded-bl-full pointer-events-none"></div>
+
+        <div class="text-center mb-8 relative z-10">
+            <h1 class="font-headline-lg text-3xl md:text-4xl text-primary mb-2">Create Account</h1>
+            <p class="text-mist text-sm md:text-base">Join the exclusive Liora portfolio</p>
         </div>
-        <div class="relative z-10 text-center max-w-lg">
-            <a class="font-display-lg text-display-lg text-primary-fixed tracking-tighter mb-section-gap block" href="#">ELÉGANCE</a>
-            <p class="font-headline-lg text-headline-lg text-surface-container-low mb-stack-md">"Your journey to confidence starts here."</p>
-            <p class="font-accent-italic text-accent-italic text-surface-variant opacity-80">Discover modern Egyptian craftsmanship.</p>
+
+        @if (!ViewData.ModelState.IsValid && ViewData.ModelState[string.Empty] != null)
+        {
+            <div class="bg-error/10 border border-error/20 text-error px-4 py-3 rounded-xl mb-6 text-sm flex items-start gap-2">
+                <span class="material-symbols-outlined text-[20px]">error</span>
+                <div asp-validation-summary="ModelOnly"></div>
+            </div>
+        }
+
+        <form asp-area="Identity" asp-controller="Account" asp-action="Register" method="post" class="flex flex-col gap-4 relative z-10">
+            <!-- FullName -->
+            <div class="flex flex-col gap-1.5">
+                <label asp-for="FullName" class="text-xs font-bold tracking-widest text-mist uppercase">Full Name</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-mist/70">person</span>
+                    <input asp-for="FullName" class="w-full bg-surface-container-high/30 border border-outline/20 text-primary rounded-xl pl-11 pr-4 py-3.5 text-sm placeholder-mist/50 focus:border-primary focus:ring-1 focus:ring-primary focus:bg-surface-container-lowest transition-all" placeholder="Jane Doe" />
+                </div>
+                <span asp-validation-for="FullName" class="text-error text-xs mt-1 block"></span>
+            </div>
+
+            <!-- Email -->
+            <div class="flex flex-col gap-1.5">
+                <label asp-for="Email" class="text-xs font-bold tracking-widest text-mist uppercase"></label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-mist/70">mail</span>
+                    <input asp-for="Email" class="w-full bg-surface-container-high/30 border border-outline/20 text-primary rounded-xl pl-11 pr-4 py-3.5 text-sm placeholder-mist/50 focus:border-primary focus:ring-1 focus:ring-primary focus:bg-surface-container-lowest transition-all" placeholder="name@example.com" />
+                </div>
+                <span asp-validation-for="Email" class="text-error text-xs mt-1 block"></span>
+            </div>
+
+            <!-- PhoneNumber -->
+            <div class="flex flex-col gap-1.5">
+                <label asp-for="PhoneNumber" class="text-xs font-bold tracking-widest text-mist uppercase">Phone Number</label>
+                <div class="relative flex">
+                    <!-- Hardcoded EG for now, but bindable logic supports it -->
+                    <input type="hidden" asp-for="PhoneCountryIso2" value="EG" />
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-mist/70 z-10">call</span>
+                    <input asp-for="PhoneNumber" class="w-full bg-surface-container-high/30 border border-outline/20 text-primary rounded-xl pl-11 pr-4 py-3.5 text-sm placeholder-mist/50 focus:border-primary focus:ring-1 focus:ring-primary focus:bg-surface-container-lowest transition-all" placeholder="01234567890" />
+                </div>
+                <span asp-validation-for="PhoneNumber" class="text-error text-xs mt-1 block"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="flex flex-col gap-1.5">
+                <label asp-for="Password" class="text-xs font-bold tracking-widest text-mist uppercase"></label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-mist/70">lock</span>
+                    <input asp-for="Password" class="w-full bg-surface-container-high/30 border border-outline/20 text-primary rounded-xl pl-11 pr-4 py-3.5 text-sm placeholder-mist/50 focus:border-primary focus:ring-1 focus:ring-primary focus:bg-surface-container-lowest transition-all" placeholder="••••••••" />
+                </div>
+                <span asp-validation-for="Password" class="text-error text-xs mt-1 block"></span>
+            </div>
+
+            <!-- ConfirmPassword -->
+            <div class="flex flex-col gap-1.5">
+                <label asp-for="ConfirmPassword" class="text-xs font-bold tracking-widest text-mist uppercase">Confirm Password</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-mist/70">lock_reset</span>
+                    <input asp-for="ConfirmPassword" class="w-full bg-surface-container-high/30 border border-outline/20 text-primary rounded-xl pl-11 pr-4 py-3.5 text-sm placeholder-mist/50 focus:border-primary focus:ring-1 focus:ring-primary focus:bg-surface-container-lowest transition-all" placeholder="••••••••" />
+                </div>
+                <span asp-validation-for="ConfirmPassword" class="text-error text-xs mt-1 block"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="w-full bg-primary text-white font-bold tracking-wider text-sm uppercase py-4 rounded-xl hover:bg-primary-fixed hover:text-primary-fixed-variant transition-all duration-300 shadow-[0_8px_20px_rgba(127,84,70,0.2)] hover:shadow-[0_10px_25px_rgba(127,84,70,0.3)] mt-2">
+                Sign Up
+            </button>
+        </form>
+
+        <div class="relative flex py-6 items-center">
+            <div class="flex-grow border-t border-outline/20"></div>
+            <span class="flex-shrink-0 mx-4 text-mist text-xs font-bold tracking-widest uppercase">Or</span>
+            <div class="flex-grow border-t border-outline/20"></div>
+        </div>
+
+        <!-- Google Sign In -->
+        <form asp-area="Identity" asp-controller="ExternalLogin" asp-action="ExternalLogin" method="post" class="w-full relative z-10">
+            <button type="submit" name="provider" value="Google" class="w-full bg-surface-container-lowest border border-outline/20 text-primary flex items-center justify-center gap-3 py-3.5 rounded-xl hover:bg-surface-container-high/50 transition-all font-medium text-sm">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo" class="w-5 h-5" />
+                Continue with Google
+            </button>
+        </form>
+
+        <div class="text-center mt-8 relative z-10">
+            <p class="text-sm text-mist">
+                Already have an account? 
+                <a href="@Url.Action("Login", "Account", new { area = "Identity" })" class="text-primary font-bold hover:underline transition-all">Sign In</a>
+            </p>
         </div>
     </div>
-    <!-- Right Screen: Registration Form -->
-    <div class="w-full md:w-1/2 h-full bg-surface flex items-center justify-center p-container-padding-mobile md:p-container-padding-desktop overflow-y-auto">
-        <div class="w-full max-w-md mt-16 md:mt-0">
-            <!-- Form Header -->
-            <div class="mb-stack-lg text-center md:text-left">
-                <span class="font-label-caps text-label-caps text-secondary uppercase tracking-[0.1em] block mb-stack-sm">JOIN liora</span>
-                <h1 class="font-headline-md text-headline-md text-on-surface mb-stack-sm">Create your account</h1>
-                <p class="font-body-md text-body-md text-on-surface-variant">Experience effortless grace and premium quality.</p>
-            </div>
-            <!-- Registration Form -->
-            <form action="#" class="space-y-stack-md" method="POST">
-                <!-- Row 1: First & Last Name -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-stack-md">
-                    <div class="flex flex-col space-y-unit">
-                        <label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-[0.1em]" for="firstName">First Name</label>
-                        <div class="relative rounded-xl overflow-hidden input-glow border border-outline-variant/50 transition-all duration-250 ease-out bg-surface-container-lowest">
-                            <input class="w-full bg-transparent border-none text-on-surface py-3 px-4 focus:ring-0 font-body-md" id="firstName" name="firstName" placeholder="Jane" required="" type="text" />
-                        </div>
-                    </div>
-                    <div class="flex flex-col space-y-unit">
-                        <label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-[0.1em]" for="lastName">Last Name</label>
-                        <div class="relative rounded-xl overflow-hidden input-glow border border-outline-variant/50 transition-all duration-250 ease-out bg-surface-container-lowest">
-                            <input class="w-full bg-transparent border-none text-on-surface py-3 px-4 focus:ring-0 font-body-md" id="lastName" name="lastName" placeholder="Doe" required="" type="text" />
-                        </div>
-                    </div>
-                </div>
-                <!-- Row 2: Email -->
-                <div class="flex flex-col space-y-unit">
-                    <label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-[0.1em]" for="email">Email</label>
-                    <div class="relative rounded-xl overflow-hidden input-glow border border-outline-variant/50 transition-all duration-250 ease-out bg-surface-container-lowest">
-                        <input class="w-full bg-transparent border-none text-on-surface py-3 px-4 focus:ring-0 font-body-md" id="email" name="email" placeholder="jane@example.com" required="" type="email" />
-                    </div>
-                </div>
-                <!-- Row 3: Password -->
-                <div class="flex flex-col space-y-unit">
-                    <label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-[0.1em]" for="password">Password</label>
-                    <div class="relative rounded-xl overflow-hidden input-glow border border-outline-variant/50 transition-all duration-250 ease-out bg-surface-container-lowest flex items-center">
-                        <input class="w-full bg-transparent border-none text-on-surface py-3 px-4 focus:ring-0 font-body-md" id="password" name="password" placeholder="••••••••" required="" type="password" />
-                        <button aria-label="Toggle password visibility" class="absolute right-4 text-outline hover:text-primary transition-colors duration-250 focus:outline-none" type="button">
-                            <span class="material-symbols-outlined" data-icon="visibility">visibility</span>
-                        </button>
-                    </div>
-                </div>
-                <!-- Password Strength Meter (4 segments) -->
-                <div class="flex space-x-2 mt-unit">
-                    <div class="h-1 w-1/4 rounded-full bg-primary-container"></div>
-                    <div class="h-1 w-1/4 rounded-full bg-surface-variant"></div>
-                    <div class="h-1 w-1/4 rounded-full bg-surface-variant"></div>
-                    <div class="h-1 w-1/4 rounded-full bg-surface-variant"></div>
-                </div>
-                <!-- Row 4: Confirm Password -->
-                <div class="flex flex-col space-y-unit pt-stack-sm">
-                    <label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-[0.1em]" for="confirmPassword">Confirm Password</label>
-                    <div class="relative rounded-xl overflow-hidden input-glow border border-outline-variant/50 transition-all duration-250 ease-out bg-surface-container-lowest">
-                        <input class="w-full bg-transparent border-none text-on-surface py-3 px-4 focus:ring-0 font-body-md" id="confirmPassword" name="confirmPassword" placeholder="••••••••" required="" type="password" />
-                    </div>
-                </div>
-                <!-- Terms Checkbox -->
-                <div class="flex items-start py-stack-sm">
-                    <div class="flex items-center h-5">
-                        <input aria-describedby="terms-description" class="w-5 h-5 bg-surface-container-lowest border-outline-variant rounded-md text-primary focus:ring-primary focus:ring-offset-surface" id="terms" name="terms" required="" type="checkbox" />
-                    </div>
-                    <div class="ml-3 text-sm">
-                        <label class="font-body-md text-body-md text-on-surface-variant" for="terms">
-                            I agree to the <a class="text-primary hover:underline transition-all duration-250" href="#">Terms</a> &amp; <a class="text-primary hover:underline transition-all duration-250" href="#">Privacy Policy</a>
-                        </label>
-                    </div>
-                </div>
-                <!-- Submit Button -->
-                <button class="w-full bg-primary-container text-on-primary py-4 px-6 rounded-full font-label-caps text-label-caps uppercase tracking-[0.1em] hover:opacity-90 active:scale-95 transition-all duration-250 ease-out shadow-level-1 hover:shadow-level-2 mt-stack-md" type="submit">
-                    CREATE MY ACCOUNT
-                </button>
-            </form>
-            <!-- Footer Link -->
-            <div class="mt-stack-lg text-center">
-                <p class="font-body-md text-body-md text-on-surface-variant">
-                    Already have an account?
-                    <a class="text-primary hover:underline transition-all duration-250 font-medium inline-flex items-center" href="#">
-                        Sign in <span class="material-symbols-outlined ml-1 text-sm" data-icon="arrow_forward">arrow_forward</span>
-                    </a>
-                </p>
-            </div>
-        </div>
-    </div>
-</body></html>
+
+</body>
+</html>

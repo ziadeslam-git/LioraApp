@@ -1,160 +1,67 @@
-<!DOCTYPE html>
+@model LioraApp.ViewModels.Admin.CategoryDeleteVM
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Liora - Delete Category";
+}
 
-<html class="light" lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Liora - Delete Category</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;700&amp;family=Playfair+Display:wght@500;600;700&amp;family=EB+Garamond:ital@1&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    <script id="tailwind-config">
-        tailwind.config = {
-        darkMode: "class",
-        theme: {
-        extend: {
-        "colors": {
-        "on-secondary-container": "#6c5f79",
-        "on-primary": "#ffffff",
-        "on-surface-variant": "#514440",
-        "on-secondary-fixed-variant": "#4e425a",
-        "secondary-container": "#eedcfa",
-        "on-surface": "#1e1b18",
-        "inverse-on-surface": "#f7efe9",
-        "error": "#ba1a1a",
-        "surface-container": "#f4ede7",
-        "on-primary-fixed-variant": "#643d30",
-        "primary-fixed-dim": "#f2baa8",
-        "inverse-surface": "#33302c",
-        "secondary": "#665972",
-        "tertiary-fixed": "#eadfee",
-        "outline": "#83746f",
-        "surface": "#fff8f3",
-        "on-error-container": "#93000a",
-        "on-tertiary": "#ffffff",
-        "on-primary-container": "#4e2a1f",
-        "tertiary-container": "#a299a7",
-        "surface-variant": "#e8e1db",
-        "on-background": "#1e1b18",
-        "secondary-fixed": "#eedcfa",
-        "on-tertiary-fixed-variant": "#4b4450",
-        "surface-container-low": "#f9f2ec",
-        "outline-variant": "#d5c2bd",
-        "background": "#fff8f3",
-        "surface-dim": "#dfd9d3",
-        "on-secondary": "#ffffff",
-        "on-tertiary-fixed": "#1f1924",
-        "primary-container": "#c49080",
-        "surface-container-high": "#eee7e1",
-        "surface-bright": "#fff8f3",
-        "tertiary-fixed-dim": "#cec3d2",
-        "on-error": "#ffffff",
-        "primary-fixed": "#ffdbd0",
-        "inverse-primary": "#f2baa8",
-        "error-container": "#ffdad6",
-        "primary": "#7f5446",
-        "on-secondary-fixed": "#21172c",
-        "on-primary-fixed": "#311309",
-        "surface-tint": "#7f5446",
-        "surface-container-lowest": "#ffffff",
-        "secondary-fixed-dim": "#d1c0de",
-        "on-tertiary-container": "#38313d",
-        "tertiary": "#635b68",
-        "surface-container-highest": "#e8e1db"
-        },
-        "borderRadius": {
-        "DEFAULT": "0.25rem",
-        "lg": "0.5rem",
-        "xl": "0.75rem",
-        "full": "9999px"
-        },
-        "spacing": {
-        "stack-md": "16px",
-        "section-gap": "120px",
-        "unit": "8px",
-        "container-padding-mobile": "20px",
-        "container-padding-desktop": "64px",
-        "stack-sm": "8px",
-        "gutter": "24px",
-        "stack-lg": "32px"
-        },
-        "fontFamily": {
-        "display-lg-mobile": ["Playfair Display"],
-        "headline-lg-mobile": ["Playfair Display"],
-        "display-lg": ["Playfair Display"],
-        "body-lg": ["DM Sans"],
-        "accent-italic": ["EB Garamond"],
-        "label-caps": ["DM Sans"],
-        "headline-md": ["Playfair Display"],
-        "body-md": ["DM Sans"],
-        "headline-lg": ["Playfair Display"]
-        },
-        "fontSize": {
-        "display-lg-mobile": ["40px", {"lineHeight": "1.2", "fontWeight": "700"}],
-        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
-        "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
-        "accent-italic": ["20px", {"lineHeight": "1.5", "fontWeight": "400"}],
-        "label-caps": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "700"}],
-        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "500"}],
-        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
-        "headline-lg": ["40px", {"lineHeight": "1.2", "fontWeight": "600"}]
-        }
-        }
-        }
-        }
-    </script>
-    <style>
-        .material-symbols-outlined {
-        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
+@section Styles {
+<style>
+    .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
 
-        .material-symbols-outlined.fill {
-        font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-    </style>
-</head>
-<body class="bg-background text-on-background font-body-md text-body-md h-screen flex overflow-hidden">
-    <!-- Blurred Background Context (Categories List Simulation) -->
-    <div class="absolute inset-0 bg-surface blur-md opacity-80 z-0 select-none pointer-events-none p-container-padding-desktop">
-        <div class="max-w-7xl mx-auto flex flex-col gap-stack-lg">
-            <div class="flex justify-between items-center">
-                <h1 class="font-headline-lg text-headline-lg">Categories</h1>
-                <div class="w-32 h-10 bg-primary-container rounded-full"></div>
-            </div>
-            <div class="grid grid-cols-3 gap-gutter">
-                <div class="h-64 bg-surface-container rounded-xl shadow-[0px_10px_30px_rgba(26,16,37,0.05)]"></div>
-                <div class="h-64 bg-surface-container rounded-xl shadow-[0px_10px_30px_rgba(26,16,37,0.05)]"></div>
-                <div class="h-64 bg-surface-container rounded-xl shadow-[0px_10px_30px_rgba(26,16,37,0.05)]"></div>
-            </div>
+    .material-symbols-outlined.fill {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+</style>
+}
+
+<!-- Blurred Background Context (Categories List Simulation) -->
+<div class="absolute inset-0 bg-surface blur-md opacity-80 z-0 select-none pointer-events-none p-container-padding-desktop">
+    <div class="max-w-7xl mx-auto flex flex-col gap-stack-lg">
+        <div class="flex justify-between items-center">
+            <h1 class="font-headline-lg text-headline-lg">Categories</h1>
+            <div class="w-32 h-10 bg-primary-container rounded-full"></div>
+        </div>
+        <div class="grid grid-cols-3 gap-gutter">
+            <div class="h-64 bg-surface-container rounded-xl shadow-[0px_10px_30px_rgba(26,16,37,0.05)]"></div>
+            <div class="h-64 bg-surface-container rounded-xl shadow-[0px_10px_30px_rgba(26,16,37,0.05)]"></div>
+            <div class="h-64 bg-surface-container rounded-xl shadow-[0px_10px_30px_rgba(26,16,37,0.05)]"></div>
         </div>
     </div>
-    <!-- Modal Overlay -->
-    <div class="absolute inset-0 z-50 flex items-center justify-center bg-[#1a1025]/30 backdrop-blur-sm p-container-padding-mobile">
-        <!-- Modal Container -->
-        <div class="bg-surface w-full max-w-md rounded-[24px] shadow-[0px_20px_50px_rgba(26,16,37,0.08)] p-8 flex flex-col gap-6 transform transition-all scale-100 opacity-100">
-            <!-- Icon & Header -->
-            <div class="flex flex-col items-center text-center gap-4">
-                <div class="w-16 h-16 rounded-full bg-error-container flex items-center justify-center">
-                    <span class="material-symbols-outlined fill text-error text-3xl" data-icon="warning">warning</span>
-                </div>
-                <h2 class="font-headline-md text-headline-md text-on-surface">Delete Category?</h2>
+</div>
+<!-- Modal Overlay -->
+<div class="absolute inset-0 z-50 flex items-center justify-center bg-[#1a1025]/30 backdrop-blur-sm p-container-padding-mobile">
+    <!-- Modal Container -->
+    <div class="bg-surface w-full max-w-md rounded-[24px] shadow-[0px_20px_50px_rgba(26,16,37,0.08)] p-8 flex flex-col gap-6 transform transition-all scale-100 opacity-100">
+        <!-- Icon & Header -->
+        <div class="flex flex-col items-center text-center gap-4">
+            <div class="w-16 h-16 rounded-full bg-error-container flex items-center justify-center">
+                <span class="material-symbols-outlined fill text-error text-3xl" data-icon="warning">warning</span>
             </div>
-            <!-- Body -->
-            <div class="text-center font-body-lg text-body-lg text-on-surface-variant">
-                <p>Are you sure you want to delete <strong>'Evening Wear'</strong>?</p>
-                <p class="mt-2 text-error">This will unassign 56 products and cannot be undone.</p>
-            </div>
-            <!-- Actions -->
-            <div class="flex flex-col sm:flex-row gap-4 mt-4">
-                <button class="flex-1 py-3 px-6 rounded-full border border-outline text-on-surface font-label-caps text-label-caps hover:bg-surface-variant transition-all duration-250 ease-out active:scale-98">
-                    Cancel
-                </button>
-                <button class="flex-1 py-3 px-6 rounded-full bg-error text-on-error font-label-caps text-label-caps shadow-[0px_10px_30px_rgba(26,16,37,0.05)] hover:bg-on-error-container hover:shadow-[0px_20px_50px_rgba(26,16,37,0.08)] transition-all duration-250 ease-out active:scale-98">
-                    Delete Category
-                </button>
-            </div>
+            <h2 class="font-headline-md text-headline-md text-on-surface">Delete Category?</h2>
         </div>
+        <!-- Body -->
+        <div class="text-center font-body-lg text-body-lg text-on-surface-variant">
+            <p>Are you sure you want to delete <strong>'@Model.Name'</strong>?</p>
+            @if(Model.ProductsCount > 0 || Model.SubCategoriesCount > 0)
+            {
+                <p class="mt-2 text-error">Warning: This category has @Model.ProductsCount products and @Model.SubCategoriesCount sub-categories. You cannot delete it until they are reassigned or deleted.</p>
+            }
+            else
+            {
+                <p class="mt-2 text-error">This action cannot be undone.</p>
+            }
+        </div>
+        <!-- Actions -->
+        <form asp-action="Delete" method="post" class="flex flex-col sm:flex-row gap-4 mt-4">
+            <input type="hidden" asp-for="Id" />
+            <a asp-action="Index" class="flex-1 py-3 px-6 rounded-full border border-outline text-on-surface font-label-caps text-label-caps hover:bg-surface-variant transition-all duration-250 ease-out active:scale-98 text-center">
+                Cancel
+            </a>
+            <button type="submit" class="flex-1 py-3 px-6 rounded-full bg-error text-on-error font-label-caps text-label-caps shadow-[0px_10px_30px_rgba(26,16,37,0.05)] hover:bg-on-error-container hover:shadow-[0px_20px_50px_rgba(26,16,37,0.08)] transition-all duration-250 ease-out active:scale-98">
+                Delete Category
+            </button>
+        </form>
     </div>
-</body></html>
+</div>

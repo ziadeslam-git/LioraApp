@@ -1,310 +1,165 @@
-<!DOCTYPE html>
+@model LioraApp.ViewModels.Admin.ProductFormVM
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Liora Admin - Create Product";
+}
 
-<html class="light" lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Liora Admin - Create Product</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    <script id="tailwind-config">
-        tailwind.config = {
-        darkMode: "class",
-        theme: {
-        extend: {
-        "colors": {
-        "on-tertiary-fixed-variant": "#4b4450",
-        "on-surface-variant": "#514440",
-        "on-error": "#ffffff",
-        "surface-container-low": "#f9f2ec",
-        "on-secondary": "#ffffff",
-        "secondary-fixed-dim": "#d1c0de",
-        "on-secondary-container": "#6c5f79",
-        "surface-variant": "#e8e1db",
-        "primary-container": "#c49080",
-        "error-container": "#ffdad6",
-        "surface-tint": "#7f5446",
-        "on-secondary-fixed": "#21172c",
-        "on-primary-fixed-variant": "#643d30",
-        "surface-container-high": "#eee7e1",
-        "secondary-container": "#eedcfa",
-        "surface-container-lowest": "#ffffff",
-        "secondary-fixed": "#eedcfa",
-        "tertiary-fixed": "#eadfee",
-        "outline": "#83746f",
-        "on-primary-container": "#4e2a1f",
-        "inverse-surface": "#33302c",
-        "on-primary": "#ffffff",
-        "on-error-container": "#93000a",
-        "tertiary-fixed-dim": "#cec3d2",
-        "primary-fixed-dim": "#f2baa8",
-        "on-tertiary-fixed": "#1f1924",
-        "on-tertiary": "#ffffff",
-        "on-secondary-fixed-variant": "#4e425a",
-        "tertiary": "#635b68",
-        "surface-dim": "#dfd9d3",
-        "on-background": "#1e1b18",
-        "surface-container-highest": "#e8e1db",
-        "surface-bright": "#fff8f3",
-        "on-tertiary-container": "#38313d",
-        "background": "#fff8f3",
-        "primary": "#7f5446",
-        "inverse-on-surface": "#f7efe9",
-        "error": "#ba1a1a",
-        "primary-fixed": "#ffdbd0",
-        "surface-container": "#f4ede7",
-        "surface": "#fff8f3",
-        "secondary": "#665972",
-        "on-primary-fixed": "#311309",
-        "outline-variant": "#d5c2bd",
-        "tertiary-container": "#a299a7",
-        "inverse-primary": "#f2baa8",
-        "on-surface": "#1e1b18"
-        },
-        "borderRadius": {
-        "DEFAULT": "0.25rem",
-        "lg": "0.5rem",
-        "xl": "0.75rem",
-        "2xl": "1rem",
-        "full": "9999px"
-        },
-        "spacing": {
-        "stack-md": "16px",
-        "container-padding-desktop": "64px",
-        "stack-lg": "32px",
-        "container-padding-mobile": "20px",
-        "gutter": "24px",
-        "stack-sm": "8px",
-        "section-gap": "120px",
-        "unit": "8px"
-        },
-        "fontFamily": {
-        "body-lg": ["DM Sans"],
-        "accent-italic": ["EB Garamond"],
-        "body-md": ["DM Sans"],
-        "display-lg": ["Playfair Display"],
-        "label-caps": ["DM Sans"],
-        "headline-lg-mobile": ["Playfair Display"],
-        "display-lg-mobile": ["Playfair Display"],
-        "headline-lg": ["Playfair Display"],
-        "headline-md": ["Playfair Display"]
-        },
-        "fontSize": {
-        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
-        "accent-italic": ["20px", {"lineHeight": "1.5", "fontWeight": "400"}],
-        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
-        "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-        "label-caps": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "700"}],
-        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
-        "display-lg-mobile": ["40px", {"lineHeight": "1.2", "fontWeight": "700"}],
-        "headline-lg": ["40px", {"lineHeight": "1.2", "fontWeight": "600"}],
-        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "500"}]
-        },
-        "boxShadow": {
-        "ambient-1": "0px 10px 30px rgba(26, 16, 37, 0.05)",
-        "ambient-2": "0px 20px 50px rgba(26, 16, 37, 0.08)"
-        }
-        }
-        }
-        }
-    </script>
-    <style>
-        body {
-        background-color: #fff8f3;
-        }
+@section Styles {
+<style>
+    .input-glow:focus {
+    box-shadow: 0 0 4px #C49080;
+    border-color: #C49080;
+    }
 
-        .input-glow:focus {
-        box-shadow: 0 0 4px #C49080;
-        border-color: #C49080;
-        }
+    .transition-ease {
+    transition: all 250ms ease-out;
+    }
+</style>
+}
 
-        .transition-ease {
-        transition: all 250ms ease-out;
-        }
-    </style>
-</head>
-<body class="font-body-md text-on-surface bg-background antialiased flex h-screen overflow-hidden">
-    <!-- SideNavBar -->
-    <nav class="hidden md:flex flex-col fixed left-0 top-0 h-full w-[240px] bg-surface-container-low border-r border-outline-variant overflow-y-auto z-40">
-        <div class="p-6">
-            <h1 class="font-headline-md text-headline-md font-bold text-primary">Liora</h1>
+<div class="max-w-[1280px] mx-auto">
+    <div class="flex items-center justify-between mb-stack-lg">
+        <h2 class="font-headline-lg text-headline-lg text-on-surface">Create Product</h2>
+        <div class="flex gap-4">
+            <a asp-action="Index" class="px-6 py-2 rounded-full border border-primary text-primary hover:bg-surface-variant transition-ease font-label-caps text-label-caps uppercase tracking-wider flex items-center justify-center">Cancel</a>
+            <button type="submit" form="createProductForm" class="px-6 py-2 rounded-full bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary transition-ease active:scale-98 font-label-caps text-label-caps uppercase tracking-wider shadow-ambient-1 hover:shadow-ambient-2">Save Product</button>
         </div>
-        <div class="px-4 py-2 mb-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold">LA</div>
-                <div>
-                    <p class="font-body-md text-body-md font-medium">Liora Admin</p>
-                    <p class="text-xs text-on-surface-variant">Enterprise Portal</p>
-                </div>
-            </div>
-        </div>
-        <ul class="flex flex-col gap-1 px-2">
-            <li><a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors rounded-lg" href="#"><span class="material-symbols-outlined">dashboard</span> <span class="font-label-caps text-label-caps uppercase">Overview</span></a></li>
-            <li><a class="flex items-center gap-3 px-4 py-3 border-l-2 border-primary bg-surface-container-high text-primary font-bold rounded-lg" href="#"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span> <span class="font-label-caps text-label-caps uppercase">Catalog</span></a></li>
-            <li><a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors rounded-lg" href="#"><span class="material-symbols-outlined">payments</span> <span class="font-label-caps text-label-caps uppercase">Sales</span></a></li>
-            <li><a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors rounded-lg" href="#"><span class="material-symbols-outlined">group</span> <span class="font-label-caps text-label-caps uppercase">Customers</span></a></li>
-            <li><a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors rounded-lg" href="#"><span class="material-symbols-outlined">settings</span> <span class="font-label-caps text-label-caps uppercase">Settings</span></a></li>
-        </ul>
-    </nav>
-    <!-- TopNavBar -->
-    <header class="hidden md:flex items-center justify-between px-gutter fixed top-0 right-0 h-[60px] w-[calc(100%-240px)] bg-surface-container border-b border-outline-variant z-50">
-        <div></div> <!-- Spacer for left side if search was here -->
-        <div class="flex items-center gap-4">
-            <button class="w-10 h-10 rounded-full hover:bg-surface-container-highest transition-colors flex items-center justify-center text-on-surface-variant cursor-pointer active:scale-95">
-                <span class="material-symbols-outlined">notifications</span>
-            </button>
-            <button class="w-10 h-10 rounded-full hover:bg-surface-container-highest transition-colors flex items-center justify-center text-on-surface-variant cursor-pointer active:scale-95">
-                <span class="material-symbols-outlined">account_circle</span>
-            </button>
-        </div>
-    </header>
-    <!-- Main Content Area -->
-    <main class="flex-1 w-full md:w-[calc(100%-240px)] md:ml-[240px] pt-[60px] h-full overflow-y-auto bg-background">
-        <div class="max-w-[1280px] mx-auto p-container-padding-mobile md:p-container-padding-desktop">
-            <div class="flex items-center justify-between mb-stack-lg">
-                <h2 class="font-headline-lg text-headline-lg text-on-surface">Create Product</h2>
-                <div class="flex gap-4">
-                    <button class="px-6 py-2 rounded-full border border-primary text-primary hover:bg-surface-variant transition-ease font-label-caps text-label-caps uppercase tracking-wider">Cancel</button>
-                    <button class="px-6 py-2 rounded-full bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary transition-ease active:scale-98 font-label-caps text-label-caps uppercase tracking-wider shadow-ambient-1 hover:shadow-ambient-2">Save Product</button>
-                </div>
-            </div>
-            <form class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
-                <!-- Left Column (60%) -->
-                <div class="lg:col-span-7 flex flex-col gap-stack-lg">
-                    <!-- Basic Info Card -->
-                    <section class="bg-surface-container-lowest rounded-2xl p-6 shadow-ambient-1">
-                        <h3 class="font-headline-md text-headline-md text-primary mb-stack-md text-xl">Basic Information</h3>
-                        <div class="space-y-6">
-                            <div>
-                                <label class="block font-label-caps text-label-caps text-on-surface-variant mb-2 uppercase" for="product_name">Product Name</label>
-                                <input class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-4 py-3 text-on-surface focus:outline-none input-glow transition-ease placeholder:text-on-surface-variant/50" id="product_name" placeholder="e.g. Silk Evening Gown" type="text" />
+    </div>
+    <form id="createProductForm" asp-action="Create" method="post" class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+        <div asp-validation-summary="All" class="text-error mb-4 col-span-full"></div>
+        <!-- Left Column (60%) -->
+        <div class="lg:col-span-7 flex flex-col gap-stack-lg">
+            <!-- Basic Info Card -->
+            <section class="bg-surface-container-lowest rounded-2xl p-6 shadow-ambient-1">
+                <h3 class="font-headline-md text-headline-md text-primary mb-stack-md text-xl">Basic Information</h3>
+                <div class="space-y-6">
+                    <div>
+                        <label asp-for="Name" class="block font-label-caps text-label-caps text-on-surface-variant mb-2 uppercase"></label>
+                        <input asp-for="Name" class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-4 py-3 text-on-surface focus:outline-none input-glow transition-ease placeholder:text-on-surface-variant/50" placeholder="e.g. Silk Evening Gown" />
+                        <span asp-validation-for="Name" class="text-xs text-error mt-1"></span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label asp-for="CategoryId" class="block font-label-caps text-label-caps text-on-surface-variant uppercase"></label>
+                                <a class="text-xs text-primary hover:underline" asp-controller="Category" asp-action="Create">+ New Category</a>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <div class="flex justify-between items-center mb-2">
-                                        <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase" for="category">Category</label>
-                                        <a class="text-xs text-primary hover:underline" href="#">+ New Category</a>
-                                    </div>
-                                    <select class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-4 py-3 text-on-surface focus:outline-none input-glow transition-ease appearance-none" id="category">
-                                        <option disabled="" selected="" value="">Select Category</option>
-                                        <option value="dresses">Dresses</option>
-                                        <option value="tops">Tops</option>
-                                        <option value="accessories">Accessories</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block font-label-caps text-label-caps text-on-surface-variant mb-2 uppercase" for="base_price">Base Price</label>
-                                    <div class="relative">
-                                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">LE</span>
-                                        <input class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg pl-12 pr-4 py-3 text-on-surface focus:outline-none input-glow transition-ease" id="base_price" placeholder="0.00" type="number" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block font-label-caps text-label-caps text-on-surface-variant mb-2 uppercase" for="description">Description</label>
-                                <textarea class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-4 py-3 text-on-surface focus:outline-none input-glow transition-ease resize-none placeholder:text-on-surface-variant/50" id="description" placeholder="Enter product details..." rows="4"></textarea>
-                            </div>
-                            <div class="flex items-center justify-between py-2 border-t border-outline-variant/20 mt-4">
-                                <div>
-                                    <span class="font-body-md text-body-md font-medium text-on-surface">Product Status</span>
-                                    <p class="text-sm text-on-surface-variant">Set whether this product is visible in the store.</p>
-                                </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input checked="" class="sr-only peer" type="checkbox" value="" />
-                                    <div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
-                                </label>
-                            </div>
+                            <select asp-for="CategoryId" asp-items="Model.Categories" class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-4 py-3 text-on-surface focus:outline-none input-glow transition-ease appearance-none">
+                                <option disabled selected value="">Select Category</option>
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-xs text-error mt-1"></span>
                         </div>
-                    </section>
-                    <!-- Variants & Stock Card -->
-                    <section class="bg-surface-container-lowest rounded-2xl p-6 shadow-ambient-1">
-                        <div class="flex justify-between items-center mb-stack-md">
-                            <h3 class="font-headline-md text-headline-md text-primary text-xl">Variants &amp; Stock</h3>
-                            <button class="text-primary hover:text-primary-container transition-ease font-medium text-sm flex items-center gap-1" type="button">
-                                <span class="material-symbols-outlined text-sm">add</span> Add Variant
+                        <div>
+                            <label asp-for="BasePrice" class="block font-label-caps text-label-caps text-on-surface-variant mb-2 uppercase"></label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">EGP</span>
+                                <input asp-for="BasePrice" class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg pl-12 pr-4 py-3 text-on-surface focus:outline-none input-glow transition-ease" placeholder="0.00" type="number" step="0.01" />
+                            </div>
+                            <span asp-validation-for="BasePrice" class="text-xs text-error mt-1"></span>
+                        </div>
+                    </div>
+                    <div>
+                        <label asp-for="Description" class="block font-label-caps text-label-caps text-on-surface-variant mb-2 uppercase"></label>
+                        <textarea asp-for="Description" class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-4 py-3 text-on-surface focus:outline-none input-glow transition-ease resize-none placeholder:text-on-surface-variant/50" placeholder="Enter product details..." rows="4"></textarea>
+                        <span asp-validation-for="Description" class="text-xs text-error mt-1"></span>
+                    </div>
+                    <div class="flex items-center justify-between py-2 border-t border-outline-variant/20 mt-4">
+                        <div>
+                            <span class="font-body-md text-body-md font-medium text-on-surface">Product Status</span>
+                            <p class="text-sm text-on-surface-variant">Set whether this product is visible in the store.</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input asp-for="IsActive" class="sr-only peer" type="checkbox" />
+                            <div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+                        </label>
+                    </div>
+                </div>
+            </section>
+            <!-- Variants & Stock Card -->
+            <section class="bg-surface-container-lowest rounded-2xl p-6 shadow-ambient-1">
+                <div class="flex justify-between items-center mb-stack-md">
+                    <h3 class="font-headline-md text-headline-md text-primary text-xl">Variants &amp; Stock</h3>
+                    <button class="text-primary hover:text-primary-container transition-ease font-medium text-sm flex items-center gap-1" type="button">
+                        <span class="material-symbols-outlined text-sm">add</span> Add Variant
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <!-- Variant Row 1 -->
+                    <div class="bg-surface p-4 rounded-xl border border-outline-variant/20 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                        <div class="md:col-span-3">
+                            <label class="block text-xs text-on-surface-variant mb-1 uppercase tracking-wider">Size</label>
+                            <select class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none input-glow transition-ease">
+                                <option>Small</option>
+                                <option>Medium</option>
+                                <option>Large</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-3">
+                            <label class="block text-xs text-on-surface-variant mb-1 uppercase tracking-wider">Color</label>
+                            <input class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none input-glow transition-ease" type="text" value="Ivory" />
+                        </div>
+                        <div class="md:col-span-3">
+                            <label class="block text-xs text-on-surface-variant mb-1 uppercase tracking-wider">SKU</label>
+                            <input class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none input-glow transition-ease font-mono" type="text" value="LIO-IVR-SM" />
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs text-on-surface-variant mb-1 uppercase tracking-wider">Stock</label>
+                            <input class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none input-glow transition-ease" type="number" value="12" />
+                        </div>
+                        <div class="md:col-span-1 flex justify-end md:mt-5">
+                            <button class="text-error hover:text-on-error-container p-2 rounded-full hover:bg-error-container transition-ease" type="button">
+                                <span class="material-symbols-outlined text-lg">delete</span>
                             </button>
                         </div>
-                        <div class="space-y-4">
-                            <!-- Variant Row 1 -->
-                            <div class="bg-surface p-4 rounded-xl border border-outline-variant/20 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-                                <div class="md:col-span-3">
-                                    <label class="block text-xs text-on-surface-variant mb-1 uppercase tracking-wider">Size</label>
-                                    <select class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none input-glow transition-ease">
-                                        <option>Small</option>
-                                        <option>Medium</option>
-                                        <option>Large</option>
-                                    </select>
-                                </div>
-                                <div class="md:col-span-3">
-                                    <label class="block text-xs text-on-surface-variant mb-1 uppercase tracking-wider">Color</label>
-                                    <input class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none input-glow transition-ease" type="text" value="Ivory" />
-                                </div>
-                                <div class="md:col-span-3">
-                                    <label class="block text-xs text-on-surface-variant mb-1 uppercase tracking-wider">SKU</label>
-                                    <input class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none input-glow transition-ease font-mono" type="text" value="LIO-IVR-SM" />
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label class="block text-xs text-on-surface-variant mb-1 uppercase tracking-wider">Stock</label>
-                                    <input class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none input-glow transition-ease" type="number" value="12" />
-                                </div>
-                                <div class="md:col-span-1 flex justify-end md:mt-5">
-                                    <button class="text-error hover:text-on-error-container p-2 rounded-full hover:bg-error-container transition-ease" type="button">
-                                        <span class="material-symbols-outlined text-lg">delete</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+                    </div>
                 </div>
-                <!-- Right Column (40%) -->
-                <div class="lg:col-span-5">
-                    <!-- Images Card -->
-                    <section class="bg-surface-container-lowest rounded-2xl p-6 shadow-ambient-1 sticky top-[100px]">
-                        <h3 class="font-headline-md text-headline-md text-primary mb-stack-md text-xl">Product Media</h3>
-                        <!-- Dropzone -->
-                        <div class="border-2 border-dashed border-primary-container/50 rounded-2xl p-8 flex flex-col items-center justify-center text-center bg-surface-bright hover:bg-surface transition-ease cursor-pointer mb-6">
-                            <div class="w-16 h-16 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center mb-4">
-                                <span class="material-symbols-outlined text-3xl">cloud_upload</span>
-                            </div>
-                            <p class="font-body-md text-body-md font-medium text-on-surface mb-1">Click to upload or drag and drop</p>
-                            <p class="text-sm text-on-surface-variant">SVG, PNG, JPG or GIF (max. 800x400px)</p>
-                        </div>
-                        <!-- Image Grid -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <!-- Main Image -->
-                            <div class="relative group aspect-[3/4] rounded-xl overflow-hidden ring-2 ring-primary-container ring-offset-2">
-                                <img alt="Silk gown front view" class="w-full h-full object-cover" data-alt="A highly detailed editorial photograph of a modern, minimalist silk evening gown on a mannequin, front view. The lighting is soft, high-key, and diffused, creating a pristine, light-mode aesthetic. The background is a clean, bright studio space with subtle ambient shadows. The gown itself has a luxurious, fluid texture, fitting the theme of empowered elegance and intimate luxury." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRyof6nhTIxnmkQBJJcPnIkseinE1HYLUbDY3m1E2vMPwL_LF4WNjANTjAG_BrByfgzjVB7ld-22YGqf7UX1FgkJFH0NoRfJzfsCio3k74p42q-CThyI9y_Z_4hSvjs4T0TjEXExHst6lkChXvqQ0tgQjIWL4iS0j0qzXy2H5e4SWVnIFrbFwyzwapr265kdHnb2FAKH-hV19c6hrAQSkWdm1spI0rBg7lpAIN6K4rahwyAaTpH9AX5Kj0smAfbccseZ0tqcdhBUel" />
-                                <div class="absolute inset-0 bg-inverse-surface/40 opacity-0 group-hover:opacity-100 transition-ease flex items-center justify-center gap-2">
-                                    <button class="w-8 h-8 rounded-full bg-surface text-primary flex items-center justify-center hover:scale-110 transition-ease" type="button">
-                                        <span class="material-symbols-outlined text-sm">visibility</span>
-                                    </button>
-                                    <button class="w-8 h-8 rounded-full bg-error text-on-error flex items-center justify-center hover:scale-110 transition-ease" type="button">
-                                        <span class="material-symbols-outlined text-sm">close</span>
-                                    </button>
-                                </div>
-                                <div class="absolute top-2 left-2 bg-primary-container text-on-primary-container text-xs px-2 py-1 rounded-full font-medium">Main</div>
-                            </div>
-                            <!-- Thumbnail -->
-                            <div class="relative group aspect-[3/4] rounded-xl overflow-hidden border border-outline-variant/20">
-                                <img alt="Silk gown detail" class="w-full h-full object-cover" data-alt="A highly detailed close-up editorial photograph focusing on the delicate fabric texture of a modern silk evening gown. The image captures the smooth, luxurious drape of the material under soft, high-key studio lighting. The aesthetic is clean, minimalist, and bright, conveying a sense of high-fashion and intimate luxury. Ambient rose-tinted depth is subtly present in the folds." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWfCaG_5021_9bo8fzszW0EqzQ1FNfNyQvnuKgjGJILUEfK_nGGYK9qhf3wsGgeNlwOBtjclb85M2CPEYO-1VwwPPemGw7MM_4swLJ5T5gqybAKA9g_6OK1S9Rly5c4cISi3BaPZMKY9WPEN3Jn2NrThwTqrxZ9xPcdB5lQRjGxWdFrJZ7I_IuX4fEdK_Xzsc9lB7gfmFt0qp0rVimjjgslzQjUbXA3mHPrJn5NbJjSO1eOVjVcKJjHb4071p2TuNPq69n0wyFehq2" />
-                                <div class="absolute inset-0 bg-inverse-surface/40 opacity-0 group-hover:opacity-100 transition-ease flex flex-col items-center justify-center gap-2">
-                                    <div class="flex gap-2">
-                                        <button class="w-8 h-8 rounded-full bg-surface text-primary flex items-center justify-center hover:scale-110 transition-ease" title="Set as Main" type="button">
-                                            <span class="material-symbols-outlined text-sm">star</span>
-                                        </button>
-                                        <button class="w-8 h-8 rounded-full bg-error text-on-error flex items-center justify-center hover:scale-110 transition-ease" type="button">
-                                            <span class="material-symbols-outlined text-sm">close</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-            </form>
-            <div class="h-section-gap"></div> <!-- Bottom spacer -->
+            </section>
         </div>
-    </main>
-</body></html>
+        <!-- Right Column (40%) -->
+        <div class="lg:col-span-5">
+            <!-- Images Card -->
+            <section class="bg-surface-container-lowest rounded-2xl p-6 shadow-ambient-1 sticky top-[100px]">
+                <h3 class="font-headline-md text-headline-md text-primary mb-stack-md text-xl">Product Media</h3>
+                <!-- Dropzone -->
+                <div class="border-2 border-dashed border-primary-container/50 rounded-2xl p-8 flex flex-col items-center justify-center text-center bg-surface-bright hover:bg-surface transition-ease cursor-pointer mb-6">
+                    <div class="w-16 h-16 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center mb-4">
+                        <span class="material-symbols-outlined text-3xl">cloud_upload</span>
+                    </div>
+                    <p class="font-body-md text-body-md font-medium text-on-surface mb-1">Click to upload or drag and drop</p>
+                    <p class="text-sm text-on-surface-variant">SVG, PNG, JPG or GIF (max. 800x400px)</p>
+                </div>
+                <!-- Image Grid -->
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Main Image -->
+                    <div class="relative group aspect-[3/4] rounded-xl overflow-hidden ring-2 ring-primary-container ring-offset-2">
+                        <img alt="Silk gown front view" class="w-full h-full object-cover" data-alt="A highly detailed editorial photograph of a modern, minimalist silk evening gown on a mannequin, front view. The lighting is soft, high-key, and diffused, creating a pristine, light-mode aesthetic. The background is a clean, bright studio space with subtle ambient shadows. The gown itself has a luxurious, fluid texture, fitting the theme of empowered elegance and intimate luxury." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRyof6nhTIxnmkQBJJcPnIkseinE1HYLUbDY3m1E2vMPwL_LF4WNjANTjAG_BrByfgzjVB7ld-22YGqf7UX1FgkJFH0NoRfJzfsCio3k74p42q-CThyI9y_Z_4hSvjs4T0TjEXExHst6lkChXvqQ0tgQjIWL4iS0j0qzXy2H5e4SWVnIFrbFwyzwapr265kdHnb2FAKH-hV19c6hrAQSkWdm1spI0rBg7lpAIN6K4rahwyAaTpH9AX5Kj0smAfbccseZ0tqcdhBUel" />
+                        <div class="absolute inset-0 bg-inverse-surface/40 opacity-0 group-hover:opacity-100 transition-ease flex items-center justify-center gap-2">
+                            <button class="w-8 h-8 rounded-full bg-surface text-primary flex items-center justify-center hover:scale-110 transition-ease" type="button">
+                                <span class="material-symbols-outlined text-sm">visibility</span>
+                            </button>
+                            <button class="w-8 h-8 rounded-full bg-error text-on-error flex items-center justify-center hover:scale-110 transition-ease" type="button">
+                                <span class="material-symbols-outlined text-sm">close</span>
+                            </button>
+                        </div>
+                        <div class="absolute top-2 left-2 bg-primary-container text-on-primary-container text-xs px-2 py-1 rounded-full font-medium">Main</div>
+                    </div>
+                    <!-- Thumbnail -->
+                    <div class="relative group aspect-[3/4] rounded-xl overflow-hidden border border-outline-variant/20">
+                        <img alt="Silk gown detail" class="w-full h-full object-cover" data-alt="A highly detailed close-up editorial photograph focusing on the delicate fabric texture of a modern silk evening gown. The image captures the smooth, luxurious drape of the material under soft, high-key studio lighting. The aesthetic is clean, minimalist, and bright, conveying a sense of high-fashion and intimate luxury. Ambient rose-tinted depth is subtly present in the folds." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWfCaG_5021_9bo8fzszW0EqzQ1FNfNyQvnuKgjGJILUEfK_nGGYK9qhf3wsGgeNlwOBtjclb85M2CPEYO-1VwwPPemGw7MM_4swLJ5T5gqybAKA9g_6OK1S9Rly5c4cISi3BaPZMKY9WPEN3Jn2NrThwTqrxZ9xPcdB5lQRjGxWdFrJZ7I_IuX4fEdK_Xzsc9lB7gfmFt0qp0rVimjjgslzQjUbXA3mHPrJn5NbJjSO1eOVjVcKJjHb4071p2TuNPq69n0wyFehq2" />
+                        <div class="absolute inset-0 bg-inverse-surface/40 opacity-0 group-hover:opacity-100 transition-ease flex flex-col items-center justify-center gap-2">
+                            <div class="flex gap-2">
+                                <button class="w-8 h-8 rounded-full bg-surface text-primary flex items-center justify-center hover:scale-110 transition-ease" title="Set as Main" type="button">
+                                    <span class="material-symbols-outlined text-sm">star</span>
+                                </button>
+                                <button class="w-8 h-8 rounded-full bg-error text-on-error flex items-center justify-center hover:scale-110 transition-ease" type="button">
+                                    <span class="material-symbols-outlined text-sm">close</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </form>
+    <div class="h-section-gap"></div> <!-- Bottom spacer -->
+</div>

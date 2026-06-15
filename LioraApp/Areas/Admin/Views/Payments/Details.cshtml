@@ -1,195 +1,14 @@
-﻿<!DOCTYPE html>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Payment Details";
+}
 
-<html class="light" lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Payment Details - Liora Admin</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    <script id="tailwind-config">
-        tailwind.config = {
-        darkMode: "class",
-        theme: {
-        extend: {
-        "colors": {
-        "surface-container": "#f4ede7",
-        "tertiary-fixed-dim": "#cec3d2",
-        "inverse-primary": "#f2baa8",
-        "error": "#ba1a1a",
-        "surface-container-high": "#eee7e1",
-        "on-secondary-fixed": "#21172c",
-        "surface-tint": "#7f5446",
-        "surface-dim": "#dfd9d3",
-        "secondary-fixed-dim": "#d1c0de",
-        "on-tertiary-fixed-variant": "#4b4450",
-        "surface-container-low": "#f9f2ec",
-        "on-secondary": "#ffffff",
-        "on-background": "#1e1b18",
-        "on-surface": "#1e1b18",
-        "surface-container-lowest": "#ffffff",
-        "primary-fixed": "#ffdbd0",
-        "on-error-container": "#93000a",
-        "on-error": "#ffffff",
-        "on-surface-variant": "#514440",
-        "background": "#fff8f3",
-        "inverse-surface": "#33302c",
-        "surface-container-highest": "#e8e1db",
-        "on-tertiary": "#ffffff",
-        "primary-container": "#c49080",
-        "on-primary": "#ffffff",
-        "primary-fixed-dim": "#f2baa8",
-        "on-tertiary-container": "#38313d",
-        "on-primary-fixed": "#311309",
-        "surface-bright": "#fff8f3",
-        "tertiary": "#635b68",
-        "secondary-container": "#eedcfa",
-        "tertiary-fixed": "#eadfee",
-        "on-primary-fixed-variant": "#643d30",
-        "on-secondary-container": "#6c5f79",
-        "on-tertiary-fixed": "#1f1924",
-        "error-container": "#ffdad6",
-        "outline": "#83746f",
-        "inverse-on-surface": "#f7efe9",
-        "secondary": "#665972",
-        "surface": "#fff8f3",
-        "secondary-fixed": "#eedcfa",
-        "on-secondary-fixed-variant": "#4e425a",
-        "surface-variant": "#e8e1db",
-        "outline-variant": "#d5c2bd",
-        "primary": "#7f5446",
-        "on-primary-container": "#4e2a1f",
-        "tertiary-container": "#a299a7"
-        },
-        "borderRadius": {
-        "DEFAULT": "0.25rem",
-        "lg": "0.5rem",
-        "xl": "0.75rem",
-        "full": "9999px",
-        "2xl": "1rem"
-        },
-        "spacing": {
-        "gutter": "24px",
-        "container-padding-desktop": "64px",
-        "stack-sm": "8px",
-        "stack-lg": "32px",
-        "unit": "8px",
-        "section-gap": "120px",
-        "stack-md": "16px",
-        "container-padding-mobile": "20px"
-        },
-        "fontFamily": {
-        "accent-italic": ["EB Garamond", "serif"],
-        "headline-md": ["Playfair Display", "serif"],
-        "label-caps": ["DM Sans", "sans-serif"],
-        "display-lg": ["Playfair Display", "serif"],
-        "body-md": ["DM Sans", "sans-serif"],
-        "headline-lg-mobile": ["Playfair Display", "serif"],
-        "body-lg": ["DM Sans", "sans-serif"],
-        "display-lg-mobile": ["Playfair Display", "serif"],
-        "headline-lg": ["Playfair Display", "serif"],
-        "mono": ["DM Mono", "monospace"]
-        },
-        "fontSize": {
-        "accent-italic": ["20px", { "lineHeight": "1.5", "fontWeight": "400" }],
-        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "500" }],
-        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "700" }],
-        "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
-        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
-        "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
-        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
-        "display-lg-mobile": ["40px", { "lineHeight": "1.2", "fontWeight": "700" }],
-        "headline-lg": ["40px", { "lineHeight": "1.2", "fontWeight": "600" }]
-        },
-        "boxShadow": {
-        "level-1": "0px 10px 30px rgba(26, 16, 37, 0.05)",
-        "level-2": "0px 20px 50px rgba(26, 16, 37, 0.08)"
-        }
-        }
-        }
-        }
-    </script>
-    <style>
-        .material-symbols-outlined {
-        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-
-        .material-symbols-outlined.fill {
-        font-variation-settings: 'FILL' 1;
-        }
-
-        .btn-hover-scale {
-        transition: transform 250ms ease-out, background-color 250ms ease-out, box-shadow 250ms ease-out;
-        }
-
-        .btn-hover-scale:active {
-        transform: scale(0.98);
-        }
-    </style>
-</head>
-<body class="bg-background text-on-background font-body-md antialiased overflow-x-hidden">
-    <!-- TopNavBar -->
-    <nav class="fixed top-0 right-0 h-[60px] w-[calc(100%-240px)] bg-surface-container dark:bg-surface-container border-b border-outline-variant flex items-center justify-between px-gutter w-full z-50">
-        <div class="flex items-center gap-4">
-            <!-- Search on left -->
-            <div class="relative hidden md:flex items-center">
-                <span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-sm">search</span>
-                <input class="bg-surface-container-high border-outline-variant border rounded-full py-1.5 pl-9 pr-4 text-sm text-on-surface focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all" placeholder="Search..." type="text" />
-            </div>
-        </div>
-        <div class="flex items-center gap-4">
-            <span class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors cursor-pointer active:scale-95 p-2">notifications</span>
-            <span class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors cursor-pointer active:scale-95 p-2">account_circle</span>
-        </div>
-    </nav>
-    <!-- SideNavBar -->
-    <aside class="fixed left-0 top-0 h-full w-[240px] bg-surface-container-low dark:bg-surface-container-low border-r border-outline-variant flex flex-col h-full overflow-y-auto z-50">
-        <div class="px-6 py-8">
-            <div class="font-headline-md text-headline-md font-bold text-primary mb-2">Liora</div>
-            <div class="flex items-center gap-3 mt-6 mb-8">
-                <div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden">
-                    <img alt="Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of an administrator in a well-lit, modern office setting. The aesthetic is clean, minimalist, and high-fashion editorial. The lighting is soft and flattering, highlighting the subject's confident expression. The color palette emphasizes warm neutrals and subtle rose-gold accents, fitting a luxury brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4XAfnA6TnI0TvKByjv0-P9Doc9T67qa2oBOcGWqQQqyEb6lRVUp18oOokf1oXkfnwRPfPHqjhdoWwfQlfQyB928ojBu5HVkiD-SFfNH33bhCvzaWClmHEt5-iucR_bU_5dbzM_g3FND2zo2CDe-Ddvi1xZvgslLHlgu-tRkyqIZC3-KmsnnlMSyPTkPiphmvxCtSEp2oCR0wUljFgCMJnjYLYR83XLA132JT-Gy7rgL42HK6DQRBCnv0PI17F_wwkRpUHTLilhgj1" />
-                </div>
-                <div>
-                    <div class="text-sm font-semibold text-on-surface">Liora Admin</div>
-                    <div class="text-xs text-on-surface-variant">Enterprise Portal</div>
-                </div>
-            </div>
-        </div>
-        <nav class="flex-1 px-2 space-y-1">
-            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200 ease-in-out rounded-xl" href="#">
-                <span class="material-symbols-outlined">dashboard</span>
-                <span>Overview</span>
-            </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200 ease-in-out rounded-xl" href="#">
-                <span class="material-symbols-outlined">inventory_2</span>
-                <span>Catalog</span>
-            </a>
-            <!-- Active State -->
-            <a class="flex items-center gap-3 px-4 py-3 border-l-2 border-primary bg-surface-container-high text-primary font-bold duration-200 ease-in-out rounded-r-xl" href="#">
-                <span class="material-symbols-outlined fill">payments</span>
-                <span>Sales</span>
-            </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200 ease-in-out rounded-xl" href="#">
-                <span class="material-symbols-outlined">group</span>
-                <span>Customers</span>
-            </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors duration-200 ease-in-out rounded-xl" href="#">
-                <span class="material-symbols-outlined">settings</span>
-                <span>Settings</span>
-            </a>
-        </nav>
-    </aside>
-    <!-- Main Content Canvas -->
-    <main class="ml-[240px] mt-[60px] min-h-[calc(100vh-60px)] p-container-padding-desktop">
-        <!-- Header & Breadcrumbs -->
+<!-- Header & Breadcrumbs -->
         <div class="mb-stack-lg">
             <div class="flex items-center gap-2 text-on-surface-variant font-label-caps text-label-caps mb-2 tracking-wider">
-                <a class="hover:text-primary transition-colors" href="#">SALES</a>
+                <a class="hover:text-primary transition-colors" asp-controller="Dashboard" asp-action="Index">SALES</a>
                 <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-                <a class="hover:text-primary transition-colors" href="#">PAYMENTS</a>
+                <a class="hover:text-primary transition-colors" asp-action="Index">PAYMENTS</a>
                 <span class="material-symbols-outlined text-[14px]">chevron_right</span>
                 <span class="text-primary">DETAILS</span>
             </div>
@@ -210,7 +29,7 @@
                         </div>
                         <div>
                             <div class="text-sm text-on-surface-variant mb-1">Order Reference</div>
-                            <a class="text-primary font-medium hover:underline flex items-center gap-1" href="#">
+                            <a class="text-primary font-medium hover:underline flex items-center gap-1" asp-controller="Orders" asp-action="Index">
                                 ORD-2023-1194
                                 <span class="material-symbols-outlined text-[16px]">open_in_new</span>
                             </a>
@@ -282,7 +101,7 @@
                             <div class="text-sm text-on-surface-variant">amira.h@example.com</div>
                         </div>
                     </div>
-                    <a class="text-sm text-primary font-medium hover:underline flex items-center gap-1" href="#">
+                    <a class="text-sm text-primary font-medium hover:underline flex items-center gap-1" asp-controller="Users" asp-action="Index">
                         View Profile <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
                     </a>
                 </div>
@@ -337,5 +156,3 @@
                 </div>
             </div>
         </div>
-    </main>
-</body></html>

@@ -177,7 +177,50 @@ public class OrdersController : Controller
         if (!string.Equals(previousOrderStatus, order.Status, StringComparison.OrdinalIgnoreCase) ||
             !string.Equals(previousPaymentStatus, order.PaymentStatus, StringComparison.OrdinalIgnoreCase))
         {
-            await SendOrderStatusEmailAsync(order, previousOrderStatus, previousPaymentStatus);
+            // If order was just confirmed, send a focused confirmation email to the customer
+            if (!string.Equals(previousOrderStatus, SD.Status_Confirmed, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(order.Status, SD.Status_Confirmed, StringComparison.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    var user = await _userManager.FindByIdAsync(order.UserId);
+                    var customerEmail = user?.Email;
+                    var customerName = user?.FullName ?? order.Address?.FullName ?? "Customer";
+                    if (!string.IsNullOrWhiteSpace(customerEmail))
+                    {
+                        var subject = $"✅ Your Order #{order.Id} Has Been Confirmed";
+                        var body = $"""
+
+                            <div style="font-family:sans-serif;max-width:600px;margin:auto">
+
+                            <h2 style="color:#111">Order Confirmed! 🎉</h2>
+
+                            <p>Dear {customerName},</p>
+
+                            <p>We're happy to let you know that your payment has been verified and your order is now confirmed.</p>
+
+                            | Order ID | #{order.Id} |
+                            | --- | --- |
+                            | Total Paid | {order.TotalAmount} EGP |
+                            | Payment Method | {order.Payment?.Provider ?? "N/A"} |
+
+                            <p style="margin-top:20px">We'll notify you once your order is on its way. Thank you for shopping with us! 🛍️</p>
+
+                            </div>
+
+                            """;
+                        await _emailSender.SendEmailAsync(customerEmail, subject, body);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to send confirmation email for OrderId={OrderId}.", order.Id);
+                }
+            }
+            else
+            {
+                await SendOrderStatusEmailAsync(order, previousOrderStatus, previousPaymentStatus);
+            }
         }
 
         TempData["success"] = $"Order #{order.Id} status updated successfully.";
@@ -669,6 +712,78 @@ public class OrdersController : Controller
 
         TempData["success"] = $"Order #{id} has been cancelled. It will be hidden from this list in 24 hours.";
         return RedirectToAction(nameof(Index));
+    }
+
+    // ──────────────────────────────────────────────────────────
+    //  POST /Admin/Orders/RejectPayment/{id}
+    //  Reject a customer's payment proof and notify them by email
+    // ──────────────────────────────────────────────────────────
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RejectPayment(int id, string? reason)
+    {
+        var order = await _unitOfWork.Orders.GetByIdAsync(id);
+        if (order is null) return NotFound();
+
+        // Mark payment as failed and persist
+        var previousPaymentStatus = order.PaymentStatus;
+        order.PaymentStatus = SD.Payment_Failed;
+        order.UpdatedAt = DateTime.UtcNow;
+
+        await SyncPaymentRecordAsync(order);
+        _unitOfWork.Orders.Update(order);
+        await _unitOfWork.SaveAsync();
+
+        // Notify customer about rejection
+        try
+        {
+            var user = await _userManager.FindByIdAsync(order.UserId);
+            var customerEmail = user?.Email ?? order.User?.Email ?? string.Empty;
+            var customerName = user?.FullName ?? order.Address?.FullName ?? "Customer";
+
+            if (!string.IsNullOrWhiteSpace(customerEmail))
+            {
+                var subject = $"❌ Your Order #{order.Id} Could Not Be Confirmed";
+                var body = $"""
+
+                    <div style="font-family:sans-serif;max-width:600px;margin:auto">
+
+                    <h2 style="color:#c0392b">Order Could Not Be Confirmed</h2>
+
+                    <p>Dear {customerName},</p>
+
+                    <p>Unfortunately, we were unable to verify your payment for Order <strong>#{order.Id}</strong>.</p>
+
+                    <p>This may be due to:</p>
+
+                    <ul>
+
+                    <li>Incorrect payment amount</li>
+
+                    <li>Unclear payment screenshot</li>
+
+                    <li>Payment sent to wrong account</li>
+
+                    </ul>
+
+                    <p>Please contact us or place a new order with a valid payment proof.</p>
+
+                    <p style="margin-top:20px;color:#555">We apologize for the inconvenience.</p>
+
+                    </div>
+
+                    """;
+
+                await _emailSender.SendEmailAsync(customerEmail, subject, body);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send rejection email for OrderId={OrderId}.", order.Id);
+        }
+
+        TempData["success"] = $"Payment for Order #{order.Id} was rejected.";
+        return RedirectToAction(nameof(Details), new { id = order.Id });
     }
 
     // ──────────────────────────────────────────────────────────

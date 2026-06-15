@@ -132,6 +132,8 @@ public class CategoryController : Controller
         if (string.IsNullOrWhiteSpace(vm.Slug))
             vm.Slug = GenerateSlug(vm.Name);
 
+        ModelState.Remove(nameof(vm.Slug)); // Ignore missing slug in binding since we auto-generated it
+
         if (!ModelState.IsValid)
         {
             vm.ParentCategories = await GetParentDropdownAsync();
@@ -192,6 +194,8 @@ public class CategoryController : Controller
     {
         if (string.IsNullOrWhiteSpace(vm.Slug))
             vm.Slug = GenerateSlug(vm.Name);
+
+        ModelState.Remove(nameof(vm.Slug)); // Ignore missing slug in binding
 
         if (!ModelState.IsValid)
         {

@@ -1,374 +1,196 @@
-<!DOCTYPE html>
+@model LioraApp.ViewModels.Admin.ProductFormVM
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Liora Admin - Edit Product";
+}
 
-<html class="light" lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Liora Admin - Edit Product</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=EB+Garamond:ital@0;1&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script id="tailwind-config">
-        tailwind.config = {
-        darkMode: "class",
-        theme: {
-        extend: {
-        "colors": {
-        "on-primary-fixed-variant": "#643d30",
-        "tertiary": "#635b68",
-        "surface-container-low": "#f9f2ec",
-        "on-tertiary-fixed": "#1f1924",
-        "on-primary-container": "#4e2a1f",
-        "surface-tint": "#7f5446",
-        "secondary": "#665972",
-        "on-tertiary-container": "#38313d",
-        "secondary-fixed": "#eedcfa",
-        "surface-dim": "#dfd9d3",
-        "error": "#ba1a1a",
-        "on-secondary": "#ffffff",
-        "inverse-on-surface": "#f7efe9",
-        "surface-container-high": "#eee7e1",
-        "secondary-container": "#eedcfa",
-        "on-tertiary-fixed-variant": "#4b4450",
-        "on-primary-fixed": "#311309",
-        "on-surface": "#1e1b18",
-        "on-secondary-fixed": "#21172c",
-        "surface-variant": "#e8e1db",
-        "background": "#fff8f3",
-        "primary-container": "#c49080",
-        "on-error-container": "#93000a",
-        "primary-fixed": "#ffdbd0",
-        "secondary-fixed-dim": "#d1c0de",
-        "surface-container": "#f4ede7",
-        "primary": "#7f5446",
-        "inverse-surface": "#33302c",
-        "primary-fixed-dim": "#f2baa8",
-        "on-background": "#1e1b18",
-        "on-tertiary": "#ffffff",
-        "on-secondary-fixed-variant": "#4e425a",
-        "outline-variant": "#d5c2bd",
-        "on-primary": "#ffffff",
-        "tertiary-fixed-dim": "#cec3d2",
-        "tertiary-container": "#a299a7",
-        "surface-container-lowest": "#ffffff",
-        "surface-bright": "#fff8f3",
-        "tertiary-fixed": "#eadfee",
-        "outline": "#83746f",
-        "on-surface-variant": "#514440",
-        "error-container": "#ffdad6",
-        "surface-container-highest": "#e8e1db",
-        "inverse-primary": "#f2baa8",
-        "surface": "#fff8f3",
-        "on-error": "#ffffff",
-        "on-secondary-container": "#6c5f79"
-        },
-        "borderRadius": {
-        "DEFAULT": "0.25rem",
-        "lg": "0.5rem",
-        "xl": "0.75rem",
-        "full": "9999px"
-        },
-        "spacing": {
-        "stack-md": "16px",
-        "container-padding-mobile": "20px",
-        "stack-lg": "32px",
-        "section-gap": "120px",
-        "unit": "8px",
-        "container-padding-desktop": "64px",
-        "stack-sm": "8px",
-        "gutter": "24px"
-        },
-        "fontFamily": {
-        "label-caps": ["DM Sans"],
-        "headline-lg-mobile": ["Playfair Display"],
-        "headline-md": ["Playfair Display"],
-        "body-lg": ["DM Sans"],
-        "headline-lg": ["Playfair Display"],
-        "display-lg": ["Playfair Display"],
-        "body-md": ["DM Sans"],
-        "display-lg-mobile": ["Playfair Display"],
-        "accent-italic": ["EB Garamond"]
-        },
-        "fontSize": {
-        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "700" }],
-        "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
-        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "500" }],
-        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
-        "headline-lg": ["40px", { "lineHeight": "1.2", "fontWeight": "600" }],
-        "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
-        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
-        "display-lg-mobile": ["40px", { "lineHeight": "1.2", "fontWeight": "700" }],
-        "accent-italic": ["20px", { "lineHeight": "1.5", "fontWeight": "400" }]
-        }
-        }
-        }
-        }
-    </script>
-    <style>
-        .material-symbols-outlined {
-        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
+@section Styles {
+<style>
+    .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
 
-        .icon-fill {
-        font-variation-settings: 'FILL' 1;
-        }
+    .icon-fill {
+    font-variation-settings: 'FILL' 1;
+    }
 
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-        width: 8px;
-        }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+    width: 8px;
+    }
 
-        ::-webkit-scrollbar-track {
-        background: #fff8f3;
-        }
+    ::-webkit-scrollbar-track {
+    background: #fff8f3;
+    }
 
-        ::-webkit-scrollbar-thumb {
-        background: #e8e1db;
-        border-radius: 4px;
-        }
+    ::-webkit-scrollbar-thumb {
+    background: #e8e1db;
+    border-radius: 4px;
+    }
 
-        ::-webkit-scrollbar-thumb:hover {
-        background: #d5c2bd;
-        }
+    ::-webkit-scrollbar-thumb:hover {
+    background: #d5c2bd;
+    }
 
-        /* Focus styles */
-        .input-focus-glow:focus {
-        box-shadow: 0 0 0 4px rgba(196, 144, 128, 0.2);
-        border-color: #c49080;
-        }
-    </style>
-</head>
-<body class="bg-background text-on-background font-body-md text-body-md antialiased overflow-x-hidden min-h-screen">
-    <!-- TopAppBar -->
-    <header class="fixed docked full-width top-0 h-20 bg-surface/80 backdrop-blur-md shadow-sm shadow-[0px_10px_30px_rgba(26,16,37,0.05)] z-40 flex justify-between items-center w-full px-container-padding-desktop md:ml-64 transition-all duration-250 hidden md:flex">
-        <div class="flex items-center gap-4">
-            <span class="font-display-lg text-[32px] text-primary italic tracking-wider">Liora</span>
-        </div>
-        <div class="flex items-center gap-6">
-            <div class="relative focus-within:ring-2 focus-within:ring-primary-container rounded-full">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-                <input class="pl-12 pr-4 py-2 bg-surface-container-high border-none rounded-full w-64 text-on-surface placeholder-on-surface-variant focus:outline-none focus:ring-0 font-body-md text-body-md transition-all duration-250 hover:bg-surface-variant" placeholder="Search catalog..." type="text" />
-            </div>
-            <div class="flex items-center gap-4">
-                <button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-all duration-250">
-                    <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
-                </button>
-                <button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-all duration-250">
-                    <span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
-                </button>
-            </div>
-        </div>
-    </header>
-    <!-- SideNavBar (Desktop) -->
-    <nav class="bg-inverse-surface shadow-lg shadow-[0px_10px_30px_rgba(26,16,37,0.05)] h-screen w-64 fixed left-0 top-0 z-50 flex flex-col h-full py-stack-lg px-gutter hidden md:flex">
-        <div class="mb-stack-lg flex items-center gap-4 text-on-tertiary">
-            <div class="w-12 h-12 rounded-full bg-surface-container-high overflow-hidden">
-                <img alt="Admin Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a female luxury boutique manager. She has an elegant, confident expression, soft lighting highlighting her features, against a minimalist neutral background. The aesthetic is high-end editorial, bright, and polished." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2jwl-cdu1vqePtbhtI1PkE2yknbFoQaNVO__SNdIhDDcs1UDhnfntySNzKr6UW8859O2j5M-9eEo-0q49-9RZD3niPttk1RLbTsdE3WEtIQawkXim0ELhKNfSNH24YHn6Vmav-3hgo_Myap24uLuYBNlZPF7c-voSPWFKGgceq8H-8oy2S0Ow2SfmxOCpWW3RecZ6FGhs2HaaJFC-lY_cR2y_G1tNasIQhlXcWTIMEupE3FDr5f7wmktDA_SbX7EPAnzBubfWmCT8" />
-            </div>
-            <div>
-                <h2 class="font-headline-md text-[20px] leading-tight text-surface">Liora Admin</h2>
-                <p class="font-body-md text-[14px] text-surface-dim">Luxury Management</p>
-            </div>
-        </div>
-        <ul class="flex flex-col gap-2 flex-grow">
-            <li>
-                <a class="flex items-center gap-4 p-3 rounded-lg text-on-tertiary-fixed-variant font-label-caps hover:text-primary-fixed transition-colors duration-250 ease-out group" href="#">
-                    <span class="material-symbols-outlined group-hover:scale-110 transition-transform duration-250" data-icon="dashboard">dashboard</span>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-            <li>
-                <a class="flex items-center gap-4 p-3 rounded-lg text-primary font-bold border-b-2 border-primary pb-1 group" href="#">
-                    <span class="material-symbols-outlined icon-fill" data-icon="inventory_2">inventory_2</span>
-                    <span>Catalog</span>
-                </a>
-            </li>
-            <li>
-                <a class="flex items-center gap-4 p-3 rounded-lg text-on-tertiary-fixed-variant font-label-caps hover:text-primary-fixed transition-colors duration-250 ease-out group" href="#">
-                    <span class="material-symbols-outlined group-hover:scale-110 transition-transform duration-250" data-icon="payments">payments</span>
-                    <span>Sales</span>
-                </a>
-            </li>
-            <li>
-                <a class="flex items-center gap-4 p-3 rounded-lg text-on-tertiary-fixed-variant font-label-caps hover:text-primary-fixed transition-colors duration-250 ease-out group" href="#">
-                    <span class="material-symbols-outlined group-hover:scale-110 transition-transform duration-250" data-icon="group">group</span>
-                    <span>Customers</span>
-                </a>
-            </li>
-            <li>
-                <a class="flex items-center gap-4 p-3 rounded-lg text-on-tertiary-fixed-variant font-label-caps hover:text-primary-fixed transition-colors duration-250 ease-out group" href="#">
-                    <span class="material-symbols-outlined group-hover:scale-110 transition-transform duration-250" data-icon="settings">settings</span>
-                    <span>Settings</span>
-                </a>
-            </li>
-        </ul>
-        <button class="mt-auto mb-stack-lg w-full py-3 bg-primary-container text-on-primary-container rounded-full font-label-caps text-label-caps hover:scale-95 transition-transform duration-250 ease-out shadow-[0px_10px_30px_rgba(26,16,37,0.05)]">
-            Add New Collection
-        </button>
-        <ul class="flex flex-col gap-2 pt-4 border-t border-surface-tint/20">
-            <li>
-                <a class="flex items-center gap-4 p-3 rounded-lg text-on-tertiary-fixed-variant font-label-caps hover:text-primary-fixed transition-colors duration-250 ease-out group" href="#">
-                    <span class="material-symbols-outlined group-hover:scale-110 transition-transform duration-250" data-icon="help">help</span>
-                    <span>Support</span>
-                </a>
-            </li>
-            <li>
-                <a class="flex items-center gap-4 p-3 rounded-lg text-on-tertiary-fixed-variant font-label-caps hover:text-primary-fixed transition-colors duration-250 ease-out group" href="#">
-                    <span class="material-symbols-outlined group-hover:scale-110 transition-transform duration-250" data-icon="logout">logout</span>
-                    <span>Log Out</span>
-                </a>
-            </li>
-        </ul>
+    /* Focus styles */
+    .input-focus-glow:focus {
+    box-shadow: 0 0 0 4px rgba(196, 144, 128, 0.2);
+    border-color: #c49080;
+    }
+</style>
+}
+
+<!-- Header Section -->
+<div class="mb-stack-lg">
+    <nav class="flex items-center gap-2 text-on-surface-variant mb-4 font-body-md text-[14px]">
+        <a class="hover:text-primary transition-colors duration-250" asp-action="Index">Catalog</a>
+        <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+        <a class="hover:text-primary transition-colors duration-250" asp-action="Index">Products</a>
+        <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+        <span class="text-on-surface">Edit Product</span>
     </nav>
-    <!-- Main Content Canvas -->
-    <main class="md:ml-64 pt-24 pb-section-gap px-container-padding-mobile md:px-container-padding-desktop">
-        <!-- Header Section -->
-        <div class="mb-stack-lg">
-            <nav class="flex items-center gap-2 text-on-surface-variant mb-4 font-body-md text-[14px]">
-                <a class="hover:text-primary transition-colors duration-250" href="#">Catalog</a>
-                <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-                <a class="hover:text-primary transition-colors duration-250" href="#">Products</a>
-                <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-                <span class="text-on-surface">Edit Product</span>
-            </nav>
-            <h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface tracking-tight">Edit Product: Ethereal Silk Slip Dress</h1>
+    <h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface tracking-tight">Edit Product: @Model.Name</h1>
+</div>
+<!-- Two Column Grid -->
+<form id="editProductForm" asp-action="Edit" method="post" class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="All" class="text-error mb-4 col-span-full"></div>
+    <!-- Left Column (Main Info & Variants) -->
+    <div class="lg:col-span-8 flex flex-col gap-stack-lg">
+        <!-- Basic Information Card -->
+        <div class="bg-surface-container-lowest rounded-xl p-8 shadow-[0px_10px_30px_rgba(26,16,37,0.05)] border border-surface-variant/50">
+            <h2 class="font-headline-md text-[24px] text-on-surface mb-6">Basic Information</h2>
+            <div class="space-y-6">
+                <div>
+                    <label asp-for="Name" class="block font-label-caps text-label-caps text-on-surface-variant mb-2"></label>
+                    <input asp-for="Name" class="w-full bg-surface-container-lowest border border-outline/20 rounded-lg px-4 py-3 text-on-surface font-body-md text-body-md focus:outline-none input-focus-glow transition-all duration-250" />
+                    <span asp-validation-for="Name" class="text-xs text-error mt-1"></span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label asp-for="CategoryId" class="block font-label-caps text-label-caps text-on-surface-variant mb-2"></label>
+                        <div class="relative">
+                            <select asp-for="CategoryId" asp-items="Model.Categories" class="w-full bg-surface-container-lowest border border-outline/20 rounded-lg px-4 py-3 text-on-surface font-body-md text-body-md appearance-none focus:outline-none input-focus-glow transition-all duration-250">
+                                <option disabled selected value="">Select Category</option>
+                            </select>
+                            <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
+                        </div>
+                        <span asp-validation-for="CategoryId" class="text-xs text-error mt-1"></span>
+                    </div>
+                    <div>
+                        <label asp-for="BasePrice" class="block font-label-caps text-label-caps text-on-surface-variant mb-2"></label>
+                        <input asp-for="BasePrice" type="number" step="0.01" class="w-full bg-surface-container-lowest border border-outline/20 rounded-lg px-4 py-3 text-on-surface font-body-md text-body-md focus:outline-none input-focus-glow transition-all duration-250" />
+                        <span asp-validation-for="BasePrice" class="text-xs text-error mt-1"></span>
+                    </div>
+                </div>
+                <div>
+                    <label asp-for="Description" class="block font-label-caps text-label-caps text-on-surface-variant mb-2"></label>
+                    <textarea asp-for="Description" class="w-full bg-surface-container-lowest border border-outline/20 rounded-lg px-4 py-3 text-on-surface font-body-md text-body-md focus:outline-none input-focus-glow transition-all duration-250 resize-y" rows="4"></textarea>
+                    <span asp-validation-for="Description" class="text-xs text-error mt-1"></span>
+                </div>
+            </div>
         </div>
-        <!-- Two Column Grid -->
-        <form class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
-            <!-- Left Column (Main Info & Variants) -->
-            <div class="lg:col-span-8 flex flex-col gap-stack-lg">
-                <!-- Basic Information Card -->
-                <div class="bg-surface-container-lowest rounded-xl p-8 shadow-[0px_10px_30px_rgba(26,16,37,0.05)] border border-surface-variant/50">
-                    <h2 class="font-headline-md text-[24px] text-on-surface mb-6">Basic Information</h2>
-                    <div class="space-y-6">
-                        <div>
-                            <label class="block font-label-caps text-label-caps text-on-surface-variant mb-2" for="productName">Product Name</label>
-                            <input class="w-full bg-surface-container-lowest border border-outline/20 rounded-lg px-4 py-3 text-on-surface font-body-md text-body-md focus:outline-none input-focus-glow transition-all duration-250" id="productName" type="text" value="Ethereal Silk Slip Dress" />
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block font-label-caps text-label-caps text-on-surface-variant mb-2" for="category">Category</label>
-                                <div class="relative">
-                                    <select class="w-full bg-surface-container-lowest border border-outline/20 rounded-lg px-4 py-3 text-on-surface font-body-md text-body-md appearance-none focus:outline-none input-focus-glow transition-all duration-250" id="category">
-                                        <option selected="" value="silk-dresses">Silk Dresses</option>
-                                        <option value="loungewear">Loungewear</option>
-                                        <option value="accessories">Accessories</option>
-                                    </select>
-                                    <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
+        <!-- Variants & Stock Card -->
+        <div class="bg-surface-container-lowest rounded-xl p-8 shadow-[0px_10px_30px_rgba(26,16,37,0.05)] border border-surface-variant/50">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="font-headline-md text-[24px] text-on-surface">Variants &amp; Stock</h2>
+                <button class="text-primary font-label-caps text-label-caps hover:text-primary-container transition-colors duration-250 flex items-center gap-1" type="button">
+                    <span class="material-symbols-outlined text-[18px]">add</span> Add Variant
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-surface-variant">
+                            <th class="py-3 px-4 font-label-caps text-label-caps text-on-surface-variant font-normal">Variant</th>
+                            <th class="py-3 px-4 font-label-caps text-label-caps text-on-surface-variant font-normal">SKU</th>
+                            <th class="py-3 px-4 font-label-caps text-label-caps text-on-surface-variant font-normal text-right">Stock</th>
+                            <th class="py-3 px-4 font-label-caps text-label-caps text-on-surface-variant font-normal text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-surface-variant/50 hover:bg-surface-container-low transition-colors duration-250 group">
+                            <td class="py-4 px-4 flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-md bg-surface-variant overflow-hidden">
+                                    <img alt="Variant thumbnail" class="w-full h-full object-cover" data-alt="A close up detail shot of luxurious ivory white silk fabric draping softly. High fashion editorial lighting, bright, elegant, modern minimalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD45SnDdj2gHb5ITHL0ZZrsfmmIgsuFkQo8n3fjd1kOScqRn8aSme-Gn86vRvoldTecdY5p7KBmdeMiOimYDScQwA1WLz44e-PSWhnYHZ_NPwD6vBV4K7uRwWHoTq5OiWuzqovh363xalQoOBiILCbC95VLZvd9ha5D3LZT9yKAVmbs_IGXojuXNfKo7oyLRIAvmtflWch5ojbgnOguZzVO3UlHS0yr8STSujTsUiktk6MrouY2y4fxPeaUJFjab-tdDK17Rppeo5iy" />
                                 </div>
-                            </div>
-                            <div>
-                                <label class="block font-label-caps text-label-caps text-on-surface-variant mb-2" for="basePrice">Base Price (LE)</label>
-                                <input class="w-full bg-surface-container-lowest border border-outline/20 rounded-lg px-4 py-3 text-on-surface font-body-md text-body-md focus:outline-none input-focus-glow transition-all duration-250" id="basePrice" type="text" value="4,200" />
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block font-label-caps text-label-caps text-on-surface-variant mb-2" for="description">Description</label>
-                            <textarea class="w-full bg-surface-container-lowest border border-outline/20 rounded-lg px-4 py-3 text-on-surface font-body-md text-body-md focus:outline-none input-focus-glow transition-all duration-250 resize-y" id="description" rows="4">A timeless silhouette crafted from 100% pure mulberry silk. Features a delicate V-neckline and adjustable straps for a perfect fit.</textarea>
-                        </div>
-                    </div>
+                                <div>
+                                    <p class="font-body-md text-on-surface font-medium">Ivory / S</p>
+                                </div>
+                            </td>
+                            <td class="py-4 px-4 font-body-md text-on-surface-variant text-[14px]">LIO-ESD-S</td>
+                            <td class="py-4 px-4 text-right">
+                                <input class="w-20 text-right bg-transparent border border-outline/20 rounded-md px-2 py-1 focus:outline-none input-focus-glow transition-all duration-250" type="number" value="24" />
+                            </td>
+                            <td class="py-4 px-4 text-right">
+                                <button class="text-on-surface-variant hover:text-error transition-colors duration-250 opacity-0 group-hover:opacity-100" type="button">
+                                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- Right Column (Media & Status) -->
+    <div class="lg:col-span-4 flex flex-col gap-stack-lg">
+        <!-- Product Status Card -->
+        <div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_10px_30px_rgba(26,16,37,0.05)] border border-surface-variant/50">
+            <h2 class="font-headline-md text-[20px] text-on-surface mb-4">Status</h2>
+            <div class="flex items-center justify-between py-2">
+                <div>
+                    <p class="font-body-md text-on-surface font-medium">Product Visibility</p>
+                    <p class="font-body-md text-[13px] text-on-surface-variant mt-1">Active in catalog</p>
                 </div>
-                <!-- Variants & Stock Card -->
-                <div class="bg-surface-container-lowest rounded-xl p-8 shadow-[0px_10px_30px_rgba(26,16,37,0.05)] border border-surface-variant/50">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="font-headline-md text-[24px] text-on-surface">Variants &amp; Stock</h2>
-                        <button class="text-primary font-label-caps text-label-caps hover:text-primary-container transition-colors duration-250 flex items-center gap-1" type="button">
-                            <span class="material-symbols-outlined text-[18px]">add</span> Add Variant
-                        </button>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="border-b border-surface-variant">
-                                    <th class="py-3 px-4 font-label-caps text-label-caps text-on-surface-variant font-normal">Variant</th>
-                                    <th class="py-3 px-4 font-label-caps text-label-caps text-on-surface-variant font-normal">SKU</th>
-                                    <th class="py-3 px-4 font-label-caps text-label-caps text-on-surface-variant font-normal text-right">Stock</th>
-                                    <th class="py-3 px-4 font-label-caps text-label-caps text-on-surface-variant font-normal text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="border-b border-surface-variant/50 hover:bg-surface-container-low transition-colors duration-250 group">
-                                    <td class="py-4 px-4 flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-md bg-surface-variant overflow-hidden">
-                                            <img alt="Variant thumbnail" class="w-full h-full object-cover" data-alt="A close up detail shot of luxurious ivory white silk fabric draping softly. High fashion editorial lighting, bright, elegant, modern minimalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD45SnDdj2gHb5ITHL0ZZrsfmmIgsuFkQo8n3fjd1kOScqRn8aSme-Gn86vRvoldTecdY5p7KBmdeMiOimYDScQwA1WLz44e-PSWhnYHZ_NPwD6vBV4K7uRwWHoTq5OiWuzqovh363xalQoOBiILCbC95VLZvd9ha5D3LZT9yKAVmbs_IGXojuXNfKo7oyLRIAvmtflWch5ojbgnOguZzVO3UlHS0yr8STSujTsUiktk6MrouY2y4fxPeaUJFjab-tdDK17Rppeo5iy" />
-                                        </div>
-                                        <div>
-                                            <p class="font-body-md text-on-surface font-medium">Ivory / S</p>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-4 font-body-md text-on-surface-variant text-[14px]">LIO-ESD-S</td>
-                                    <td class="py-4 px-4 text-right">
-                                        <input class="w-20 text-right bg-transparent border border-outline/20 rounded-md px-2 py-1 focus:outline-none input-focus-glow transition-all duration-250" type="number" value="24" />
-                                    </td>
-                                    <td class="py-4 px-4 text-right">
-                                        <button class="text-on-surface-variant hover:text-error transition-colors duration-250 opacity-0 group-hover:opacity-100" type="button">
-                                            <span class="material-symbols-outlined text-[20px]">delete</span>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <!-- Custom Toggle -->
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input asp-for="IsActive" class="sr-only peer" type="checkbox" />
+                    <div class="w-11 h-6 bg-surface-variant peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary-container rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                </label>
+            </div>
+        </div>
+        <!-- Product Media Card -->
+        <div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_10px_30px_rgba(26,16,37,0.05)] border border-surface-variant/50">
+            <h2 class="font-headline-md text-[20px] text-on-surface mb-4">Media</h2>
+            <!-- Primary Upload Area -->
+            <div class="aspect-[3/4] w-full rounded-lg bg-surface-variant border-2 border-dashed border-outline-variant overflow-hidden relative group cursor-pointer mb-4 flex flex-col items-center justify-center">
+                <img alt="Primary Product Photo" class="absolute inset-0 w-full h-full object-cover z-0" data-alt="A full length editorial shot of an ethereal ivory silk slip dress elegantly draped on a modern minimalist dress form. The background is a soft, high-key studio setting with ambient warm lighting. The mood is intimate, luxurious, and refined, capturing the lustrous texture of the silk." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrWsoiZuicObJlRRJrTiytXKegj831Jt4cgVNHlGdqdT7__m2uHo3pglVAcCVAOExMfpT5_ZyZ9dBlnyFLJFL5R__mXra9D7o1yILWTUTZSMTgq3uulGMGZjFIcPU_veYJBMNdkCvbsPG2kq7oG7lQjhj32QNzVRpZYyw6AsrYH8KvXyh7PaGjlIcPpJL72szi5G-gBJWiR7itWppu7tdV2mkU8NtVLbZVGJyQEsPciAfdTBG62YX-b-24cBqfBEIYP2VPGLIXd-NG" />
+                <div class="absolute inset-0 bg-inverse-surface/40 opacity-0 group-hover:opacity-100 transition-opacity duration-250 z-10 flex flex-col items-center justify-center text-on-tertiary">
+                    <span class="material-symbols-outlined mb-2 text-[32px]">cloud_upload</span>
+                    <span class="font-label-caps text-label-caps">Replace Primary Image</span>
                 </div>
             </div>
-            <!-- Right Column (Media & Status) -->
-            <div class="lg:col-span-4 flex flex-col gap-stack-lg">
-                <!-- Product Status Card -->
-                <div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_10px_30px_rgba(26,16,37,0.05)] border border-surface-variant/50">
-                    <h2 class="font-headline-md text-[20px] text-on-surface mb-4">Status</h2>
-                    <div class="flex items-center justify-between py-2">
-                        <div>
-                            <p class="font-body-md text-on-surface font-medium">Product Visibility</p>
-                            <p class="font-body-md text-[13px] text-on-surface-variant mt-1">Active in catalog</p>
-                        </div>
-                        <!-- Custom Toggle -->
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input checked="" class="sr-only peer" type="checkbox" />
-                            <div class="w-11 h-6 bg-surface-variant peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary-container rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                        </label>
+            <!-- Secondary Gallery -->
+            <div class="grid grid-cols-4 gap-2">
+                <div class="aspect-square rounded-md bg-surface-variant border border-outline/20 overflow-hidden cursor-pointer hover:border-primary transition-colors duration-250 relative group">
+                    <img alt="Gallery thumbnail 1" class="w-full h-full object-cover" data-alt="A close-up macro shot of delicate lace detailing on ivory silk fabric. Soft, diffused lighting emphasizes the intricate textures and premium quality of the material. Modern luxury aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdKfuKFVTEVtjnRmw060m8CpJ5BB6_xRHYYg-T7_IE8Iso03AZTppcrQpIBvri0cGH3xI4UyduQS-BFFejRSmXWkI3kWB2DvJonS9cxe7Yigr9clPyXYTPt7CIZ20Psb4RZ5vEZPwKtcSzGtfgDhBUFFpzRIP635XNt1DOReuMObJHt62xLoUaPwTBhSp-M3JGnMyTUp4I37o6TRzx_P3jG6bU4NWOwA4MpXhbOjb1kG1o1r_5hDR4QYFrg0zHL9Pb49Evt4WpPRkr" />
+                    <div class="absolute inset-0 bg-inverse-surface/20 opacity-0 group-hover:opacity-100 transition-opacity duration-250 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-white text-[16px]">delete</span>
                     </div>
                 </div>
-                <!-- Product Media Card -->
-                <div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_10px_30px_rgba(26,16,37,0.05)] border border-surface-variant/50">
-                    <h2 class="font-headline-md text-[20px] text-on-surface mb-4">Media</h2>
-                    <!-- Primary Upload Area -->
-                    <div class="aspect-[3/4] w-full rounded-lg bg-surface-variant border-2 border-dashed border-outline-variant overflow-hidden relative group cursor-pointer mb-4 flex flex-col items-center justify-center">
-                        <img alt="Primary Product Photo" class="absolute inset-0 w-full h-full object-cover z-0" data-alt="A full length editorial shot of an ethereal ivory silk slip dress elegantly draped on a modern minimalist dress form. The background is a soft, high-key studio setting with ambient warm lighting. The mood is intimate, luxurious, and refined, capturing the lustrous texture of the silk." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrWsoiZuicObJlRRJrTiytXKegj831Jt4cgVNHlGdqdT7__m2uHo3pglVAcCVAOExMfpT5_ZyZ9dBlnyFLJFL5R__mXra9D7o1yILWTUTZSMTgq3uulGMGZjFIcPU_veYJBMNdkCvbsPG2kq7oG7lQjhj32QNzVRpZYyw6AsrYH8KvXyh7PaGjlIcPpJL72szi5G-gBJWiR7itWppu7tdV2mkU8NtVLbZVGJyQEsPciAfdTBG62YX-b-24cBqfBEIYP2VPGLIXd-NG" />
-                        <div class="absolute inset-0 bg-inverse-surface/40 opacity-0 group-hover:opacity-100 transition-opacity duration-250 z-10 flex flex-col items-center justify-center text-on-tertiary">
-                            <span class="material-symbols-outlined mb-2 text-[32px]">cloud_upload</span>
-                            <span class="font-label-caps text-label-caps">Replace Primary Image</span>
-                        </div>
-                    </div>
-                    <!-- Secondary Gallery -->
-                    <div class="grid grid-cols-4 gap-2">
-                        <div class="aspect-square rounded-md bg-surface-variant border border-outline/20 overflow-hidden cursor-pointer hover:border-primary transition-colors duration-250 relative group">
-                            <img alt="Gallery thumbnail 1" class="w-full h-full object-cover" data-alt="A close-up macro shot of delicate lace detailing on ivory silk fabric. Soft, diffused lighting emphasizes the intricate textures and premium quality of the material. Modern luxury aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdKfuKFVTEVtjnRmw060m8CpJ5BB6_xRHYYg-T7_IE8Iso03AZTppcrQpIBvri0cGH3xI4UyduQS-BFFejRSmXWkI3kWB2DvJonS9cxe7Yigr9clPyXYTPt7CIZ20Psb4RZ5vEZPwKtcSzGtfgDhBUFFpzRIP635XNt1DOReuMObJHt62xLoUaPwTBhSp-M3JGnMyTUp4I37o6TRzx_P3jG6bU4NWOwA4MpXhbOjb1kG1o1r_5hDR4QYFrg0zHL9Pb49Evt4WpPRkr" />
-                            <div class="absolute inset-0 bg-inverse-surface/20 opacity-0 group-hover:opacity-100 transition-opacity duration-250 flex items-center justify-center">
-                                <span class="material-symbols-outlined text-white text-[16px]">delete</span>
-                            </div>
-                        </div>
-                        <button class="aspect-square rounded-md border-2 border-dashed border-outline-variant flex items-center justify-center text-on-surface-variant hover:text-primary hover:border-primary transition-all duration-250" type="button">
-                            <span class="material-symbols-outlined">add</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <!-- Footer Actions -->
-            <div class="col-span-1 lg:col-span-12 mt-stack-md flex justify-end gap-4 border-t border-surface-variant pt-stack-lg">
-                <button class="px-8 py-3 rounded-full font-label-caps text-label-caps text-on-surface hover:bg-surface-variant transition-colors duration-250 ease-out border border-transparent" type="button">
-                    Cancel
-                </button>
-                <button class="px-8 py-3 bg-primary-container text-on-primary-container rounded-full font-label-caps text-label-caps hover:scale-95 transition-transform duration-250 ease-out shadow-[0px_10px_30px_rgba(26,16,37,0.05)]" type="submit">
-                    Save Changes
+                <button class="aspect-square rounded-md border-2 border-dashed border-outline-variant flex items-center justify-center text-on-surface-variant hover:text-primary hover:border-primary transition-all duration-250" type="button">
+                    <span class="material-symbols-outlined">add</span>
                 </button>
             </div>
-        </form>
-    </main>
-    <script>
-        // Simple script to handle hover states or subtle interactions if needed beyond CSS
-        document.addEventListener('DOMContentLoaded', () => {
-        // Future logic for drag/drop image upload could go here
-        });
-    </script>
-</body></html>
+        </div>
+    </div>
+    <!-- Footer Actions -->
+    <div class="col-span-1 lg:col-span-12 mt-stack-md flex justify-end gap-4 border-t border-surface-variant pt-stack-lg">
+        <a asp-action="Index" class="px-8 py-3 rounded-full font-label-caps text-label-caps text-on-surface hover:bg-surface-variant transition-colors duration-250 ease-out border border-transparent flex items-center justify-center">
+            Cancel
+        </a>
+        <button type="submit" form="editProductForm" class="px-8 py-3 bg-primary-container text-on-primary-container rounded-full font-label-caps text-label-caps hover:scale-95 transition-transform duration-250 ease-out shadow-[0px_10px_30px_rgba(26,16,37,0.05)]">
+            Save Changes
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+<script>
+    // Simple script to handle hover states or subtle interactions if needed beyond CSS
+    document.addEventListener('DOMContentLoaded', () => {
+    // Future logic for drag/drop image upload could go here
+    });
+</script>
+}

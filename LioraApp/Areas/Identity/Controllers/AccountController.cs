@@ -22,9 +22,6 @@ public class AccountController : Controller
     private readonly IConfiguration _configuration;
     private readonly IPhoneNumberValidator _phoneNumberValidator;
 
-    // ✅ FIX 1: Removed IRepository<ApplicationUserOTP> — لا وجود لـ ApplicationUserOTP في هذا المشروع
-    // ✅ FIX 2: Removed wrong using (Microsoft.VisualStudio.Web.CodeGenerators...)
-    // ✅ FIX 3: Constructor نظيف بدون OTP dependency
     public AccountController(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
@@ -67,13 +64,11 @@ public class AccountController : Controller
 
         if (!ModelState.IsValid) return View(vm);
 
-        // ✅ FIX 4: استخدمنا FullName بدل Name (ApplicationUser في هذا المشروع ليه FullName)
-        // ✅ FIX 5: حذفنا user.Address — الـ Addresses موجودة في جدول منفصل
         var user = new ApplicationUser
         {
             FullName       = vm.FullName,
             Email          = vm.Email,
-            UserName       = vm.Email,  // Username = Email (standard)
+            UserName       = vm.Email,
             PhoneNumber    = phoneValidation.E164Number,
             CreatedAt      = DateTime.UtcNow,
             IsActive       = true,
@@ -88,13 +83,12 @@ public class AccountController : Controller
             return View(vm);
         }
 
-        // ✅ FIX 6: استخدمنا SD.Role_Customer بدل SD.CUSTOMER_ROLE
         await _userManager.AddToRoleAsync(user, SD.Role_Customer);
 
         // Send email confirmation link
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         var publicBaseUrl = _configuration["App:PublicBaseUrl"] ?? $"{Request.Scheme}://{Request.Host}";
-        var link  = Url.Action(nameof(ConfirmEmail), "Account",
+        var link = Url.Action(nameof(ConfirmEmail), "Account",
                         new { area = "Identity", token, email = user.Email },
                         protocol: "https",
                         host: new Uri(publicBaseUrl).Host);
@@ -107,27 +101,20 @@ public class AccountController : Controller
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <title>Confirm Your Email</title>
             </head>
-            <body style="margin:0; padding:0; background-color:#f4f4f7; font-family:'Segoe UI', Arial, sans-serif;">
+            <body style="margin:0; padding:0; background-color:#fff8f3; font-family:'Segoe UI', Arial, sans-serif;">
                 <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
                     <tr><td align="center">
-                        <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:16px; overflow:hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
-                            <!-- Header -->
-                            <tr><td style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); padding:32px 40px; text-align:center;">
-                                <h1 style="margin:0; color:#ffffff; font-size:26px; font-weight:700; letter-spacing:-0.5px;">🛍️ Liora</h1>
+                        <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:24px; overflow:hidden; box-shadow: 0 4px 24px rgba(127,84,70,0.10);">
+                            <tr><td style="background: linear-gradient(135deg, #c49080 0%, #7f5446 100%); padding:32px 40px; text-align:center;">
+                                <h1 style="margin:0; color:#ffffff; font-size:32px; font-weight:400; font-style:italic; letter-spacing:1px;">liora</h1>
                                 <p style="margin:8px 0 0; color:rgba(255,255,255,0.8); font-size:14px;">Welcome to the family!</p>
                             </td></tr>
-                            <!-- Icon -->
-                            <tr><td style="padding:32px 40px 0; text-align:center;">
-                                <div style="width:72px; height:72px; background:#ede9fe; border-radius:50%; line-height:72px; font-size:32px; text-align:center; display:inline-block;">✅</div>
+                            <tr><td style="padding:40px 40px 32px; text-align:center;">
+                                <h2 style="margin:0 0 12px; color:#7f5446; font-size:22px; font-weight:600;">Confirm Your Email</h2>
+                                <p style="margin:0 0 28px; color:#83746f; font-size:15px; line-height:1.7;">Thank you for joining Liora, {user.FullName}!<br/>Please confirm your email to activate your account.</p>
+                                <a href="{link}" style="display:inline-block; padding:16px 40px; background:#7f5446; color:#ffffff; text-decoration:none; border-radius:50px; font-size:14px; font-weight:700; letter-spacing:1px; text-transform:uppercase;">Confirm My Email</a>
                             </td></tr>
-                            <!-- Body -->
-                            <tr><td style="padding:24px 40px 32px; text-align:center;">
-                                <h2 style="margin:0 0 12px; color:#1e1b4b; font-size:22px; font-weight:700;">Confirm Your Email</h2>
-                                <p style="margin:0 0 24px; color:#6b7280; font-size:15px; line-height:1.7;">Thank you for joining Liora, {user.FullName}! Please confirm your email address to activate your account.</p>
-                                <a href="{link}" style="display:inline-block; padding:14px 36px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color:#ffffff; text-decoration:none; border-radius:10px; font-size:15px; font-weight:600; letter-spacing:0.3px;">Confirm My Email</a>
-                            </td></tr>
-                            <!-- Footer -->
-                            <tr><td style="padding:0 40px;"><hr style="border:none; border-top:1px solid #e5e7eb; margin:0;" /></td></tr>
+                            <tr><td style="padding:0 40px;"><hr style="border:none; border-top:1px solid #e8e1db; margin:0;" /></td></tr>
                             <tr><td style="padding:20px 40px 28px;">
                                 <p style="margin:0; color:#9ca3af; font-size:12px; text-align:center; line-height:1.7;">If you didn't create a Liora account, please ignore this email.<br/>© 2026 Liora. All rights reserved.</p>
                             </td></tr>
@@ -138,11 +125,9 @@ public class AccountController : Controller
             </html>
             """;
 
-        await _emailSender.SendEmailAsync(user.Email!,
-            "Liora — Confirm Your Email",
-            confirmEmailBody);
+        await _emailSender.SendEmailAsync(user.Email!, "Liora — Confirm Your Email", confirmEmailBody);
 
-        TempData["success"] = _localizer["AccountCreatedCheckEmail"].Value;
+        TempData["success"] = "Account created! Please check your email to confirm your account before signing in.";
         return RedirectToAction(nameof(Login));
     }
 
@@ -156,11 +141,11 @@ public class AccountController : Controller
         var result = await _userManager.ConfirmEmailAsync(user, token);
 
         if (result.Succeeded)
-            TempData["success"] = _localizer["EmailConfirmedSuccess"].Value;
+            TempData["success"] = "Email confirmed! You can now sign in.";
         else
-            TempData["error"] = _localizer["EmailConfirmationFailed"].Value;
+            TempData["error"] = "Email confirmation failed. The link may have expired.";
 
-        return View();
+        return RedirectToAction(nameof(Login));
     }
 
     // ─── LOGIN ──────────────────────────────────────────────────
@@ -181,21 +166,20 @@ public class AccountController : Controller
 
         if (user is null)
         {
-            ModelState.AddModelError(string.Empty, _localizer["InvalidEmailOrPassword"]);
+            ModelState.AddModelError(string.Empty, "Invalid email or password.");
             return View(vm);
         }
 
         if (!await _userManager.IsEmailConfirmedAsync(user))
         {
-            ViewBag.ShowConfirmEmailAlert = true;
-            ViewBag.UnconfirmedEmail = user.Email;
-            ModelState.AddModelError(string.Empty, "Please confirm your email before signing in.");
+            ModelState.AddModelError(string.Empty, "Please confirm your email before signing in. Check your inbox.");
             return View(vm);
         }
 
         if (!user.IsActive)
         {
-            return RedirectToAction(nameof(AccountDeactivated));
+            ModelState.AddModelError(string.Empty, "Your account has been deactivated. Please contact support.");
+            return View(vm);
         }
 
         var result = await _signInManager.PasswordSignInAsync(
@@ -207,198 +191,10 @@ public class AccountController : Controller
             return RedirectToAction("Index", "Home", new { area = "Customer" });
 
         if (result.IsLockedOut)
-            ModelState.AddModelError(string.Empty, _localizer["AccountLockedOut"]);
-        else if (result.IsNotAllowed)
-            ModelState.AddModelError(string.Empty, _localizer["LoginNotAllowed"]);
+            ModelState.AddModelError(string.Empty, "Account locked due to too many failed attempts. Try again later.");
         else
-            ModelState.AddModelError(string.Empty, _localizer["InvalidEmailOrPassword"]);
+            ModelState.AddModelError(string.Empty, "Invalid email or password.");
 
         return View(vm);
-    }
-
-    // ─── ACCOUNT DEACTIVATED ─────────────────────────────────
-    [HttpGet]
-    public IActionResult AccountDeactivated() => View();
-
-
-    // ─── FORGOT PASSWORD ────────────────────────────────────────
-    [HttpGet]
-    public IActionResult ForgotPassword() => View();
-
-    [HttpPost]
-    [EnableRateLimiting("auth")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ForgotPassword(ForgotPasswordVM vm)
-    {
-        if (!ModelState.IsValid) return View(vm);
-
-        var user = await _userManager.FindByEmailAsync(vm.Email);
-
-        // ✅ Always show same message for security (don't leak whether email exists)
-        // ✅ FIX: Removed IsEmailConfirmedAsync gate — unconfirmed users were permanently
-        //    locked out of password reset, creating a deadlock.
-        if (user is not null)
-        {
-            // ✅ FIX 7: استخدمنا GeneratePasswordResetTokenAsync (Identity standard)
-            // بدل OTP system القديمة اللي كانت بتحتاج ApplicationUserOTP من DB
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var publicBaseUrl = _configuration["App:PublicBaseUrl"] ?? $"{Request.Scheme}://{Request.Host}";
-            var link  = Url.Action(nameof(ResetPassword), "Account",
-                            new { area = "Identity", token, email = user.Email },
-                            protocol: "https",
-                            host: new Uri(publicBaseUrl).Host);
-
-            var emailBody = $"""
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8" />
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                    <title>Reset Your Password</title>
-                </head>
-                <body style="margin:0; padding:0; background-color:#f4f4f7; font-family:'Segoe UI', Arial, sans-serif;">
-                    <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
-                        <tr><td align="center">
-                            <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:16px; overflow:hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
-                                <!-- Header -->
-                                <tr><td style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); padding:32px 40px; text-align:center;">
-                                    <h1 style="margin:0; color:#ffffff; font-size:26px; font-weight:700; letter-spacing:-0.5px;">🛍️ Liora</h1>
-                                    <p style="margin:8px 0 0; color:rgba(255,255,255,0.8); font-size:14px;">Your trusted shopping destination</p>
-                                </td></tr>
-                                <!-- Icon -->
-                                <tr><td style="padding:32px 40px 0; text-align:center;">
-                                    <div style="width:72px; height:72px; background:#ede9fe; border-radius:50%; line-height:72px; font-size:32px; text-align:center; display:inline-block;">🔐</div>
-                                </td></tr>
-                                <!-- Body -->
-                                <tr><td style="padding:24px 40px 32px; text-align:center;">
-                                    <h2 style="margin:0 0 12px; color:#1e1b4b; font-size:22px; font-weight:700;">Reset Your Password</h2>
-                                    <p style="margin:0 0 24px; color:#6b7280; font-size:15px; line-height:1.7;">We received a request to reset the password for your Liora account. Click the button below to set a new password.</p>
-                                    <a href="{link}" style="display:inline-block; padding:14px 36px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color:#ffffff; text-decoration:none; border-radius:10px; font-size:15px; font-weight:600; letter-spacing:0.3px;">Reset My Password</a>
-                                    <p style="margin:24px 0 0; color:#9ca3af; font-size:13px;">⏱️ This link expires in <strong>1 hour</strong>.</p>
-                                </td></tr>
-                                <!-- Footer -->
-                                <tr><td style="padding:0 40px;"><hr style="border:none; border-top:1px solid #e5e7eb; margin:0;" /></td></tr>
-                                <tr><td style="padding:20px 40px 28px;">
-                                    <p style="margin:0; color:#9ca3af; font-size:12px; text-align:center; line-height:1.7;">If you didn't request a password reset, you can safely ignore this email. Your password will not be changed.<br/>© 2026 Liora. All rights reserved.</p>
-                                </td></tr>
-                            </table>
-                        </td></tr>
-                    </table>
-                </body>
-                </html>
-                """;
-
-            await _emailSender.SendEmailAsync(
-                user.Email!,
-                "Liora — Reset Your Password",
-                emailBody);
-        }
-
-        TempData["success"] = _localizer["IfEmailExistsResetSent"].Value;
-        return RedirectToAction(nameof(ForgotPasswordConfirmation));
-    }
-
-    [HttpGet]
-    public IActionResult ForgotPasswordConfirmation() => View();
-
-    // ─── RESET PASSWORD ─────────────────────────────────────────
-    [HttpGet]
-    public IActionResult ResetPassword(string token, string email)
-        => View(new ResetPasswordVM { Token = token, Email = email });
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ResetPassword(ResetPasswordVM vm)
-    {
-        if (!ModelState.IsValid) return View(vm);
-
-        var user = await _userManager.FindByEmailAsync(vm.Email);
-        if (user is null)
-        {
-            TempData["success"] = _localizer["PasswordResetSuccess"].Value;
-            return RedirectToAction(nameof(Login));
-        }
-
-        var result = await _userManager.ResetPasswordAsync(user, vm.Token, vm.NewPassword);
-
-        if (result.Succeeded)
-        {
-            TempData["success"] = _localizer["PasswordResetPleaseLogin"].Value;
-            return RedirectToAction(nameof(Login));
-        }
-
-        foreach (var error in result.Errors)
-            ModelState.AddModelError(string.Empty, error.Description);
-
-        return View(vm);
-    }
-
-    // ─── RESEND CONFIRMATION EMAIL ──────────────────────────────
-    [HttpGet]
-    public IActionResult ResendConfirmation(string? email = null)
-        => View(new ForgotPasswordVM { Email = email ?? string.Empty });
-
-    [HttpPost]
-    [EnableRateLimiting("auth")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ResendConfirmation(ForgotPasswordVM vm)
-    {
-        if (!ModelState.IsValid) return View(vm);
-
-        var user = await _userManager.FindByEmailAsync(vm.Email);
-
-        // Security: always show the same message regardless of whether the email exists
-        if (user is not null && !await _userManager.IsEmailConfirmedAsync(user))
-        {
-            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var publicBaseUrl = _configuration["App:PublicBaseUrl"] ?? $"{Request.Scheme}://{Request.Host}";
-            var link  = Url.Action(nameof(ConfirmEmail), "Account",
-                            new { area = "Identity", token, email = user.Email },
-                            protocol: "https",
-                            host: new Uri(publicBaseUrl).Host);
-
-            var confirmEmailBody = $"""
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8" />
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                    <title>Confirm Your Email</title>
-                </head>
-                <body style="margin:0; padding:0; background-color:#f4f4f7; font-family:'Segoe UI', Arial, sans-serif;">
-                    <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
-                        <tr><td align="center">
-                            <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:16px; overflow:hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
-                                <tr><td style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); padding:32px 40px; text-align:center;">
-                                    <h1 style="margin:0; color:#ffffff; font-size:26px; font-weight:700;">🛍️ Liora</h1>
-                                    <p style="margin:8px 0 0; color:rgba(255,255,255,0.8); font-size:14px;">Welcome to the family!</p>
-                                </td></tr>
-                                <tr><td style="padding:32px 40px 0; text-align:center;">
-                                    <div style="width:72px; height:72px; background:#ede9fe; border-radius:50%; line-height:72px; font-size:32px; text-align:center; display:inline-block;">✅</div>
-                                </td></tr>
-                                <tr><td style="padding:24px 40px 32px; text-align:center;">
-                                    <h2 style="margin:0 0 12px; color:#1e1b4b; font-size:22px; font-weight:700;">Confirm Your Email</h2>
-                                    <p style="margin:0 0 24px; color:#6b7280; font-size:15px; line-height:1.7;">Please confirm your email address to activate your Liora account.</p>
-                                    <a href="{link}" style="display:inline-block; padding:14px 36px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color:#ffffff; text-decoration:none; border-radius:10px; font-size:15px; font-weight:600; letter-spacing:0.3px;">Confirm My Email</a>
-                                </td></tr>
-                                <tr><td style="padding:0 40px;"><hr style="border:none; border-top:1px solid #e5e7eb; margin:0;" /></td></tr>
-                                <tr><td style="padding:20px 40px 28px;">
-                                    <p style="margin:0; color:#9ca3af; font-size:12px; text-align:center; line-height:1.7;">If you didn't create a Liora account, please ignore this email.<br/>© 2026 Liora. All rights reserved.</p>
-                                </td></tr>
-                            </table>
-                        </td></tr>
-                    </table>
-                </body>
-                </html>
-                """;
-
-            await _emailSender.SendEmailAsync(
-                user.Email!,
-                "Liora — Confirm Your Email",
-                confirmEmailBody);
-        }
-
-        TempData["success"] = _localizer["IfEmailExistsConfirmationSent"].Value;
-        return RedirectToAction(nameof(Login));
     }
 }

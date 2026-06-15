@@ -48,13 +48,20 @@ public class ProfileController : Controller
         var user = await _userManager.GetUserAsync(User);
         if (user is null) return NotFound();
 
+        var orders = await _unitOfWork.Orders.FindAllAsync(o => o.UserId == user.Id);
+        var addresses = await _unitOfWork.Addresses.FindAllAsync(a => a.UserId == user.Id);
+
         var vm = new ProfileVM
         {
             FullName    = user.FullName,
             Email       = user.Email ?? string.Empty,
             PhoneNumber = user.PhoneNumber ?? string.Empty,
             PhoneCountryIso2 = "EG",
-            ProfileImageUrl = user.ProfileImageUrl
+            ProfileImageUrl = user.ProfileImageUrl,
+            TotalOrders = orders?.Count() ?? 0,
+            TotalSpent = orders?.Sum(o => o.TotalAmount) ?? 0,
+            SavedAddresses = addresses?.Count() ?? 0,
+            RecentOrders = orders?.OrderByDescending(o => o.CreatedAt).Take(3).ToList() ?? new List<Order>()
         };
 
         return View(vm);
@@ -315,12 +322,19 @@ public class ProfileController : Controller
     }
 
     [HttpGet]
-    public IActionResult AddAddress() => View(new AddressVM());
+    public IActionResult AddAddress()
+        {
+            var vm = new AddressVM();
+            ViewBag.Governorates = Governorates.GetEgyptianGovernorates();
+            return View(vm);
+        }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddAddress(AddressVM vm)
     {
+        ViewBag.Governorates = Governorates.GetEgyptianGovernorates();
+
         if (!ModelState.IsValid) return View(vm);
 
         var user = await _userManager.GetUserAsync(User);
@@ -380,6 +394,7 @@ public class ProfileController : Controller
             IsDefault   = address.IsDefault,
         };
 
+        ViewBag.Governorates = Governorates.GetEgyptianGovernorates();
         return View(vm);
     }
 
@@ -387,6 +402,8 @@ public class ProfileController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditAddress(AddressVM vm)
     {
+        ViewBag.Governorates = Governorates.GetEgyptianGovernorates();
+
         if (!ModelState.IsValid) return View(vm);
 
         var user = await _userManager.GetUserAsync(User);

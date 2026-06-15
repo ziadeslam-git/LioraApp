@@ -9,7 +9,7 @@
     var shopUrl = Url.Action("Index", "Products", new { area = "Customer" });
     var logoutUrl = Url.Action("Logout", "Account", new { area = "Identity" });
     var currentPath = Context.Request.Path.Value ?? "";
-    bool IsActive(string? path) => path != null && currentPath.StartsWith(path, StringComparison.OrdinalIgnoreCase);
+    bool IsActive(string? path) => path != null && (path == "/" ? currentPath == "/" : currentPath.StartsWith(path, StringComparison.OrdinalIgnoreCase));
 }
 <!DOCTYPE html>
 <html class="light" lang="en">
@@ -217,11 +217,19 @@
         </ul>
         <!-- Trailing Icons -->
         <div class="flex items-center space-x-4 md:space-x-6 text-on-surface-variant">
-            <a href="@cartUrl" aria-label="Cart" class="hover:text-primary hover:scale-105 transition-all duration-200 relative">
+            <a href="@cartUrl" aria-label="Cart" class="hover:text-primary hover:scale-105 transition-all duration-200 relative p-2">
                 <span class="material-symbols-outlined">shopping_bag</span>
+                @await Component.InvokeAsync("CartCount")
             </a>
             @if (isAuthenticated)
             {
+                @if (User.IsInRole(LioraApp.Utilities.SD.Role_Admin))
+                {
+                    <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" aria-label="Admin Dashboard" class="flex items-center gap-1 bg-primary/10 text-primary hover:bg-primary hover:text-white px-2 py-1 md:px-3 rounded-full transition-all duration-200" title="Admin Dashboard">
+                        <span class="material-symbols-outlined text-[20px]">dashboard</span>
+                        <span class="font-label-caps text-[11px] uppercase tracking-wider hidden md:block">Dashboard</span>
+                    </a>
+                }
                 <a href="@profileUrl" aria-label="Profile" class="hidden md:block hover:text-primary hover:scale-105 transition-all duration-200">
                     <span class="material-symbols-outlined">person</span>
                 </a>
@@ -234,8 +242,9 @@
             }
             else
             {
-                <a href="@loginUrl" aria-label="Login" class="hidden md:block hover:text-primary hover:scale-105 transition-all duration-200 font-label-caps text-label-caps">
+                <a href="@loginUrl" aria-label="Login" class="hidden md:flex items-center gap-1 hover:text-primary hover:scale-105 transition-all duration-200 font-label-caps text-label-caps">
                     <span class="material-symbols-outlined">login</span>
+                    <span class="text-[11px] uppercase tracking-wider">Login</span>
                 </a>
             }
             <button class="md:hidden hover:text-primary transition-colors duration-300" aria-label="Mobile Cart">
@@ -272,7 +281,7 @@
 
 <!-- ─── FOOTER ────────────────────────────────────────────────── -->
 <footer class="bg-surface-container-high rounded-t-xl mt-stack-lg border-t border-outline-variant/10 shadow-[0_-8px_24px_rgba(196,144,128,0.08)]">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-stack-lg px-container-padding-mobile md:px-container-padding-desktop py-20 max-w-7xl mx-auto w-full">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-stack-lg px-container-padding-mobile md:px-container-padding-desktop py-10 max-w-7xl mx-auto w-full">
         <div class="flex flex-col gap-4">
             <a class="font-accent-italic text-headline-md italic text-primary hover:opacity-80 transition-opacity" href="@homeUrl">liora</a>
             <p class="font-body-md text-body-md text-on-surface-variant max-w-xs leading-relaxed">Modern Egyptian Craftsmanship. Designed to flow with your life.</p>
@@ -302,6 +311,69 @@
         </div>
     </div>
 </footer>
+
+<!-- ─── MOBILE BOTTOM NAV ─────────────────────────────────────── -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full h-[70px] bg-white border-t border-slate-100 flex items-center justify-around z-40 px-2 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] pb-safe rounded-t-[20px]">
+    <!-- Home -->
+    <a href="@homeUrl" class="relative flex flex-col items-center justify-center w-full h-full group">
+        @if(IsActive(homeUrl) && !IsActive(shopUrl)) {
+            <div class="absolute -top-6 w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center shadow-lg border-4 border-background transition-all duration-300">
+                <span class="material-symbols-outlined text-[26px]">home</span>
+            </div>
+            <span class="text-[10px] mt-8 font-bold text-primary">Home</span>
+        } else {
+            <span class="material-symbols-outlined text-[24px] text-slate-400 group-hover:text-primary transition-colors">home</span>
+            <span class="text-[10px] mt-1 font-medium text-slate-400 group-hover:text-primary transition-colors">Home</span>
+        }
+    </a>
+    <!-- Shop All -->
+    <a href="@shopUrl" class="relative flex flex-col items-center justify-center w-full h-full group">
+        @if(IsActive(shopUrl)) {
+            <div class="absolute -top-6 w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center shadow-lg border-4 border-background transition-all duration-300">
+                <span class="material-symbols-outlined text-[26px]">shopping_bag</span>
+            </div>
+            <span class="text-[10px] mt-8 font-bold text-primary">Shop</span>
+        } else {
+            <span class="material-symbols-outlined text-[24px] text-slate-400 group-hover:text-primary transition-colors">shopping_bag</span>
+            <span class="text-[10px] mt-1 font-medium text-slate-400 group-hover:text-primary transition-colors">Shop</span>
+        }
+    </a>
+    <!-- Dashboard (Only for Admin) -->
+    @if (isAuthenticated && User.IsInRole(LioraApp.Utilities.SD.Role_Admin))
+    {
+        <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="relative flex flex-col items-center justify-center w-full h-full group">
+            <span class="material-symbols-outlined text-[24px] text-slate-400 group-hover:text-primary transition-colors">dashboard</span>
+            <span class="text-[10px] mt-1 font-medium text-slate-400 group-hover:text-primary transition-colors">Dashboard</span>
+        </a>
+    }
+    <!-- My Orders -->
+    @if (isAuthenticated)
+    {
+        <a href="@ordersUrl" class="relative flex flex-col items-center justify-center w-full h-full group">
+            @if(IsActive(ordersUrl)) {
+                <div class="absolute -top-6 w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center shadow-lg border-4 border-background transition-all duration-300">
+                    <span class="material-symbols-outlined text-[26px]">receipt_long</span>
+                </div>
+                <span class="text-[10px] mt-8 font-bold text-primary">Orders</span>
+            } else {
+                <span class="material-symbols-outlined text-[24px] text-slate-400 group-hover:text-primary transition-colors">receipt_long</span>
+                <span class="text-[10px] mt-1 font-medium text-slate-400 group-hover:text-primary transition-colors">Orders</span>
+            }
+        </a>
+    }
+    <!-- Profile -->
+    <a href="@(isAuthenticated ? profileUrl : loginUrl)" class="relative flex flex-col items-center justify-center w-full h-full group">
+        @if(IsActive(profileUrl)) {
+            <div class="absolute -top-6 w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center shadow-lg border-4 border-background transition-all duration-300">
+                <span class="material-symbols-outlined text-[26px]">person</span>
+            </div>
+            <span class="text-[10px] mt-8 font-bold text-primary">Profile</span>
+        } else {
+            <span class="material-symbols-outlined text-[24px] text-slate-400 group-hover:text-primary transition-colors">person</span>
+            <span class="text-[10px] mt-1 font-medium text-slate-400 group-hover:text-primary transition-colors">Profile</span>
+        }
+    </a>
+</nav>
 
 <!-- ─── SCRIPTS ───────────────────────────────────────────────── -->
 <script>
