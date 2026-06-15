@@ -135,7 +135,7 @@
                             </div>
                             <div class="text-right">
                                 <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Price</p>
-                                <p>EGP @(variant.Price?.ToString("N0") ?? Model.BasePrice.ToString("N0"))</p>
+                                <p>EGP @((variant.Price == 0 ? Model.BasePrice : variant.Price).ToString("N0"))</p>
                             </div>
                         </div>
                     </div>

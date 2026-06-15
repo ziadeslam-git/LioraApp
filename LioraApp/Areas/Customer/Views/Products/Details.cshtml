@@ -57,7 +57,9 @@
 <!-- Header & Price -->
 <div class="mb-stack-lg border-b border-outline-variant/30 pb-stack-md">
 <h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-md md:text-headline-md text-on-surface mb-2">@Model.Product.Name</h1>
-<p class="font-accent-italic text-accent-italic text-on-surface-variant mb-4">Effortless grace in every thread.</p>
+@if (!string.IsNullOrEmpty(Model.Product.Description)) {
+    <p class="font-accent-italic text-accent-italic text-on-surface-variant mb-4">@(Model.Product.Description.Length > 60 ? Model.Product.Description.Substring(0, 60) + "..." : Model.Product.Description)</p>
+}
 <div class="font-body-lg text-body-lg font-semibold text-primary-container">
                     @displayPrice.ToString("C")
                 </div>

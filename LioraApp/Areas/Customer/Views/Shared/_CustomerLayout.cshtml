@@ -195,8 +195,12 @@
 <header class="bg-surface/80 backdrop-blur-md sticky top-0 w-full z-50 border-b border-outline-variant/10 shadow-level-1">
     <nav class="flex justify-between items-center w-full px-container-padding-mobile md:px-container-padding-desktop h-20 max-w-7xl mx-auto">
         <!-- Mobile Menu Toggle -->
-        <button class="md:hidden text-on-surface-variant hover:text-primary transition-colors duration-300" id="mobile-menu-btn" aria-label="Menu">
-            <span class="material-symbols-outlined">menu</span>
+        <button class="md:hidden text-on-surface hover:text-primary transition-colors duration-300 p-2" id="mobile-menu-btn" aria-label="Menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
         </button>
         <!-- Brand Logo -->
         <a class="font-accent-italic text-headline-md md:text-headline-lg italic text-primary hover:scale-105 transition-transform duration-200" href="@homeUrl">liora</a>
@@ -247,9 +251,19 @@
                     <span class="text-[11px] uppercase tracking-wider">Login</span>
                 </a>
             }
-            <button class="md:hidden hover:text-primary transition-colors duration-300" aria-label="Mobile Cart">
-                <span class="material-symbols-outlined">shopping_bag</span>
-            </button>
+            @if (isAuthenticated)
+            {
+                <form asp-area="Identity" asp-controller="Account" asp-action="Logout" method="post" class="md:hidden">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="hover:text-primary transition-colors duration-300 p-1" aria-label="Logout">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                    </button>
+                </form>
+            }
         </div>
     </nav>
     <!-- Mobile Menu -->
