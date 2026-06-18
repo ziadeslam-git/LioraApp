@@ -8,10 +8,9 @@ using LioraApp.Utilities.DBInitializer;
 using LioraApp.Utilities.Localization;
 using LioraApp.Utilities.Validation;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.RateLimiting;
 
@@ -190,10 +189,10 @@ builder.Services.AddRateLimiter(options =>
 {
     options.AddFixedWindowLimiter("auth", cfg =>
     {
-        cfg.PermitLimit         = 10;
-        cfg.Window              = TimeSpan.FromMinutes(1);
+        cfg.PermitLimit = 10;
+        cfg.Window = TimeSpan.FromMinutes(1);
         cfg.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        cfg.QueueLimit          = 0;
+        cfg.QueueLimit = 0;
     });
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 });
