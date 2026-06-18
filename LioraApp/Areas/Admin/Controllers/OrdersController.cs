@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace LioraApp.Areas.Admin.Controllers;
 
@@ -91,6 +92,38 @@ public class OrdersController : Controller
         ViewBag.TotalCount    = totalCount;
         ViewBag.PageSize      = PageSize;
         return View(viewModels);
+    }
+
+    // ──────────────────────────────────────────────────────────
+    //  GET /Admin/Orders/ExportCsv
+    // ──────────────────────────────────────────────────────────
+    [HttpGet]
+    public async Task<IActionResult> ExportCsv(string? status)
+    {
+        IQueryable<Order> query = _unitOfWork.Orders.Query().AsNoTracking()
+            .Include(o => o.User)
+            .Include(o => o.Address);
+
+        if (!string.IsNullOrWhiteSpace(status))
+            query = query.Where(o => o.Status == status);
+
+        var orders = await query
+            .OrderByDescending(o => o.CreatedAt)
+            .Take(5000)  // Safety cap
+            .ToListAsync();
+
+        var sb = new StringBuilder();
+        sb.AppendLine("Order ID,Customer,Email,Status,Payment,Total,Date");
+
+        foreach (var o in orders)
+        {
+            var name  = (o.User?.FullName ?? o.Address?.FullName ?? "Unknown").Replace(",", " ");
+            var email = (o.User?.Email ?? "").Replace(",", " ");
+            sb.AppendLine($"#{o.Id},{name},{email},{o.Status},{o.PaymentStatus},{o.TotalAmount:F2},{o.CreatedAt:yyyy-MM-dd}");
+        }
+
+        var bytes = Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(sb.ToString())).ToArray();
+        return File(bytes, "text/csv", $"liora-orders-{DateTime.UtcNow:yyyyMMdd}.csv");
     }
 
     // ──────────────────────────────────────────────────────────
@@ -869,14 +902,22 @@ public class OrdersController : Controller
     // ──────────────────────────────────────────────────────────
     private async Task ReturnStockAsync(int orderId)
     {
-        var items = await _unitOfWork.OrderItems
-            .FindAllAsync(i => i.OrderId == orderId);
+        var items = (await _unitOfWork.OrderItems
+            .FindAllAsync(i => i.OrderId == orderId)).ToList();
+
+        if (items.Count == 0) return;
+
+        // Fix 10: Single batch query for all variants — eliminates N+1 pattern.
+        // Previously: 1 GetByIdAsync per OrderItem = N round-trips to DB.
+        // Now: 1 query for all variant IDs on this order.
+        var variantIds = items.Select(i => i.ProductVariantId).Distinct().ToList();
+        var variants   = (await _unitOfWork.ProductVariants
+            .FindAllAsync(v => variantIds.Contains(v.Id), ignoreQueryFilters: true))
+            .ToDictionary(v => v.Id);
 
         foreach (var item in items)
         {
-            var variant = await _unitOfWork.ProductVariants
-                .GetByIdAsync(item.ProductVariantId, ignoreQueryFilters: true);
-            if (variant is null) continue;
+            if (!variants.TryGetValue(item.ProductVariantId, out var variant)) continue;
 
             variant.Stock += item.Quantity;
 
@@ -886,6 +927,8 @@ public class OrdersController : Controller
 
             // EF Change Tracker handles the update automatically
         }
+
+        await _unitOfWork.SaveAsync();
     }
 
     private async Task UpdateProductStatusAsync(int productId)

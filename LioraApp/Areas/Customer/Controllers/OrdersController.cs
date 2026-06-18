@@ -19,47 +19,18 @@ namespace LioraApp.Areas.Customer.Controllers;
 [Authorize(Roles = SD.Role_AdminOrCustomer)]
 public class OrdersController : Controller
 {
-    private readonly IUnitOfWork                    _unitOfWork;
-    private readonly UserManager<ApplicationUser>   _userManager;
-    private readonly IEmailSender                   _emailSender;
-    private readonly ILogger<OrdersController>      _logger;
-    private readonly IConfiguration                 _configuration;
-    private readonly IStringLocalizer<SharedResource> _localizer;
-    private const    int                            PageSize = 10;
-    private const    string                         CheckoutViewPath            = "~/Areas/Customer/Views/Cart/Checkout.cshtml";
-    private const    string                         CheckoutStateTempDataKey    = "checkout_state";
-
-    // Demo Egyptian Governorates Shipping Prices
-    public static readonly Dictionary<string, decimal> GovernorateShippingPrices = new(StringComparer.OrdinalIgnoreCase)
-    {
-        { "Cairo", 50m },
-        { "Giza", 50m },
-        { "Alexandria", 70m },
-        { "Dakahlia", 80m },
-        { "Red Sea", 100m },
-        { "Beheira", 80m },
-        { "Fayoum", 80m },
-        { "Gharbia", 80m },
-        { "Ismailia", 80m },
-        { "Menofia", 80m },
-        { "Minya", 90m },
-        { "Qaliubiya", 60m },
-        { "New Valley", 120m },
-        { "Suez", 80m },
-        { "Aswan", 120m },
-        { "Assiut", 100m },
-        { "Beni Suef", 90m },
-        { "Port Said", 80m },
-        { "Damietta", 80m },
-        { "Sharkia", 80m },
-        { "South Sinai", 100m },
-        { "Kafr Al sheikh", 80m },
-        { "Matrouh", 100m },
-        { "Luxor", 120m },
-        { "Qena", 110m },
-        { "North Sinai", 100m },
-        { "Sohag", 100m }
-    };
+    private readonly IUnitOfWork                      _unitOfWork;
+    private readonly UserManager<ApplicationUser>     _userManager;
+    private readonly IEmailSender                     _emailSender;
+    private readonly ILogger<OrdersController>        _logger;
+    private readonly IConfiguration                   _configuration;
+    private readonly IStringLocalizer<SharedResource>  _localizer;
+    private readonly IShippingService                  _shippingService;
+    private readonly IServiceScopeFactory              _scopeFactory;
+    private readonly CloudinaryService                 _cloudinaryService;
+    private const    int                               PageSize = 10;
+    private const    string                            CheckoutViewPath         = "~/Areas/Customer/Views/Cart/Checkout.cshtml";
+    private const    string                            CheckoutStateTempDataKey = "checkout_state";
 
     public OrdersController(
         IUnitOfWork unitOfWork,
@@ -67,14 +38,30 @@ public class OrdersController : Controller
         IEmailSender emailSender,
         ILogger<OrdersController> logger,
         IConfiguration configuration,
-        IStringLocalizer<SharedResource> localizer)
+        IStringLocalizer<SharedResource> localizer,
+        IShippingService shippingService,
+        IServiceScopeFactory scopeFactory,
+        CloudinaryService cloudinaryService)
     {
-        _unitOfWork = unitOfWork;
-        _userManager = userManager;
-        _emailSender = emailSender;
-        _logger     = logger;
-        _configuration = configuration;
-        _localizer = localizer;
+        _unitOfWork        = unitOfWork;
+        _userManager       = userManager;
+        _emailSender       = emailSender;
+        _logger            = logger;
+        _configuration     = configuration;
+        _localizer         = localizer;
+        _shippingService   = shippingService;
+        _scopeFactory      = scopeFactory;
+        _cloudinaryService = cloudinaryService;
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    //  GET  /Customer/Orders/GetShippingCost
+    // ──────────────────────────────────────────────────────────────────────────
+    [HttpGet]
+    public IActionResult GetShippingCost(string governorate, decimal subtotal)
+    {
+        var cost = _shippingService.CalculateShipping(subtotal, governorate);
+        return Json(new { cost });
     }
 
     // ──────────────────────────────────────────────────────────────────────────
@@ -462,30 +449,41 @@ public class OrdersController : Controller
                 appliedCoupon.CouponCode, discountAmount, userId);
         }
 
-        // Calculate Shipping Cost
-        decimal shippingCost = 100m; // Default
-        string governorate = address.City ?? address.State ?? "";
-        if (GovernorateShippingPrices.TryGetValue(governorate, out decimal price))
-        {
-            shippingCost = price;
-        }
+        // ── Fix 2: Shipping cost computed server-side — never trust the client value ──
+        string governorate = address.City ?? address.State ?? string.Empty;
+        decimal shippingCost = _shippingService.CalculateShipping(subtotal, governorate);
 
         var totalAmount = subtotal - discountAmount + shippingCost;
 
-        // Handle Receipt Image Upload for manual payments
-        string? receiptImageUrl = null;
-        if ((vm.PaymentMethod == SD.PaymentMethod_VodafoneCash || vm.PaymentMethod == SD.PaymentMethod_InstaPay) && vm.ReceiptImage != null)
+        // ── Fix 1: Receipt upload — validate magic bytes + size, then store via Cloudinary ──
+        string? receiptImageUrl  = null;
+        string? receiptPublicId  = null;
+        bool isManualPayment = vm.PaymentMethod == SD.PaymentMethod_VodafoneCash
+                            || vm.PaymentMethod == SD.PaymentMethod_InstaPay;
+
+        if (isManualPayment && vm.ReceiptImage is { Length: > 0 })
         {
-            string wwwRootPath = "wwwroot"; // Use wwwroot for direct file storage if environment isn't injected
-            string fileName = Guid.NewGuid().ToString() + Path.GetExtension(vm.ReceiptImage.FileName);
-            string uploadsPath = Path.Combine(wwwRootPath, "images", "receipts");
-            if (!Directory.Exists(uploadsPath)) Directory.CreateDirectory(uploadsPath);
-            
-            using (var fileStream = new FileStream(Path.Combine(uploadsPath, fileName), FileMode.Create))
+            // Validate actual file content — not just the client-supplied extension
+            if (!FileTypeValidator.IsValidImage(vm.ReceiptImage, out _))
             {
-                await vm.ReceiptImage.CopyToAsync(fileStream);
+                _logger.LogWarning("PlaceOrder: Rejected upload with invalid magic bytes. FileName={FileName}, UserId={UserId}.",
+                    vm.ReceiptImage.FileName, userId);
+                TempData["error"] = _localizer["ReceiptInvalidFileType"].Value
+                    is { Length: > 0 } v ? v : "Invalid file type. Only JPG, PNG, and WEBP images are accepted.";
+                return RedirectToAction(nameof(Checkout));
             }
-            receiptImageUrl = @"\images\receipts\" + fileName;
+
+            if (vm.ReceiptImage.Length > FileTypeValidator.MaxReceiptBytes)
+            {
+                TempData["error"] = _localizer["ReceiptFileTooLarge"].Value
+                    is { Length: > 0 } s ? s : "Receipt image must be under 5 MB.";
+                return RedirectToAction(nameof(Checkout));
+            }
+
+            // Upload via Cloudinary — secure, cross-platform, no local disk dependency
+            (string uploadedUrl, string uploadedPublicId) = await _cloudinaryService.UploadAsync(vm.ReceiptImage, "receipts");
+            receiptImageUrl = uploadedUrl;
+            receiptPublicId = uploadedPublicId;
         }
 
         try
@@ -499,7 +497,9 @@ public class OrdersController : Controller
                 appliedCoupon,
                 vm.PaymentMethod == SD.PaymentMethod_CashOnDelivery ? SD.Payment_Unpaid : SD.Payment_Pending,
                 paymentProvider: vm.PaymentMethod,
-                transactionId: receiptImageUrl,
+                transactionId: null,           // Fix 5: receipt URL stored in ReceiptImageUrl, not TransactionId
+                receiptImageUrl: receiptImageUrl,
+                receiptPublicId: receiptPublicId,
                 couponCodeOverride: couponCode,
                 shippingCost: shippingCost);
 
@@ -549,8 +549,11 @@ public class OrdersController : Controller
             return Forbid();
         }
 
-        var estimatedFrom = DateOnly.FromDateTime(order.CreatedAt.AddDays(3));
-        var estimatedTo = DateOnly.FromDateTime(order.CreatedAt.AddDays(5));
+        var minDays = _configuration.GetValue<int>("Shipping:EstimatedDeliveryDaysMin", 3);
+        var maxDays = _configuration.GetValue<int>("Shipping:EstimatedDeliveryDaysMax", 5);
+
+        var estimatedFrom = DateOnly.FromDateTime(order.CreatedAt.AddDays(minDays));
+        var estimatedTo   = DateOnly.FromDateTime(order.CreatedAt.AddDays(maxDays));
 
         var vm = new OrderSuccessCustomerVM
         {
@@ -825,26 +828,14 @@ public class OrdersController : Controller
         vm.CouponApplied = string.IsNullOrWhiteSpace(couponError) && discountAmount > 0 && !string.IsNullOrWhiteSpace(vm.CouponCode);
         vm.CouponMessage = couponError ?? (vm.CouponApplied ? _localizer["CouponNamedAppliedSuccessfully", vm.CouponCode ?? string.Empty].Value : null);
 
-        // Calculate Shipping
-        vm.ShippingCost = 100m; // Default
-        string targetGovernorate = "";
-        if (vm.ShowNewAddressForm)
-        {
-            targetGovernorate = vm.NewAddressCity;
-        }
-        else
-        {
-            var selectedAddress = addresses.FirstOrDefault(a => a.Id == vm.AddressId);
-            if (selectedAddress != null)
-            {
-                targetGovernorate = selectedAddress.City ?? selectedAddress.State ?? "";
-            }
-        }
+        // Calculate shipping estimate for display — authoritatively re-computed on POST
+        string targetGovernorate = vm.ShowNewAddressForm
+            ? vm.NewAddressCity
+            : (addresses.FirstOrDefault(a => a.Id == vm.AddressId)?.City
+               ?? addresses.FirstOrDefault(a => a.Id == vm.AddressId)?.State
+               ?? string.Empty);
 
-        if (GovernorateShippingPrices.TryGetValue(targetGovernorate, out decimal price))
-        {
-            vm.ShippingCost = price;
-        }
+        vm.ShippingCost = _shippingService.CalculateShipping(vm.Subtotal - vm.DiscountAmount, targetGovernorate);
 
         return vm;
     }
@@ -972,6 +963,8 @@ public class OrdersController : Controller
         string paymentStatus,
         string? paymentProvider,
         string? transactionId,
+        string? receiptImageUrl  = null,
+        string? receiptPublicId  = null,
         string? couponCodeOverride = null,
         decimal shippingCost = 0m)
     {
@@ -1093,14 +1086,16 @@ public class OrdersController : Controller
                 UpdatedAt      = DateTime.UtcNow
             };
 
-            if (!string.IsNullOrWhiteSpace(paymentProvider) || !string.IsNullOrWhiteSpace(transactionId))
+            if (!string.IsNullOrWhiteSpace(paymentProvider) || !string.IsNullOrWhiteSpace(receiptImageUrl))
             {
                 order.Payment = new Payment
                 {
-                    Amount = totalAmount,
-                    Provider = string.IsNullOrWhiteSpace(paymentProvider) ? SD.PaymentProvider_Manual : paymentProvider,
-                    TransactionId = transactionId,
-                    Status = paymentStatus == SD.Payment_Paid ? SD.Payment_Paid : SD.Payment_Pending
+                    Amount           = totalAmount,
+                    Provider         = string.IsNullOrWhiteSpace(paymentProvider) ? SD.PaymentProvider_Manual : paymentProvider,
+                    TransactionId    = transactionId,       // gateway ref — null for manual payments
+                    ReceiptImageUrl  = receiptImageUrl,     // Fix 5: dedicated field for receipt screenshot
+                    ReceiptPublicId  = receiptPublicId,     // Fix 5: Cloudinary ID for future deletion
+                    Status           = paymentStatus == SD.Payment_Paid ? SD.Payment_Paid : SD.Payment_Pending
                 };
             }
 
@@ -1288,7 +1283,8 @@ public class OrdersController : Controller
 
     private void QueueInitialOrderEmail(Order order, string customerEmail, string? customerName)
     {
-        var detailsUrl = BuildCustomerOrderDetailsUrl(order.Id);
+        // Build email content synchronously while the request scope is still alive
+        var detailsUrl   = BuildCustomerOrderDetailsUrl(order.Id);
         var emailContent = OrderEmailTemplateBuilder.BuildInitialOrderEmail(
             customerName ?? "Customer",
             order.Id,
@@ -1297,15 +1293,25 @@ public class OrdersController : Controller
             order.PaymentStatus,
             detailsUrl);
 
+        // Capture only value types and primitives — never capture Scoped services.
+        var subject  = emailContent.Subject;
+        var htmlBody = emailContent.HtmlBody;
+        var orderId  = order.Id;
+
+        // Fix 4: Create a fresh DI scope for the background task so the Scoped
+        // IEmailSender is never accessed after the HTTP request scope is disposed.
         _ = Task.Run(async () =>
         {
+            await using var scope  = _scopeFactory.CreateAsyncScope();
+            var sender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
             try
             {
-                await _emailSender.SendEmailAsync(customerEmail, emailContent.Subject, emailContent.HtmlBody);
+                await sender.SendEmailAsync(customerEmail, subject, htmlBody);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to send initial order email for OrderId={OrderId}.", order.Id);
+                // _logger is Singleton — safe to use from any thread
+                _logger.LogError(ex, "Background email failed for OrderId={OrderId}.", orderId);
             }
         });
     }

@@ -3,6 +3,7 @@ using LioraApp.Repositories.IRepositories;
 using LioraApp.ViewModels.Customer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace LioraApp.Areas.Customer.Controllers;
@@ -21,8 +22,19 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var featuredProducts = await _unitOfWork.Products
-            .FindAllAsync(p => p.IsActive, "Images,Category,Variants.Images", tracked: false);
+        // Fix 9: Take(10) is now pushed to SQL — previously all active products were
+        // loaded into RAM and Take ran in C# memory.
+        var featuredProducts = await _unitOfWork.Products.Query()
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Where(p => p.IsActive)
+            .OrderByDescending(p => p.CreatedAt)
+            .Take(10)
+            .Include(p => p.Images)
+            .Include(p => p.Category)
+            .Include(p => p.Variants)
+                .ThenInclude(v => v.Images)
+            .ToListAsync();
 
         var giftBundles = await _unitOfWork.GiftBundles
             .FindAllAsync(gb => gb.IsActive, "Items.Product.Images,Items.Product.Variants.Images", tracked: false);
@@ -38,8 +50,6 @@ public class HomeController : Controller
         var vm = new HomeIndexVM
         {
             FeaturedProducts = featuredProducts
-                .OrderByDescending(p => p.CreatedAt)
-                .Take(10)
                 .Select(p => new ProductCardVM
                 {
                     Id = p.Id,

@@ -104,12 +104,18 @@ var cloudinaryApiSecretProviders = GetProvidersWithNonEmptyValue("Cloudinary:Api
 builder.Services.Configure<CloudinarySettings>(
     builder.Configuration.GetSection("Cloudinary"));
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
+builder.Services.AddScoped<CloudinaryService>(); // allow direct injection in OrdersController
 
 // ──────────────────────────────────────────────────────────────────
 // 4. Repository Pattern — Unit of Work
 // ──────────────────────────────────────────────────────────────────
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddSingleton<IPhoneNumberValidator, LibPhoneNumberValidator>();
+
+// ──────────────────────────────────────────────────────────────────
+// 4a. Shipping Service — server-side shipping cost calculator
+// ──────────────────────────────────────────────────────────────────
+builder.Services.AddScoped<IShippingService, ShippingService>();
 
 // ──────────────────────────────────────────────────────────────────
 // 5. DB Initializer (roles + admin seed)

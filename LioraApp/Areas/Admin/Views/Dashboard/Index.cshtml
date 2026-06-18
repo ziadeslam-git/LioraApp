@@ -1,14 +1,15 @@
-@using LioraApp.Models
+@using LioraApp.Utilities
+@using LioraApp.ViewModels.Admin
 @{
     Layout = "_AdminLayout";
     ViewData["Title"] = "Liora - Dashboard Overview";
-    
-    var recentOrders = ViewBag.RecentOrders as List<Order> ?? new List<Order>();
+
+    var recentOrders = ViewBag.RecentOrders as List<RecentOrderVM> ?? new List<RecentOrderVM>();
 }
 
 <!-- Breadcrumb & Title Header -->
 <div class="flex flex-col gap-2 mb-6">
-    <h1 class="font-headline-lg text-headline-lg text-on-surface">Good morning, Admin <span class="text-3xl">👋</span></h1>
+    <h1 class="font-headline-lg text-headline-lg text-on-surface">@ViewBag.Greeting, @ViewBag.AdminDisplayName <span class="text-3xl">👋</span></h1>
     <p class="font-body-lg text-body-lg text-on-surface-variant">@DateTime.UtcNow.ToString("dddd, MMM dd, yyyy")</p>
 </div>
 
@@ -161,18 +162,17 @@
                     {
                         foreach(var order in recentOrders)
                         {
-                            var customerName = order.User?.FullName ?? order.Address?.FullName ?? "N/A";
                             <tr class="hover:bg-surface-container-low transition-colors group">
                                 <td class="px-6 py-2.5 font-mono text-xs">#LRA-@order.Id</td>
-                                <td class="px-6 py-2.5 font-medium">@customerName</td>
+                                <td class="px-6 py-2.5 font-medium">@order.CustomerName</td>
                                 <td class="px-6 py-2.5 text-on-surface-variant text-xs">@order.CreatedAt.ToString("MMM dd")</td>
                                 <td class="px-6 py-2.5 font-mono text-xs">EGP @order.TotalAmount.ToString("N0")</td>
                                 <td class="px-6 py-2.5">
-                                    @if(order.Status == LioraApp.Utilities.SD.Status_Pending)
+                                    @if(order.Status == SD.Status_Pending)
                                     {
                                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#FEF2F2] text-[#991B1B] border border-[#FECACA]">@order.Status</span>
                                     }
-                                    else if(order.Status == LioraApp.Utilities.SD.Status_Processing)
+                                    else if(order.Status == SD.Status_Processing)
                                     {
                                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A]">@order.Status</span>
                                     }
@@ -223,13 +223,18 @@
         <div class="mt-auto pt-6 border-t border-outline-variant/30">
             <p class="text-xs text-on-surface-variant text-center mb-2">Weekly Sales Overview</p>
             <div class="h-24 w-full flex items-end gap-2 justify-between px-2">
-                <div class="w-1/6 bg-surface-container-high rounded-t-sm h-[30%]"></div>
-                <div class="w-1/6 bg-surface-container-high rounded-t-sm h-[50%]"></div>
-                <div class="w-1/6 bg-surface-container-high rounded-t-sm h-[40%]"></div>
-                <div class="w-1/6 bg-primary-container/60 rounded-t-sm h-[80%]"></div>
-                <div class="w-1/6 bg-surface-container-high rounded-t-sm h-[60%]"></div>
-                <div class="w-1/6 bg-primary-container rounded-t-sm h-[100%]"></div>
-                <div class="w-1/6 bg-surface-container-high rounded-t-sm h-[70%]"></div>
+                @{
+                    var weeklyOrders = ViewBag.WeeklyOrders as int[] ?? new int[7];
+                    var weeklyMax    = (int)(ViewBag.WeeklyOrdersMax ?? 1);
+                }
+                @foreach (var count in weeklyOrders)
+                {
+                    var heightPct = (int)Math.Round((double)count / weeklyMax * 100);
+                    var colorClass = count == weeklyOrders.Max() && count > 0 ? "bg-primary-container" : "bg-surface-container-high";
+                    <div class="w-1/7 @colorClass rounded-t-sm transition-all"
+                         style="height: @heightPct%"
+                         title="@count orders"></div>
+                }
             </div>
         </div>
     </div>

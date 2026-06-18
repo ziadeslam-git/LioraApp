@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+using System.Net;
 using LioraApp.Models;
 using LioraApp.Repositories.IRepositories;
 using LioraApp.Utilities;
@@ -18,41 +20,45 @@ public class DiscountsController : Controller
         => _unitOfWork = unitOfWork;
 
     // GET: /Admin/Discounts
+    // Fix 8: GetPagedAsync pushes filter predicate + Skip/Take/COUNT to SQL.
     public async Task<IActionResult> Index(int page = 1, string? searchQuery = null, string? typeFilter = null)
     {
-        // TODO: Replace with GetPagedAsync when implemented in IRepository<T>
-        // to push Skip/Take/filter to database level and avoid loading all discounts.
-        var allDiscounts = await _unitOfWork.Discounts.GetAllAsync(tracked: false);
+        page = Math.Max(page, 1);
 
-        // Apply filters + ordering + Skip/Take in a single LINQ chain on IQueryable —
-        // VM projection happens AFTER Skip/Take so only PageSize objects are created.
-        var query = allDiscounts.AsQueryable();
+        Expression<Func<Discount, bool>>? filter = null;
 
-        if (!string.IsNullOrWhiteSpace(searchQuery))
-            query = query.Where(d => d.CouponCode.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
+        if (!string.IsNullOrWhiteSpace(searchQuery) || !string.IsNullOrWhiteSpace(typeFilter))
+        {
+            var sq = searchQuery?.Trim();
+            var tf = typeFilter?.Trim();
 
-        if (!string.IsNullOrWhiteSpace(typeFilter))
-            query = query.Where(d => d.Type == typeFilter);
+            filter = d =>
+                (sq == null || d.CouponCode.Contains(sq)) &&
+                (tf == null || d.Type == tf);
+        }
 
-        int totalCount = query.Count();
+        var (pagedItems, totalCount) = await _unitOfWork.Discounts.GetPagedAsync(
+            filter:    filter,
+            page:      page,
+            pageSize:  PageSize,
+            tracked:   false);
+
         int totalPages = (int)Math.Ceiling(totalCount / (double)PageSize);
 
-        var paged = query
+        var paged = pagedItems
             .OrderByDescending(d => d.Id)
-            .Skip((page - 1) * PageSize)
-            .Take(PageSize)
             .Select(d => new DiscountVM
             {
-                Id                 = d.Id,
-                CouponCode         = d.CouponCode,
-                Type               = d.Type,
-                DiscountValue      = d.Value,
-                MinOrderValue      = d.MinimumOrderAmount,
-                UsageLimit         = d.UsageLimit,
-                UsageCount         = d.UsageCount,
-                StartDate          = null,
-                EndDate            = d.ExpiresAt,
-                IsActive           = d.IsActive
+                Id            = d.Id,
+                CouponCode    = d.CouponCode,
+                Type          = d.Type,
+                DiscountValue = d.Value,
+                MinOrderValue = d.MinimumOrderAmount,
+                UsageLimit    = d.UsageLimit,
+                UsageCount    = d.UsageCount,
+                StartDate     = null,
+                EndDate       = d.ExpiresAt,
+                IsActive      = d.IsActive
             })
             .ToList();
 
@@ -309,14 +315,17 @@ public class DiscountsController : Controller
         
         foreach (var d in discounts)
         {
-            string val = d.Type == "Percentage" ? $"{d.Value:F0}%" : $"${d.Value:F2}";
-            string minOrder = d.MinimumOrderAmount.HasValue ? $"${d.MinimumOrderAmount.Value:F2}" : "$0.00";
-            string usage = $"{d.UsageCount} / {(d.UsageLimit.HasValue ? d.UsageLimit.Value.ToString() : "∞")}";
-            bool isExpired = d.ExpiresAt.HasValue && d.ExpiresAt.Value < DateTime.UtcNow;
-            string status = isExpired ? "<span class='inactive'>Expired</span>" : (d.IsActive ? "<span class='active'>Active</span>" : "<span class='inactive'>Inactive</span>");
-            string codeCss = isExpired ? "expired" : "";
+            // Fix 3: HtmlEncode every DB-sourced value before embedding in HTML
+            // to prevent XSS when the exported .doc file is opened.
+            string val      = WebUtility.HtmlEncode(d.Type == "Percentage" ? $"{d.Value:F0}%" : $"EGP {d.Value:F2}");
+            string minOrder = WebUtility.HtmlEncode(d.MinimumOrderAmount.HasValue ? $"EGP {d.MinimumOrderAmount.Value:F2}" : "EGP 0.00");
+            string usage    = WebUtility.HtmlEncode($"{d.UsageCount} / {(d.UsageLimit.HasValue ? d.UsageLimit.Value.ToString() : "\u221e")}");
+            string safeCouponCode = WebUtility.HtmlEncode(d.CouponCode ?? string.Empty);
+            bool isExpired  = d.ExpiresAt.HasValue && d.ExpiresAt.Value < DateTime.UtcNow;
+            string status   = isExpired ? "<span class='inactive'>Expired</span>" : (d.IsActive ? "<span class='active'>Active</span>" : "<span class='inactive'>Inactive</span>");
+            string codeCss  = isExpired ? "expired" : "";
 
-            sb.Append($"<tr><td class='{codeCss}'><strong>{d.CouponCode}</strong></td><td>{d.Type}</td><td>{val}</td><td>{minOrder}</td><td>{usage}</td><td>{(d.ExpiresAt.HasValue ? d.ExpiresAt.Value.ToString("MMM dd, yyyy") : "Never")}</td><td>{status}</td></tr>");
+            sb.Append($"<tr><td class='{codeCss}'><strong>{safeCouponCode}</strong></td><td>{val}</td><td>{minOrder}</td><td>{usage}</td><td>{(d.ExpiresAt.HasValue ? d.ExpiresAt.Value.ToString("MMM dd, yyyy") : "Never")}</td><td>{status}</td></tr>");
         }
         
         sb.Append("</table></body></html>");

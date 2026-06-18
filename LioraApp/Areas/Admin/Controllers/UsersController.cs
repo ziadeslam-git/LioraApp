@@ -1,3 +1,5 @@
+using System.Net;
+using LioraApp.Data;
 using LioraApp.Models;
 using LioraApp.Repositories.IRepositories;
 using LioraApp.Utilities;
@@ -15,12 +17,17 @@ public class UsersController : Controller
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly ApplicationDbContext _context;
     private const int PageSize = 10;
 
-    public UsersController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
+    public UsersController(
+        IUnitOfWork unitOfWork,
+        UserManager<ApplicationUser> userManager,
+        ApplicationDbContext context)
     {
         _unitOfWork  = unitOfWork;
         _userManager = userManager;
+        _context     = context;
     }
 
     // GET: /Admin/Users — DB-level pagination: filters + Skip/Take pushed to SQL before materialization
@@ -53,20 +60,38 @@ public class UsersController : Controller
             .Take(PageSize)
             .ToListAsync();
 
-        // 4. Batch-load orders only for the current page's user IDs
-        var pageUserIds = pagedUsers.Select(u => u.Id).ToHashSet();
+        // Fix 11: Single JOIN query replaces N GetRolesAsync calls (was N DB round-trips,
+        // now 1 query for all users on this page).
+        var pageUserIds = pagedUsers.Select(u => u.Id).ToList();
 
+        var userRoles = await _context.UserRoles
+            .AsNoTracking()
+            .Where(ur => pageUserIds.Contains(ur.UserId))
+            .Join(_context.Roles,
+                ur => ur.RoleId,
+                r  => r.Id,
+                (ur, r) => new { ur.UserId, RoleName = r.Name! })
+            .ToListAsync();
+
+        var rolesByUser = userRoles
+            .GroupBy(x => x.UserId)
+            .ToDictionary(
+                g => g.Key,
+                g => (IList<string>)g.Select(x => x.RoleName).ToList());
+
+        // 4. Batch-load orders only for the current page's user IDs
+        var pageUserIdSet = pageUserIds.ToHashSet();
         var pageOrders = await _unitOfWork.Orders
-            .FindAllAsync(o => pageUserIds.Contains(o.UserId), tracked: false);
+            .FindAllAsync(o => pageUserIdSet.Contains(o.UserId), tracked: false);
         var ordersByUser = pageOrders
             .GroupBy(o => o.UserId)
             .ToDictionary(g => g.Key, g => g.ToList());
 
-        // 5. Build VMs only for this page's users (max PageSize = 15 iterations)
+        // 5. Build VMs only for this page's users (max PageSize iterations)
         var vms = new List<UserAdminVM>();
         foreach (var user in pagedUsers)
         {
-            var roles      = await _userManager.GetRolesAsync(user);
+            var roles      = rolesByUser.TryGetValue(user.Id, out var rl) ? rl : new List<string>();
             var userOrders = ordersByUser.TryGetValue(user.Id, out var ord) ? ord : new();
 
             vms.Add(new UserAdminVM
@@ -185,8 +210,14 @@ public class UsersController : Controller
         
         foreach (var u in users)
         {
-            var status = u.IsActive ? "<span class='active'>Active</span>" : "<span class='inactive'>Inactive</span>";
-            sb.Append($"<tr><td>{u.FullName}</td><td>{u.Email}</td><td>{status}</td><td>{u.CreatedAt:MMM dd, yyyy}</td></tr>");
+            // Fix 3: HtmlEncode every user-controlled value before embedding in HTML
+            // to prevent XSS when the exported .doc file is opened.
+            var safeName   = WebUtility.HtmlEncode(u.FullName ?? string.Empty);
+            var safeEmail  = WebUtility.HtmlEncode(u.Email   ?? string.Empty);
+            var status     = u.IsActive
+                ? "<span class='active'>Active</span>"
+                : "<span class='inactive'>Inactive</span>";
+            sb.Append($"<tr><td>{safeName}</td><td>{safeEmail}</td><td>{status}</td><td>{u.CreatedAt:MMM dd, yyyy}</td></tr>");
         }
         
         sb.Append("</table></body></html>");

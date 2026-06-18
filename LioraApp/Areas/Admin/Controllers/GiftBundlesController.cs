@@ -171,43 +171,53 @@ public class GiftBundlesController : Controller
             return View(vm);
         }
 
-        if (vm.IsFeatured)
+        // Fix 6: Wrap all writes in a transaction — if SaveAsync fails between
+        // RemoveRange and the AddAsync loop the bundle won't lose all its products.
+        using var tx = await _unitOfWork.BeginTransactionAsync();
+        try
         {
-            await ClearFeaturedFlagFromOtherBundlesAsync(id);
-        }
-
-        bundle.Name = vm.Name.Trim();
-        bundle.Description = string.IsNullOrWhiteSpace(vm.Description) ? null : vm.Description.Trim();
-        bundle.BundlePrice = vm.BundlePrice;
-        bundle.IsActive = vm.IsActive;
-        bundle.IsFeatured = vm.IsFeatured;
-        bundle.UpdatedAt = DateTime.UtcNow;
-
-        _unitOfWork.GiftBundles.Update(bundle);
-
-        var existingItems = (await _unitOfWork.GiftBundleProducts
-            .FindAllAsync(item => item.GiftBundleId == id))
-            .ToList();
-
-        if (existingItems.Count > 0)
-        {
-            _unitOfWork.GiftBundleProducts.RemoveRange(existingItems);
-        }
-
-        for (var index = 0; index < vm.SelectedProductIds.Count; index++)
-        {
-            await _unitOfWork.GiftBundleProducts.AddAsync(new GiftBundleProduct
+            if (vm.IsFeatured)
             {
-                GiftBundleId = bundle.Id,
-                ProductId = vm.SelectedProductIds[index],
-                SortOrder = index
-            });
+                await ClearFeaturedFlagFromOtherBundlesAsync(id);
+            }
+
+            bundle.Name        = vm.Name.Trim();
+            bundle.Description = string.IsNullOrWhiteSpace(vm.Description) ? null : vm.Description.Trim();
+            bundle.BundlePrice = vm.BundlePrice;
+            bundle.IsActive    = vm.IsActive;
+            bundle.IsFeatured  = vm.IsFeatured;
+            bundle.UpdatedAt   = DateTime.UtcNow;
+
+            _unitOfWork.GiftBundles.Update(bundle);
+
+            var existingItems = (await _unitOfWork.GiftBundleProducts
+                .FindAllAsync(item => item.GiftBundleId == id))
+                .ToList();
+
+            if (existingItems.Count > 0)
+                _unitOfWork.GiftBundleProducts.RemoveRange(existingItems);
+
+            for (var index = 0; index < vm.SelectedProductIds.Count; index++)
+            {
+                await _unitOfWork.GiftBundleProducts.AddAsync(new GiftBundleProduct
+                {
+                    GiftBundleId = bundle.Id,
+                    ProductId    = vm.SelectedProductIds[index],
+                    SortOrder    = index
+                });
+            }
+
+            await _unitOfWork.SaveAsync();
+            await tx.CommitAsync();
+
+            TempData["success"] = "Gift bundle updated successfully.";
+            return RedirectToAction(nameof(Index));
         }
-
-        await _unitOfWork.SaveAsync();
-
-        TempData["success"] = "Gift bundle updated successfully.";
-        return RedirectToAction(nameof(Index));
+        catch
+        {
+            await tx.RollbackAsync();
+            throw;
+        }
     }
 
     [HttpPost]

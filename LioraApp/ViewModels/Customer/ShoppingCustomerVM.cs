@@ -22,6 +22,20 @@ public class CheckoutVM
     public decimal Subtotal { get; set; }
     public decimal DiscountAmount { get; set; }
 
+    /// <summary>
+    /// Shipping cost calculated server-side for display purposes on the Checkout page.
+    /// This value is NEVER trusted on POST — it is always re-computed by <see cref="IShippingService"/>.
+    /// </summary>
+    public decimal ShippingCost { get; set; }
+
+    /// <summary>
+    /// Receipt image uploaded by the customer as proof-of-payment for manual transfers
+    /// (VodafoneCash / InstaPay). Validated server-side with magic-byte inspection.
+    /// Not serialized to TempData — only present on the POST request.
+    /// </summary>
+    [System.Text.Json.Serialization.JsonIgnore]
+    public IFormFile? ReceiptImage { get; set; }
+
     public decimal Total => Subtotal - DiscountAmount;
     public int ItemsCount => Items.Sum(i => i.Quantity);
 

@@ -12,7 +12,7 @@
             <p class="font-body-md text-body-md text-on-surface-variant">Review and manage recent purchases, verifications, and shipments.</p>
         </div>
         <div class="flex gap-3">
-            <a asp-action="ExportCsv" asp-route-status="@ViewBag.CurrentStatus"
+            <a asp-area="Admin" asp-controller="Orders" asp-action="ExportCsv" asp-route-status="@ViewBag.CurrentStatus"
                class="flex items-center gap-2 px-4 py-2 border border-outline text-on-surface hover:bg-surface-container-highest rounded-full font-label-caps text-label-caps transition-ease btn-scale">
                 <span class="material-symbols-outlined text-[18px]">download</span>
                 EXPORT CSV

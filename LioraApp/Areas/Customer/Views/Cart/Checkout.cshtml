@@ -316,16 +316,7 @@ else
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        const shippingPrices = {
-            "Cairo": 50, "Giza": 50, "Alexandria": 70, "Dakahlia": 80, "Red Sea": 100,
-            "Beheira": 80, "Fayoum": 80, "Gharbia": 80, "Ismailia": 80, "Menofia": 80,
-            "Minya": 90, "Qaliubiya": 60, "New Valley": 120, "Suez": 80, "Aswan": 120,
-            "Assiut": 100, "Beni Suef": 90, "Port Said": 80, "Damietta": 80, "Sharkia": 80,
-            "South Sinai": 100, "Kafr Al sheikh": 80, "Matrouh": 100, "Luxor": 120,
-            "Qena": 110, "North Sinai": 100, "Sohag": 100
-        };
-
-        function updateShipping() {
+        async function updateShipping() {
             let selectedGov = "";
             const showNewAddress = document.querySelector('input[name="ShowNewAddressForm"][value="true"]');
             if (showNewAddress) {
@@ -337,25 +328,35 @@ else
                 const selectedRadio = document.querySelector('input[name="AddressId"]:checked');
                 if (selectedRadio) {
                     const label = selectedRadio.closest('label');
-                    const pText = label.innerText;
-                    for (let gov in shippingPrices) {
-                        if (pText.includes(gov)) {
-                            selectedGov = gov;
-                            break;
-                        }
+                    if (label) {
+                        const pText = label.innerText;
+                        // For saved addresses we try to extract the governorate name.
+                        // Instead of a hardcoded map, we can rely on the server to match the substring
+                        // but a cleaner way is just passing the whole text if needed.
+                        // For now we pass the address text and let the server match it, 
+                        // OR we assume the server can handle it.
+                        selectedGov = pText; 
                     }
                 }
-            }
-
-            let shippingCost = 100;
-            if (selectedGov && shippingPrices[selectedGov] !== undefined) {
-                shippingCost = shippingPrices[selectedGov];
             }
 
             const totalDisplay = document.getElementById("grand-total-display");
             const subtotal = parseFloat(totalDisplay.dataset.subtotal) || 0;
             const discount = parseFloat(totalDisplay.dataset.discount) || 0;
-            
+
+            let shippingCost = 100;
+            if (selectedGov) {
+                try {
+                    const response = await fetch(`/Customer/Orders/GetShippingCost?governorate=${encodeURIComponent(selectedGov)}&subtotal=${subtotal}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        shippingCost = data.cost;
+                    }
+                } catch (e) {
+                    console.error("Failed to fetch shipping cost", e);
+                }
+            }
+
             const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EGP' });
             document.getElementById("shipping-cost-display").innerText = formatter.format(shippingCost);
             totalDisplay.innerText = formatter.format(subtotal - discount + shippingCost);
