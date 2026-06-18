@@ -1,259 +1,407 @@
+@model LioraApp.ViewModels.Admin.CreateOrderVM
+@using LioraApp.Utilities
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = "Create Order";
+    ViewData["Title"] = "Create New Order";
+
+    var productsJson = ViewBag.ProductsListJson as string ?? "[]";
+    var orderStatuses = ViewBag.OrderStatuses as IReadOnlyList<string> ?? new List<string>();
+    var payStatuses   = ViewBag.PaymentStatuses as IReadOnlyList<string> ?? new List<string>();
 }
 
-<!-- TopAppBar -->
-        <header class="flex justify-between items-center px-gutter py-unit-stack-md bg-surface border-b border-outline-variant/20 sticky top-0 z-40 w-full transition-colors duration-250">
-            <div class="flex items-center gap-4 w-1/3">
-                <div class="relative w-full max-w-md input-focus-ring rounded-full bg-surface border border-primary/20 flex items-center px-4 py-2 transition-all duration-250">
-                    <span class="material-symbols-outlined text-on-surface-variant mr-2" data-icon="search">search</span>
-                    <input class="bg-transparent border-none outline-none w-full font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:ring-0 p-0" placeholder="Search orders, customers..." type="text" />
-                </div>
-            </div>
-            <div class="flex items-center justify-center w-1/3">
-                <span class="font-headline-md text-headline-md text-primary dark:text-primary-fixed-dim">liora</span>
-            </div>
-            <div class="flex items-center justify-end gap-4 w-1/3 text-on-surface-variant">
-                <button class="hover:text-primary hover:bg-surface-container-low p-2 rounded-full transition-colors duration-250 relative group">
-                    <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
-                    <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-primary-container rounded-full border border-surface"></span>
-                </button>
-                <button class="hover:text-primary hover:bg-surface-container-low p-2 rounded-full transition-colors duration-250">
-                    <span class="material-symbols-outlined" data-icon="person">person</span>
-                </button>
-            </div>
-        </header>
-        <!-- Content Area -->
-        <div class="p-container-padding-desktop max-w-[1280px] mx-auto w-full">
-            <!-- Page Header -->
-            <div class="mb-stack-lg flex items-end justify-between">
-                <div>
-                    <a class="inline-flex items-center text-sm font-label-caps text-on-surface-variant hover:text-primary mb-2 transition-colors duration-250" asp-action="Index">
-                        <span class="material-symbols-outlined text-[16px] mr-1" data-icon="arrow_back">arrow_back</span>
-                        Back to Orders
-                    </a>
-                    <h2 class="font-headline-lg text-headline-lg text-on-surface">Create New Order</h2>
-                </div>
-                <div class="font-mono text-sm text-on-surface-variant">
-                    Draft #10492
-                </div>
-            </div>
-            <!-- 2-Column Layout -->
-            <div class="flex flex-col lg:flex-row gap-gutter">
-                <!-- Left Column (65%) -->
-                <div class="w-full lg:w-[65%] flex flex-col gap-stack-lg">
-                    <!-- Customer Information Card -->
-                    <section class="bg-surface rounded-2xl shadow-level-1 p-8 relative overflow-hidden group">
-                        <div class="flex justify-between items-center mb-stack-md">
-                            <h3 class="font-headline-md text-xl text-on-surface">Customer Information</h3>
-                            <label class="flex items-center cursor-pointer">
-                                <span class="mr-3 font-body-md text-sm text-on-surface-variant">Guest Checkout</span>
-                                <div class="relative">
-                                    <input class="sr-only peer" type="checkbox" />
-                                    <div class="w-11 h-6 bg-surface-variant rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
-                                </div>
-                            </label>
-                        </div>
-                        <!-- Customer Search Picker -->
-                        <div class="mb-stack-md">
-                            <div class="relative w-full input-focus-ring rounded-full bg-surface-container-lowest border border-primary/20 flex items-center px-4 py-3 transition-all duration-250">
-                                <span class="material-symbols-outlined text-primary mr-3" data-icon="person_search">person_search</span>
-                                <input class="bg-transparent border-none outline-none w-full font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:ring-0 p-0" placeholder="Search existing customers by name or email..." type="text" />
-                            </div>
-                        </div>
-                        <!-- Customer Fields Form -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
-                            <div class="flex flex-col gap-1">
-                                <label class="font-label-caps text-on-surface-variant">First Name</label>
-                                <div class="input-focus-ring rounded-lg bg-surface-container-lowest border border-primary/20 px-4 py-2.5 transition-all duration-250">
-                                    <input class="bg-transparent border-none outline-none w-full font-body-md text-on-surface focus:ring-0 p-0" type="text" />
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="font-label-caps text-on-surface-variant">Last Name</label>
-                                <div class="input-focus-ring rounded-lg bg-surface-container-lowest border border-primary/20 px-4 py-2.5 transition-all duration-250">
-                                    <input class="bg-transparent border-none outline-none w-full font-body-md text-on-surface focus:ring-0 p-0" type="text" />
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-1 md:col-span-2">
-                                <label class="font-label-caps text-on-surface-variant">Email Address</label>
-                                <div class="input-focus-ring rounded-lg bg-surface-container-lowest border border-primary/20 px-4 py-2.5 transition-all duration-250">
-                                    <input class="bg-transparent border-none outline-none w-full font-body-md text-on-surface focus:ring-0 p-0" type="email" />
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-1 md:col-span-2">
-                                <label class="font-label-caps text-on-surface-variant">Phone Number</label>
-                                <div class="input-focus-ring rounded-lg bg-surface-container-lowest border border-primary/20 px-4 py-2.5 transition-all duration-250">
-                                    <input class="bg-transparent border-none outline-none w-full font-body-md text-on-surface focus:ring-0 p-0" type="tel" />
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-1 md:col-span-2 mt-2">
-                                <label class="font-label-caps text-on-surface-variant">Shipping Address</label>
-                                <div class="input-focus-ring rounded-lg bg-surface-container-lowest border border-primary/20 px-4 py-2.5 transition-all duration-250 h-24">
-                                    <textarea class="bg-transparent border-none outline-none w-full h-full resize-none font-body-md text-on-surface focus:ring-0 p-0"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    <!-- Order Items Card -->
-                    <section class="bg-surface rounded-2xl shadow-level-1 p-8">
-                        <div class="flex justify-between items-center mb-stack-md">
-                            <h3 class="font-headline-md text-xl text-on-surface">Order Items</h3>
-                        </div>
-                        <!-- Product Search Picker -->
-                        <div class="mb-stack-lg">
-                            <div class="relative w-full input-focus-ring rounded-full bg-surface-container-lowest border border-primary/20 flex items-center px-4 py-3 transition-all duration-250">
-                                <span class="material-symbols-outlined text-primary mr-3" data-icon="search">search</span>
-                                <input class="bg-transparent border-none outline-none w-full font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:ring-0 p-0" placeholder="Search products to add..." type="text" />
-                                <button class="ml-2 font-label-caps text-primary hover:text-primary-container transition-colors">Browse</button>
-                            </div>
-                        </div>
-                        <!-- Added Items List -->
-                        <div class="flex flex-col gap-4">
-                            <!-- Item Row 1 -->
-                            <div class="flex items-center gap-4 p-4 rounded-xl border border-surface-variant/30 bg-surface-container-lowest hover:border-primary/20 transition-all duration-250 group">
-                                <img alt="Silk Evening Gown" class="w-16 h-16 rounded-xl object-cover" data-alt="A luxurious silk evening gown in deep plum color, draped elegantly on a mannequin in a softly lit studio with a minimalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYArY_bzVcsXaAA87JjJdUjhYdVWjKt5khOss_CI389Hx5ytDYrXXiRzZ98ICuyQLc9YT65h_8yqWq_l6I-Z1qsDLoODrJoBSKrg6v-BzcKhML0PljBBFHO0mk3fVXruDCln6J8j_oaE0K-4h4qf_c6ROHUFH8Mf2iWduK5w_-_RIzQr623Fts_41VXkUCoyfEsZT2TouzyN7zZSaAtGG_x_yuBUqnNF_-vTmBxP-E0CNViiM-xhEj28hXT87IB1MQmQUcPszPp9Vq" />
-                                <div class="flex-grow flex flex-col justify-center">
-                                    <h4 class="font-headline-md text-lg text-on-surface leading-tight mb-1">Silk Evening Gown</h4>
-                                    <div class="flex gap-2 text-sm">
-                                        <div class="relative">
-                                            <select class="appearance-none bg-transparent border-b border-outline-variant/30 font-body-md text-on-surface-variant focus:outline-none focus:border-primary pb-1 pr-6 cursor-pointer">
-                                                <option>Size S</option>
-                                                <option selected="">Size M</option>
-                                                <option>Size L</option>
-                                            </select>
-                                            <span class="material-symbols-outlined absolute right-0 top-0.5 text-[16px] text-outline-variant pointer-events-none" data-icon="arrow_drop_down">arrow_drop_down</span>
-                                        </div>
-                                        <span class="text-outline-variant">•</span>
-                                        <div class="relative">
-                                            <select class="appearance-none bg-transparent border-b border-outline-variant/30 font-body-md text-on-surface-variant focus:outline-none focus:border-primary pb-1 pr-6 cursor-pointer">
-                                                <option selected="">Plum</option>
-                                                <option>Rose</option>
-                                                <option>Ivory</option>
-                                            </select>
-                                            <span class="material-symbols-outlined absolute right-0 top-0.5 text-[16px] text-outline-variant pointer-events-none" data-icon="arrow_drop_down">arrow_drop_down</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-6">
-                                    <div class="flex items-center border border-outline-variant/30 rounded-lg bg-surface px-2 py-1">
-                                        <button class="text-on-surface-variant hover:text-primary transition-colors p-1"><span class="material-symbols-outlined text-[16px]" data-icon="remove">remove</span></button>
-                                        <input class="w-8 text-center bg-transparent border-none outline-none font-mono text-sm focus:ring-0 p-0 text-on-surface appearance-none" min="1" type="number" value="1" />
-                                        <button class="text-on-surface-variant hover:text-primary transition-colors p-1"><span class="material-symbols-outlined text-[16px]" data-icon="add">add</span></button>
-                                    </div>
-                                    <div class="text-right w-20">
-                                        <span class="font-mono text-lg text-on-surface">£850</span>
-                                    </div>
-                                    <button class="text-surface-variant hover:text-error transition-colors p-2 rounded-full hover:bg-error-container/20 opacity-0 group-hover:opacity-100 duration-250">
-                                        <span class="material-symbols-outlined text-[20px]" data-icon="delete">delete</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <!-- Item Row 2 -->
-                            <div class="flex items-center gap-4 p-4 rounded-xl border border-surface-variant/30 bg-surface-container-lowest hover:border-primary/20 transition-all duration-250 group">
-                                <img alt="Cashmere Wrap" class="w-16 h-16 rounded-xl object-cover" data-alt="A softly folded cashmere wrap in a gentle rose gold hue, resting on an ivory marble surface. High fashion editorial style lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCHIPqADtzoTx2DzWCMsOkLwdeI_aulxOr6Ttsft6vAXB_XnSIDIydXbTbmoYJ_V8a6mlSCPkMEVGPt_qAwCLBG__56jNr2TLstO4AyFXGUP6b_YlNDJaXfW1PNBBDXmLX1OOcSGyPC_4JaXxs2hg0-B-bey6r_pXy8ZISjpTi7T8MIoEuCkmv2KTidcUFm-whKQtgUBT01FqyEpo2ZR6QS7kXz-UaOOyQC3NlWkArTTXMSXM2zPmBPjSrPCOFRoq935wbD-NJAtGn" />
-                                <div class="flex-grow flex flex-col justify-center">
-                                    <h4 class="font-headline-md text-lg text-on-surface leading-tight mb-1">Cashmere Wrap</h4>
-                                    <div class="flex gap-2 text-sm">
-                                        <span class="font-body-md text-on-surface-variant">One Size</span>
-                                        <span class="text-outline-variant">•</span>
-                                        <div class="relative">
-                                            <select class="appearance-none bg-transparent border-b border-outline-variant/30 font-body-md text-on-surface-variant focus:outline-none focus:border-primary pb-1 pr-6 cursor-pointer">
-                                                <option selected="">Rose Gold</option>
-                                                <option>Oatmeal</option>
-                                            </select>
-                                            <span class="material-symbols-outlined absolute right-0 top-0.5 text-[16px] text-outline-variant pointer-events-none" data-icon="arrow_drop_down">arrow_drop_down</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-6">
-                                    <div class="flex items-center border border-outline-variant/30 rounded-lg bg-surface px-2 py-1">
-                                        <button class="text-on-surface-variant hover:text-primary transition-colors p-1"><span class="material-symbols-outlined text-[16px]" data-icon="remove">remove</span></button>
-                                        <input class="w-8 text-center bg-transparent border-none outline-none font-mono text-sm focus:ring-0 p-0 text-on-surface appearance-none" min="1" type="number" value="2" />
-                                        <button class="text-on-surface-variant hover:text-primary transition-colors p-1"><span class="material-symbols-outlined text-[16px]" data-icon="add">add</span></button>
-                                    </div>
-                                    <div class="text-right w-20 flex flex-col">
-                                        <span class="font-mono text-lg text-on-surface">£500</span>
-                                        <span class="font-mono text-[10px] text-on-surface-variant">£250/ea</span>
-                                    </div>
-                                    <button class="text-surface-variant hover:text-error transition-colors p-2 rounded-full hover:bg-error-container/20 opacity-0 group-hover:opacity-100 duration-250">
-                                        <span class="material-symbols-outlined text-[20px]" data-icon="delete">delete</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Add Custom Item Line -->
-                        <button class="mt-4 flex items-center gap-2 font-label-caps text-primary hover:text-primary-container transition-colors p-2 rounded-lg hover:bg-primary/5">
-                            <span class="material-symbols-outlined text-[18px]" data-icon="add_circle">add_circle</span>
-                            Add Custom Item
-                        </button>
-                    </section>
-                </div>
-                <!-- Right Column (35% Sticky) -->
-                <div class="w-full lg:w-[35%] flex flex-col gap-stack-lg lg:sticky lg:top-24 h-fit">
-                    <!-- Order Summary Card -->
-                    <section class="bg-surface rounded-2xl shadow-level-1 p-8 relative">
-                        <h3 class="font-headline-md text-xl text-on-surface mb-stack-md">Order Summary</h3>
-                        <div class="flex flex-col gap-4 font-body-md text-on-surface">
-                            <div class="flex justify-between items-center">
-                                <span class="text-on-surface-variant">Subtotal (3 items)</span>
-                                <span class="font-mono">£1,350.00</span>
-                            </div>
-                            <div class="flex justify-between items-center group">
-                                <span class="text-on-surface-variant flex items-center gap-1 cursor-help" title="Click amount to edit">
-                                    Shipping
-                                    <span class="material-symbols-outlined text-[14px] opacity-50" data-icon="info">info</span>
-                                </span>
-                                <div class="relative w-24">
-                                    <span class="absolute left-2 top-1 font-mono text-on-surface-variant">£</span>
-                                    <input class="w-full text-right bg-transparent border-b border-dashed border-outline-variant focus:border-primary focus:outline-none focus:border-solid font-mono px-1 py-1 group-hover:border-primary/50 transition-colors" type="text" value="25.00" />
-                                </div>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-on-surface-variant">Tax (20% VAT included)</span>
-                                <span class="font-mono text-on-surface-variant">£275.00</span>
-                            </div>
-                            <div class="w-full h-px bg-outline-variant/30 my-2"></div>
-                            <div class="flex justify-between items-end">
-                                <span class="font-headline-md text-2xl">Total</span>
-                                <div class="flex flex-col items-end">
-                                    <span class="font-mono text-2xl font-medium text-primary">£1,375.00</span>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    <!-- Payment Method Card -->
-                    <section class="bg-surface rounded-2xl shadow-level-1 p-8">
-                        <h3 class="font-headline-md text-xl text-on-surface mb-stack-md">Payment Method</h3>
-                        <div class="relative w-full">
-                            <div class="input-focus-ring rounded-xl bg-surface-container-lowest border border-primary/20 p-1 transition-all duration-250 relative">
-                                <select class="appearance-none bg-transparent border-none w-full font-body-md text-on-surface py-3 pl-4 pr-10 focus:ring-0 cursor-pointer">
-                                    <option disabled="" selected="" value="">Select a payment method...</option>
-                                    <option value="vodafone_cash">Vodafone Cash</option>
-                                    <option value="instapay">InstaPay</option>
-                                    <option value="cod">Cash on Delivery (COD)</option>
-                                    <option value="bank_transfer">Bank Transfer</option>
-                                    <option value="credit_card">Credit Card (Link)</option>
-                                </select>
-                                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" data-icon="keyboard_arrow_down">keyboard_arrow_down</span>
-                            </div>
-                        </div>
-                        <div class="mt-4 flex items-start gap-2 p-3 rounded-lg bg-surface-container-low text-sm text-on-surface-variant">
-                            <span class="material-symbols-outlined text-[18px] text-primary shrink-0 mt-0.5" data-icon="receipt_long">receipt_long</span>
-                            <p>An invoice link will be generated automatically and can be sent to the customer upon creation.</p>
-                        </div>
-                    </section>
-                    <!-- Action Buttons -->
-                    <div class="flex flex-col gap-3 mt-4">
-                        <button class="w-full py-4 px-6 bg-primary-container text-on-primary-container rounded-full font-label-caps text-sm hover:opacity-90 active:scale-[0.98] transition-all duration-250 ease-out shadow-level-1 flex items-center justify-center gap-2 group">
-                            Create Order
-                            <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform duration-250" data-icon="arrow_forward">arrow_forward</span>
-                        </button>
-                        <button class="w-full py-3 px-6 bg-transparent text-tertiary rounded-full font-label-caps text-sm border border-transparent hover:border-outline-variant/50 hover:bg-surface-variant/30 active:scale-[0.98] transition-all duration-250 ease-out">
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            </div>
+<div class="flex-1 p-4 md:p-8 max-w-[1280px] mx-auto w-full">
+
+    <!-- Page Header -->
+    <div class="mb-stack-lg flex items-end justify-between">
+        <div>
+            <a class="inline-flex items-center text-sm font-label-caps text-on-surface-variant hover:text-primary mb-2 transition-colors duration-250"
+               asp-action="Index">
+                <span class="material-symbols-outlined text-[16px] mr-1">arrow_back</span>
+                Back to Orders
+            </a>
+            <h2 class="font-headline-lg text-headline-lg text-on-surface">Create New Order</h2>
         </div>
+        <div class="font-mono text-sm text-on-surface-variant">New Draft</div>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="mb-6 bg-red-50 border border-red-200 text-red-800 px-5 py-4 rounded-xl text-sm">
+            <p class="font-semibold mb-1 flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">error</span>
+                Please fix the errors below:
+            </p>
+            <ul class="list-disc list-inside space-y-1">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        </div>
+    }
+
+    <form asp-action="Create" method="post" id="createOrderForm">
+        @Html.AntiForgeryToken()
+
+        <!-- Hidden container for dynamic item inputs (filled by JS) -->
+        <div id="items-hidden-inputs"></div>
+
+        <div class="flex flex-col lg:flex-row gap-6">
+
+            <!-- ── LEFT COLUMN ────────────────────────────── -->
+            <div class="w-full lg:w-[65%] flex flex-col gap-6">
+
+                <!-- Customer Information -->
+                <section class="bg-surface-container-lowest rounded-2xl shadow-ambient-1 border border-surface-container-highest p-6 md:p-8">
+                    <h3 class="font-headline-md text-xl text-on-surface mb-6">Customer Information</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="flex flex-col gap-1 md:col-span-2">
+                            <label asp-for="CustomerName" class="font-label-caps text-label-caps text-on-surface-variant"></label>
+                            <input asp-for="CustomerName"
+                                   class="bg-surface-container border border-primary/20 rounded-xl px-4 py-3 font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+                                   placeholder="Full name of the customer" />
+                            <span asp-validation-for="CustomerName" class="text-xs text-red-500"></span>
+                        </div>
+                        <div class="flex flex-col gap-1 md:col-span-2">
+                            <label asp-for="CustomerPhone" class="font-label-caps text-label-caps text-on-surface-variant"></label>
+                            <input asp-for="CustomerPhone" type="tel"
+                                   class="bg-surface-container border border-primary/20 rounded-xl px-4 py-3 font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+                                   placeholder="+20 1XX XXX XXXX" />
+                            <span asp-validation-for="CustomerPhone" class="text-xs text-red-500"></span>
+                        </div>
+                    </div>
+
+                    <h4 class="font-label-caps text-label-caps text-on-surface-variant mt-6 mb-4 border-t border-surface-container-highest pt-4">SHIPPING ADDRESS</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="flex flex-col gap-1">
+                            <label asp-for="ShippingCountry" class="font-label-caps text-label-caps text-on-surface-variant"></label>
+                            <input asp-for="ShippingCountry"
+                                   class="bg-surface-container border border-primary/20 rounded-xl px-4 py-3 font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all" />
+                            <span asp-validation-for="ShippingCountry" class="text-xs text-red-500"></span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label asp-for="ShippingState" class="font-label-caps text-label-caps text-on-surface-variant"></label>
+                            <input asp-for="ShippingState"
+                                   class="bg-surface-container border border-primary/20 rounded-xl px-4 py-3 font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+                                   placeholder="Cairo, Alexandria..." />
+                            <span asp-validation-for="ShippingState" class="text-xs text-red-500"></span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label asp-for="ShippingCity" class="font-label-caps text-label-caps text-on-surface-variant"></label>
+                            <input asp-for="ShippingCity"
+                                   class="bg-surface-container border border-primary/20 rounded-xl px-4 py-3 font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+                                   placeholder="City / District" />
+                            <span asp-validation-for="ShippingCity" class="text-xs text-red-500"></span>
+                        </div>
+                        <div class="flex flex-col gap-1 md:col-span-2">
+                            <label asp-for="ShippingStreet" class="font-label-caps text-label-caps text-on-surface-variant"></label>
+                            <textarea asp-for="ShippingStreet" rows="2"
+                                      class="bg-surface-container border border-primary/20 rounded-xl px-4 py-3 font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all resize-none"
+                                      placeholder="Building, street, neighborhood details..."></textarea>
+                            <span asp-validation-for="ShippingStreet" class="text-xs text-red-500"></span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Order Items -->
+                <section class="bg-surface-container-lowest rounded-2xl shadow-ambient-1 border border-surface-container-highest p-6 md:p-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-headline-md text-xl text-on-surface">Order Items</h3>
+                        <span id="item-count-badge" class="text-sm text-on-surface-variant font-medium">0 items added</span>
+                    </div>
+
+                    <!-- Product Search Picker -->
+                    <div class="mb-5 relative">
+                        <div class="relative flex items-center bg-surface-container border border-primary/20 rounded-full px-4 py-3 transition-all focus-within:ring-2 focus-within:ring-primary/30 focus-within:border-primary">
+                            <span class="material-symbols-outlined text-primary mr-3">search</span>
+                            <input id="product-search" type="text"
+                                   class="bg-transparent border-none outline-none w-full font-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:ring-0 p-0"
+                                   placeholder="Search products to add..." autocomplete="off" />
+                        </div>
+                        <!-- Dropdown Results -->
+                        <div id="product-dropdown" class="absolute top-full left-0 right-0 mt-2 bg-surface rounded-2xl shadow-level-1 border border-surface-container-highest max-h-64 overflow-y-auto z-50 hidden">
+                        </div>
+                    </div>
+
+                    <!-- Added Items List -->
+                    <div id="order-items-list" class="flex flex-col gap-3">
+                        <div id="empty-items-msg" class="text-center py-8 text-on-surface-variant text-sm">
+                            <span class="material-symbols-outlined text-[40px] text-surface-container-high block mb-2">add_shopping_cart</span>
+                            Search and add products above
+                        </div>
+                    </div>
+
+                    <!-- Coupon -->
+                    <div class="mt-6 pt-6 border-t border-surface-container-highest">
+                        <label asp-for="CouponCode" class="font-label-caps text-label-caps text-on-surface-variant block mb-2"></label>
+                        <div class="flex gap-3">
+                            <input asp-for="CouponCode" id="coupon-input"
+                                   class="flex-grow bg-surface-container border border-primary/20 rounded-xl px-4 py-2.5 font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all uppercase tracking-widest"
+                                   placeholder="DISCOUNT CODE" />
+                            <button type="button" id="apply-coupon-btn"
+                                    class="px-5 py-2.5 bg-primary-container text-on-primary-container rounded-xl font-label-caps text-label-caps hover:opacity-90 transition-all">
+                                Apply
+                            </button>
+                        </div>
+                        <p id="coupon-result" class="text-sm mt-2 hidden"></p>
+                    </div>
+                </section>
+
+                <!-- Status -->
+                <section class="bg-surface-container-lowest rounded-2xl shadow-ambient-1 border border-surface-container-highest p-6 md:p-8">
+                    <h3 class="font-headline-md text-xl text-on-surface mb-6">Order & Payment Status</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="flex flex-col gap-1">
+                            <label asp-for="Status" class="font-label-caps text-label-caps text-on-surface-variant"></label>
+                            <select asp-for="Status" class="bg-surface-container border border-primary/20 rounded-xl px-4 py-3 font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+                                @foreach (var s in orderStatuses)
+                                {
+                                    <option value="@s">@s</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label asp-for="PaymentStatus" class="font-label-caps text-label-caps text-on-surface-variant"></label>
+                            <select asp-for="PaymentStatus" class="bg-surface-container border border-primary/20 rounded-xl px-4 py-3 font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+                                @foreach (var p in payStatuses)
+                                {
+                                    <option value="@p">@p</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ── RIGHT COLUMN (sticky summary) ─────── -->
+            <div class="w-full lg:w-[35%] flex flex-col gap-6 lg:sticky lg:top-24 h-fit">
+
+                <!-- Order Summary -->
+                <section class="bg-surface-container-lowest rounded-2xl shadow-ambient-1 border border-surface-container-highest p-6 md:p-8">
+                    <h3 class="font-headline-md text-xl text-on-surface mb-5">Order Summary</h3>
+                    <div class="flex flex-col gap-3 font-body-md text-on-surface text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="text-on-surface-variant">Subtotal (<span id="summary-item-count">0</span> items)</span>
+                            <span id="summary-subtotal" class="font-mono">EGP 0.00</span>
+                        </div>
+                        <div id="summary-discount-row" class="flex justify-between items-center hidden">
+                            <span class="text-emerald-700">Discount (<span id="summary-coupon-label"></span>)</span>
+                            <span id="summary-discount" class="font-mono text-emerald-700">-EGP 0.00</span>
+                        </div>
+                        <div class="w-full h-px bg-outline-variant/30 my-1"></div>
+                        <div class="flex justify-between items-center">
+                            <span class="font-headline-md text-lg">Total</span>
+                            <span id="summary-total" class="font-mono text-xl font-bold text-primary">EGP 0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Hidden model fields for totals -->
+                    <input type="hidden" asp-for="Subtotal" id="subtotal-input" />
+                    <input type="hidden" asp-for="DiscountAmount" id="discount-input" />
+                </section>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col gap-3">
+                    <button type="submit" id="submit-btn"
+                            class="w-full py-4 px-6 bg-primary-container text-on-primary-container rounded-full font-label-caps text-sm hover:opacity-90 active:scale-[0.98] transition-all duration-250 shadow-ambient-1 flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed">
+                        Create Order
+                        <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform duration-250">arrow_forward</span>
+                    </button>
+                    <a asp-action="Index"
+                       class="w-full py-3 px-6 text-center bg-transparent text-tertiary rounded-full font-label-caps text-sm border border-transparent hover:border-outline-variant/50 hover:bg-surface-container/30 active:scale-[0.98] transition-all">
+                        Cancel
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+<script>
+// ── Available Products (from controller ViewBag) ──────────────────────
+const availableProducts = @Html.Raw(productsJson);
+
+// Cart: productVariantId → { variantId, name, price, stock, qty }
+let cartItems = {};
+let discountAmount = 0;
+let couponCode = '';
+
+// ── Render helpers ────────────────────────────────────────────────────
+function formatEGP(amount) {
+    return 'EGP ' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function updateSummary() {
+    const items = Object.values(cartItems);
+    const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
+    const total    = Math.max(0, subtotal - discountAmount);
+
+    document.getElementById('summary-item-count').textContent = items.reduce((s, i) => s + i.qty, 0);
+    document.getElementById('summary-subtotal').textContent   = formatEGP(subtotal);
+    document.getElementById('summary-total').textContent      = formatEGP(total);
+    document.getElementById('subtotal-input').value           = subtotal.toFixed(2);
+    document.getElementById('discount-input').value           = discountAmount.toFixed(2);
+
+    const discRow = document.getElementById('summary-discount-row');
+    if (discountAmount > 0) {
+        discRow.classList.remove('hidden');
+        document.getElementById('summary-discount').textContent      = '-' + formatEGP(discountAmount);
+        document.getElementById('summary-coupon-label').textContent  = couponCode;
+    } else {
+        discRow.classList.add('hidden');
+    }
+
+    // Sync hidden form inputs for items
+    const container = document.getElementById('items-hidden-inputs');
+    container.innerHTML = '';
+    items.forEach((item, idx) => {
+        container.insertAdjacentHTML('beforeend',
+            `<input type="hidden" name="Items[${idx}].ProductVariantId" value="${item.variantId}" />
+             <input type="hidden" name="Items[${idx}].Quantity" value="${item.qty}" />`
+        );
+    });
+
+    const countBadge = document.getElementById('item-count-badge');
+    countBadge.textContent = `${items.length} item(s) added`;
+}
+
+function renderItems() {
+    const list    = document.getElementById('order-items-list');
+    const emptyMsg = document.getElementById('empty-items-msg');
+    const items   = Object.values(cartItems);
+
+    if (items.length === 0) {
+        list.innerHTML = '';
+        list.appendChild(emptyMsg);
+        return;
+    }
+    emptyMsg.remove();
+
+    list.innerHTML = items.map(item => `
+        <div class="flex items-center gap-4 p-4 rounded-xl border border-surface-container-highest bg-surface-container-low hover:border-primary/20 transition-all group" data-variant="${item.variantId}">
+            <div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-on-surface-variant text-xl">checkroom</span>
+            </div>
+            <div class="flex-grow min-w-0">
+                <p class="font-medium text-on-surface text-sm truncate">${item.name}</p>
+                <p class="text-xs text-on-surface-variant mt-0.5">${formatEGP(item.price)} each</p>
+            </div>
+            <div class="flex items-center border border-outline-variant/30 rounded-lg bg-surface px-2 py-1">
+                <button type="button" onclick="adjustQty(${item.variantId}, -1)" class="text-on-surface-variant hover:text-primary transition-colors p-1">
+                    <span class="material-symbols-outlined text-[16px]">remove</span>
+                </button>
+                <span class="w-8 text-center font-mono text-sm text-on-surface font-medium">${item.qty}</span>
+                <button type="button" onclick="adjustQty(${item.variantId}, 1)" class="text-on-surface-variant hover:text-primary transition-colors p-1 ${item.qty >= item.stock ? 'opacity-40 cursor-not-allowed' : ''}">
+                    <span class="material-symbols-outlined text-[16px]">add</span>
+                </button>
+            </div>
+            <div class="w-24 text-right">
+                <span class="font-mono text-sm font-medium text-on-surface">${formatEGP(item.price * item.qty)}</span>
+            </div>
+            <button type="button" onclick="removeItem(${item.variantId})"
+                    class="text-surface-container-high hover:text-error transition-colors p-1 rounded-full hover:bg-error-container/20 opacity-0 group-hover:opacity-100 duration-250">
+                <span class="material-symbols-outlined text-[20px]">delete</span>
+            </button>
+        </div>
+    `).join('');
+    updateSummary();
+}
+
+function addProduct(product) {
+    if (cartItems[product.id]) {
+        if (cartItems[product.id].qty < product.stock) cartItems[product.id].qty++;
+    } else {
+        cartItems[product.id] = { variantId: product.id, name: product.name, price: product.price, stock: product.stock, qty: 1 };
+    }
+    renderItems();
+    updateSummary();
+}
+
+function adjustQty(variantId, delta) {
+    if (!cartItems[variantId]) return;
+    cartItems[variantId].qty = Math.max(1, Math.min(cartItems[variantId].qty + delta, cartItems[variantId].stock));
+    renderItems();
+    updateSummary();
+}
+
+function removeItem(variantId) {
+    delete cartItems[variantId];
+    renderItems();
+    updateSummary();
+}
+
+// ── Product Search ────────────────────────────────────────────────────
+const searchInput  = document.getElementById('product-search');
+const dropdown     = document.getElementById('product-dropdown');
+
+searchInput.addEventListener('input', function () {
+    const query = this.value.toLowerCase().trim();
+    if (!query) { dropdown.classList.add('hidden'); dropdown.innerHTML = ''; return; }
+
+    const matches = availableProducts.filter(p => p.name.toLowerCase().includes(query)).slice(0, 8);
+    if (matches.length === 0) {
+        dropdown.innerHTML = '<p class="px-4 py-3 text-sm text-on-surface-variant">No products found.</p>';
+    } else {
+        dropdown.innerHTML = matches.map(p => `
+            <button type="button" onclick="addProduct(${JSON.stringify(p).replace(/"/g, '&quot;')})"
+                    class="w-full text-left px-4 py-3 hover:bg-surface-container-low transition-colors flex items-center justify-between gap-3 border-b border-surface-container last:border-0">
+                <div>
+                    <p class="text-sm font-medium text-on-surface">${p.name}</p>
+                    <p class="text-xs text-on-surface-variant">Stock: ${p.stock}</p>
+                </div>
+                <span class="text-sm font-mono text-primary shrink-0">${formatEGP(p.price)}</span>
+            </button>
+        `).join('');
+    }
+    dropdown.classList.remove('hidden');
+});
+
+document.addEventListener('click', function (e) {
+    if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.add('hidden');
+    }
+});
+
+// ── Coupon Validation ──────────────────────────────────────────────────
+document.getElementById('apply-coupon-btn').addEventListener('click', async function () {
+    const code     = document.getElementById('coupon-input').value.trim();
+    const result   = document.getElementById('coupon-result');
+    const subtotal = Object.values(cartItems).reduce((s, i) => s + i.price * i.qty, 0);
+    if (!code) return;
+
+    result.classList.remove('hidden', 'text-emerald-700', 'text-red-600');
+    result.textContent = 'Checking...';
+
+    try {
+        const url = `/Admin/Orders/ValidateCoupon?code=${encodeURIComponent(code)}&subtotal=${subtotal}`;
+        const res  = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+        const json = await res.json();
+        if (json.success) {
+            discountAmount = json.discountAmount;
+            couponCode     = code;
+            result.classList.add('text-emerald-700');
+            result.textContent = '✓ ' + json.message;
+        } else {
+            discountAmount = 0; couponCode = '';
+            result.classList.add('text-red-600');
+            result.textContent = '✗ ' + json.message;
+        }
+        updateSummary();
+    } catch { result.textContent = 'Error checking coupon.'; }
+});
+
+// ── Form Submit Guard ──────────────────────────────────────────────────
+document.getElementById('createOrderForm').addEventListener('submit', function (e) {
+    if (Object.keys(cartItems).length === 0) {
+        e.preventDefault();
+        alert('Please add at least one product to the order.');
+    }
+});
+
+// Init
+updateSummary();
+</script>
+@await Html.PartialAsync("_ValidationScriptsPartial")
+}

@@ -29,6 +29,38 @@ public class OrdersController : Controller
     private const    string                         CheckoutViewPath            = "~/Areas/Customer/Views/Cart/Checkout.cshtml";
     private const    string                         CheckoutStateTempDataKey    = "checkout_state";
 
+    // Demo Egyptian Governorates Shipping Prices
+    public static readonly Dictionary<string, decimal> GovernorateShippingPrices = new(StringComparer.OrdinalIgnoreCase)
+    {
+        { "Cairo", 50m },
+        { "Giza", 50m },
+        { "Alexandria", 70m },
+        { "Dakahlia", 80m },
+        { "Red Sea", 100m },
+        { "Beheira", 80m },
+        { "Fayoum", 80m },
+        { "Gharbia", 80m },
+        { "Ismailia", 80m },
+        { "Menofia", 80m },
+        { "Minya", 90m },
+        { "Qaliubiya", 60m },
+        { "New Valley", 120m },
+        { "Suez", 80m },
+        { "Aswan", 120m },
+        { "Assiut", 100m },
+        { "Beni Suef", 90m },
+        { "Port Said", 80m },
+        { "Damietta", 80m },
+        { "Sharkia", 80m },
+        { "South Sinai", 100m },
+        { "Kafr Al sheikh", 80m },
+        { "Matrouh", 100m },
+        { "Luxor", 120m },
+        { "Qena", 110m },
+        { "North Sinai", 100m },
+        { "Sohag", 100m }
+    };
+
     public OrdersController(
         IUnitOfWork unitOfWork,
         UserManager<ApplicationUser> userManager,
@@ -430,7 +462,31 @@ public class OrdersController : Controller
                 appliedCoupon.CouponCode, discountAmount, userId);
         }
 
-        var totalAmount = subtotal - discountAmount;
+        // Calculate Shipping Cost
+        decimal shippingCost = 100m; // Default
+        string governorate = address.City ?? address.State ?? "";
+        if (GovernorateShippingPrices.TryGetValue(governorate, out decimal price))
+        {
+            shippingCost = price;
+        }
+
+        var totalAmount = subtotal - discountAmount + shippingCost;
+
+        // Handle Receipt Image Upload for manual payments
+        string? receiptImageUrl = null;
+        if ((vm.PaymentMethod == SD.PaymentMethod_VodafoneCash || vm.PaymentMethod == SD.PaymentMethod_InstaPay) && vm.ReceiptImage != null)
+        {
+            string wwwRootPath = "wwwroot"; // Use wwwroot for direct file storage if environment isn't injected
+            string fileName = Guid.NewGuid().ToString() + Path.GetExtension(vm.ReceiptImage.FileName);
+            string uploadsPath = Path.Combine(wwwRootPath, "images", "receipts");
+            if (!Directory.Exists(uploadsPath)) Directory.CreateDirectory(uploadsPath);
+            
+            using (var fileStream = new FileStream(Path.Combine(uploadsPath, fileName), FileMode.Create))
+            {
+                await vm.ReceiptImage.CopyToAsync(fileStream);
+            }
+            receiptImageUrl = @"\images\receipts\" + fileName;
+        }
 
         try
         {
@@ -442,9 +498,10 @@ public class OrdersController : Controller
                 discountAmount,
                 appliedCoupon,
                 vm.PaymentMethod == SD.PaymentMethod_CashOnDelivery ? SD.Payment_Unpaid : SD.Payment_Pending,
-                paymentProvider: SD.PaymentProvider_Manual,
-                transactionId: null,
-                couponCodeOverride: couponCode);
+                paymentProvider: vm.PaymentMethod,
+                transactionId: receiptImageUrl,
+                couponCodeOverride: couponCode,
+                shippingCost: shippingCost);
 
             _logger.LogInformation(
                 "PlaceOrder succeeded. OrderId={OrderId}, Total={Total:C}, UserId={UserId}.",
@@ -768,6 +825,27 @@ public class OrdersController : Controller
         vm.CouponApplied = string.IsNullOrWhiteSpace(couponError) && discountAmount > 0 && !string.IsNullOrWhiteSpace(vm.CouponCode);
         vm.CouponMessage = couponError ?? (vm.CouponApplied ? _localizer["CouponNamedAppliedSuccessfully", vm.CouponCode ?? string.Empty].Value : null);
 
+        // Calculate Shipping
+        vm.ShippingCost = 100m; // Default
+        string targetGovernorate = "";
+        if (vm.ShowNewAddressForm)
+        {
+            targetGovernorate = vm.NewAddressCity;
+        }
+        else
+        {
+            var selectedAddress = addresses.FirstOrDefault(a => a.Id == vm.AddressId);
+            if (selectedAddress != null)
+            {
+                targetGovernorate = selectedAddress.City ?? selectedAddress.State ?? "";
+            }
+        }
+
+        if (GovernorateShippingPrices.TryGetValue(targetGovernorate, out decimal price))
+        {
+            vm.ShippingCost = price;
+        }
+
         return vm;
     }
 
@@ -894,7 +972,8 @@ public class OrdersController : Controller
         string paymentStatus,
         string? paymentProvider,
         string? transactionId,
-        string? couponCodeOverride = null)
+        string? couponCodeOverride = null,
+        decimal shippingCost = 0m)
     {
         using var transaction = await _unitOfWork.BeginTransactionAsync();
         try
@@ -998,7 +1077,7 @@ public class OrdersController : Controller
                 });
             }
 
-            var totalAmount = subtotal - discountAmount;
+            var totalAmount = subtotal - discountAmount + shippingCost;
             var order = new Order
             {
                 UserId         = userId,

@@ -294,14 +294,14 @@
 @RenderBody()
 
 <!-- ─── FOOTER ────────────────────────────────────────────────── -->
-<footer class="bg-surface-container-high rounded-t-xl mt-stack-lg border-t border-outline-variant/10 shadow-[0_-8px_24px_rgba(196,144,128,0.08)]">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-stack-lg px-container-padding-mobile md:px-container-padding-desktop py-10 max-w-7xl mx-auto w-full">
-        <div class="flex flex-col gap-4">
-            <a class="font-accent-italic text-headline-md italic text-primary hover:opacity-80 transition-opacity" href="@homeUrl">liora</a>
-            <p class="font-body-md text-body-md text-on-surface-variant max-w-xs leading-relaxed">Modern Egyptian Craftsmanship. Designed to flow with your life.</p>
+<footer class="bg-surface-container-high rounded-t-xl mt-stack-md border-t border-outline-variant/10 shadow-[0_-8px_24px_rgba(196,144,128,0.08)]">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md px-container-padding-mobile md:px-container-padding-desktop py-6 max-w-7xl mx-auto w-full">
+        <div class="flex flex-col gap-2">
+            <a class="font-accent-italic text-headline-sm italic text-primary hover:opacity-80 transition-opacity" href="@homeUrl">liora</a>
+            <p class="font-body-md text-body-sm text-on-surface-variant max-w-xs leading-relaxed">Modern Egyptian Craftsmanship. Designed to flow with your life.</p>
         </div>
-        <div class="col-span-1 md:col-span-2 grid grid-cols-2 gap-8">
-            <div class="flex flex-col gap-3">
+        <div class="flex flex-col md:items-end justify-center gap-2">
+            <div class="flex flex-wrap gap-4">
                 <a class="font-label-caps text-label-caps @(IsActive(shopUrl) ? "text-primary font-bold" : "text-on-surface-variant hover:text-primary transition-colors")" href="@shopUrl">Shop All</a>
                 @if (isAuthenticated)
                 {
@@ -313,14 +313,8 @@
                     <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="@loginUrl">Login</a>
                 }
             </div>
-            <div class="flex flex-col gap-3">
-                <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
-                <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">Shipping & Returns</a>
-                <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">Size Guide</a>
-                <a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">Contact</a>
-            </div>
         </div>
-        <div class="col-span-1 md:col-span-3 mt-8 pt-6 border-t border-outline-variant/20 flex justify-between items-center">
+        <div class="col-span-1 md:col-span-2 mt-4 pt-4 border-t border-outline-variant/20 flex justify-between items-center pb-20 md:pb-0">
             <p class="font-label-caps text-label-caps text-on-surface-variant">© @DateTime.Now.Year liora. All rights reserved.</p>
         </div>
     </div>

@@ -25,7 +25,7 @@
     </div>
 }
 
-<form method="post" asp-controller="Orders" asp-action="PlaceOrder" id="checkout-form">
+<form method="post" asp-controller="Orders" asp-action="PlaceOrder" id="checkout-form" enctype="multipart/form-data">
     @Html.AntiForgeryToken()
 
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter lg:gap-[64px]">
@@ -65,8 +65,37 @@ else if (!Model.ShowNewAddressForm)
             <span asp-validation-for="NewAddressStreet" class="text-error text-sm mt-1"></span>
         </div>
         <div class="flex flex-col">
-            <label class="font-label-caps text-label-caps text-on-surface-variant mb-2 ml-2">City</label>
-            <input asp-for="NewAddressCity" class="w-full bg-surface-container-lowest border border-on-surface/20 rounded-xl px-4 py-3 font-body-md text-body-md text-on-surface focus:border-primary-container focus:ring-4 focus:ring-primary-container/20 transition-all duration-250 outline-none" placeholder="Cairo" type="text"/>
+            <label class="font-label-caps text-label-caps text-on-surface-variant mb-2 ml-2">Governorate / City</label>
+            <select asp-for="NewAddressCity" class="w-full bg-surface-container-lowest border border-on-surface/20 rounded-xl px-4 py-3 font-body-md text-body-md text-on-surface focus:border-primary-container focus:ring-4 focus:ring-primary-container/20 transition-all duration-250 outline-none" onchange="updateShipping()">
+                <option value="" disabled selected>Select Governorate</option>
+                <option value="Cairo">Cairo</option>
+                <option value="Giza">Giza</option>
+                <option value="Alexandria">Alexandria</option>
+                <option value="Dakahlia">Dakahlia</option>
+                <option value="Red Sea">Red Sea</option>
+                <option value="Beheira">Beheira</option>
+                <option value="Fayoum">Fayoum</option>
+                <option value="Gharbia">Gharbia</option>
+                <option value="Ismailia">Ismailia</option>
+                <option value="Menofia">Menofia</option>
+                <option value="Minya">Minya</option>
+                <option value="Qaliubiya">Qaliubiya</option>
+                <option value="New Valley">New Valley</option>
+                <option value="Suez">Suez</option>
+                <option value="Aswan">Aswan</option>
+                <option value="Assiut">Assiut</option>
+                <option value="Beni Suef">Beni Suef</option>
+                <option value="Port Said">Port Said</option>
+                <option value="Damietta">Damietta</option>
+                <option value="Sharkia">Sharkia</option>
+                <option value="South Sinai">South Sinai</option>
+                <option value="Kafr Al sheikh">Kafr Al sheikh</option>
+                <option value="Matrouh">Matrouh</option>
+                <option value="Luxor">Luxor</option>
+                <option value="Qena">Qena</option>
+                <option value="North Sinai">North Sinai</option>
+                <option value="Sohag">Sohag</option>
+            </select>
             <span asp-validation-for="NewAddressCity" class="text-error text-sm mt-1"></span>
         </div>
         <div class="flex flex-col">
@@ -87,6 +116,16 @@ else if (!Model.ShowNewAddressForm)
                 <input asp-for="SaveNewAddress" type="checkbox" class="w-5 h-5 text-primary focus:ring-primary border-outline-variant rounded" />
                 <span class="font-body-md text-on-surface-variant">Save this address for future orders</span>
             </label>
+            <div class="flex items-center space-x-4 mt-6">
+                <button type="submit" formaction="@Url.Action("UseNewAddress", "Orders")" class="px-6 py-3 bg-primary text-on-primary rounded-full hover:opacity-90 font-label-caps text-sm transition-all duration-250">
+                    Save Address
+                </button>
+                @if(Model.Addresses.Any()) {
+                    <button type="button" onclick="document.getElementById('show-saved-addresses').submit();" class="px-6 py-3 border border-outline text-on-surface-variant rounded-full hover:bg-surface-container font-label-caps text-sm transition-all duration-250">
+                        Cancel
+                    </button>
+                }
+            </div>
         </div>
         
         <input type="hidden" name="ShowNewAddressForm" value="true" />
@@ -173,7 +212,8 @@ else
 </div>
 <span class="font-label-caps text-label-caps text-on-surface mb-2">Click to browse or drag image here</span>
 <span class="font-body-md text-body-md text-on-surface-variant text-sm">Supports JPG, PNG up to 5MB</span>
-<input accept="image/png, image/jpeg" class="hidden" type="file" name="ReceiptFile"/>
+<input accept="image/png, image/jpeg" class="hidden" type="file" asp-for="ReceiptImage" id="receipt-upload-input" onchange="previewReceiptName(this)"/>
+<p id="receipt-file-name" class="font-body-sm text-primary mt-2 hidden"></p>
 </div>
 </div>
 </div>
@@ -233,11 +273,11 @@ else
 
 <div class="flex justify-between items-center font-body-md text-body-md text-on-tertiary/80">
 <span>Shipping</span>
-<span>Calculated at checkout</span>
+<span id="shipping-cost-display">@Model.ShippingCost.ToString("C")</span>
 </div>
 <div class="flex justify-between items-center font-headline-md text-headline-md text-on-tertiary mt-6 pt-6 border-t border-on-tertiary/10">
 <span>Total</span>
-<span>@Model.Total.ToString("C")</span>
+<span id="grand-total-display" data-subtotal="@Model.Subtotal" data-discount="@Model.DiscountAmount">@Model.Total.ToString("C")</span>
 </div>
 </div>
 
@@ -276,10 +316,65 @@ else
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
+        const shippingPrices = {
+            "Cairo": 50, "Giza": 50, "Alexandria": 70, "Dakahlia": 80, "Red Sea": 100,
+            "Beheira": 80, "Fayoum": 80, "Gharbia": 80, "Ismailia": 80, "Menofia": 80,
+            "Minya": 90, "Qaliubiya": 60, "New Valley": 120, "Suez": 80, "Aswan": 120,
+            "Assiut": 100, "Beni Suef": 90, "Port Said": 80, "Damietta": 80, "Sharkia": 80,
+            "South Sinai": 100, "Kafr Al sheikh": 80, "Matrouh": 100, "Luxor": 120,
+            "Qena": 110, "North Sinai": 100, "Sohag": 100
+        };
+
+        function updateShipping() {
+            let selectedGov = "";
+            const showNewAddress = document.querySelector('input[name="ShowNewAddressForm"][value="true"]');
+            if (showNewAddress) {
+                const selectEl = document.getElementById("NewAddressCity");
+                if (selectEl) {
+                    selectedGov = selectEl.value;
+                }
+            } else {
+                const selectedRadio = document.querySelector('input[name="AddressId"]:checked');
+                if (selectedRadio) {
+                    const label = selectedRadio.closest('label');
+                    const pText = label.innerText;
+                    for (let gov in shippingPrices) {
+                        if (pText.includes(gov)) {
+                            selectedGov = gov;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            let shippingCost = 100;
+            if (selectedGov && shippingPrices[selectedGov] !== undefined) {
+                shippingCost = shippingPrices[selectedGov];
+            }
+
+            const totalDisplay = document.getElementById("grand-total-display");
+            const subtotal = parseFloat(totalDisplay.dataset.subtotal) || 0;
+            const discount = parseFloat(totalDisplay.dataset.discount) || 0;
+            
+            const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EGP' });
+            document.getElementById("shipping-cost-display").innerText = formatter.format(shippingCost);
+            totalDisplay.innerText = formatter.format(subtotal - discount + shippingCost);
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            updateShipping();
+            document.querySelectorAll('input[name="AddressId"]').forEach(radio => {
+                radio.addEventListener('change', updateShipping);
+            });
+            const citySelect = document.getElementById("NewAddressCity");
+            if (citySelect) {
+                citySelect.addEventListener('change', updateShipping);
+            }
+        });
+
         function toggleManualUpload(radio) {
             const uploadZone = document.getElementById('manual-upload-zone');
             
-            // UI styles
             document.querySelectorAll('.payment-card').forEach(card => {
                 card.classList.remove('border-primary-container');
             });
@@ -293,6 +388,20 @@ else
                 uploadZone.classList.remove('opacity-100', 'max-h-[500px]');
             }
         }
+        
+        function previewReceiptName(input) {
+            const nameEl = document.getElementById('receipt-file-name');
+            if (input.files && input.files[0]) {
+                nameEl.innerText = 'Selected: ' + input.files[0].name;
+                nameEl.classList.remove('hidden');
+            } else {
+                nameEl.classList.add('hidden');
+            }
+        }
+        
+        document.querySelector('#manual-upload-zone .border-dashed')?.addEventListener('click', function() {
+            document.getElementById('receipt-upload-input').click();
+        });
     </script>
     <style>
         .custom-scrollbar::-webkit-scrollbar {
